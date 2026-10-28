@@ -508,6 +508,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
 .shot > button { display: block; width: 100%; padding: 0; border: 0; background: var(--night-2); cursor: zoom-in; }
 .shot img { display: block; width: 100%; height: auto; transition: opacity .2s; }
 .shot > button:hover img { opacity: .85; }
+.shot .ph { aspect-ratio: 4 / 3; }
+.cars-empty { text-align: center; padding: 20px 0 100px; display: grid; gap: 18px; justify-items: center; color: var(--muted); }
 .photo-rail { grid-auto-columns: max-content; }
 .photo-rail .shot { margin: 0; }
 .photo-rail .shot img { height: clamp(260px, 60vw, 420px); width: auto; max-width: none; }
@@ -579,6 +581,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       <a href="#register">Exhibit <small>Register your car</small></a>
       <a href="#booth">Booths <small>Reserve a space</small></a>
       <a href="#events">Events <small>Now and next</small></a>
+      <a href="#cars">Show cars <small>The confirmed line-up</small></a>
       <a href="#gallery">Gallery <small>The floor, up close</small></a>
     </nav>
     <div class="cta-stack">
@@ -988,6 +991,23 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   </div>
 </div>
 
+<!-- =========================== SHOW CARS =========================== -->
+<div class="view" data-view="cars" hidden>
+  <div class="wrap">
+    <div class="page-top">
+      <span class="eyebrow ruled both">Tuner Fest 6.0 line-up</span>
+      <h1 class="mega">Show <span class="outline">cars</span></h1>
+      <p class="lede">Every car the Shift Nation team has accepted onto the floor for November 29. New cars appear here as soon as they're approved.</p>
+      <span class="eyebrow" style="--c: var(--muted)" id="cars-count"></span>
+    </div>
+    <div class="gal" id="cars-gal"></div>
+    <div class="cars-empty" id="cars-empty" hidden>
+      <p id="cars-empty-msg">No cars have been confirmed yet. Want yours to be the first?</p>
+      <a class="btn fill red" href="#register">Register your car <span class="arr">→</span></a>
+    </div>
+  </div>
+</div>
+
 <!-- =========================== GALLERY =========================== -->
 <div class="view" data-view="gallery" hidden>
   <div class="wrap">
@@ -1022,6 +1042,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
         <li><a href="#tickets">Ticket prices</a></li>
         <li><a href="#cashia">KES 200 off with Cashia</a></li>
         <li><a href="#events">Events</a></li>
+        <li><a href="#cars">Show cars</a></li>
         <li><a href="#gallery">Gallery</a></li></ul></div>
       <div><h4>Showcase</h4><ul>
         <li><a href="#register">Register your car</a></li>
@@ -1223,6 +1244,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   document.addEventListener("click", e => {
     const b = e.target.closest("[data-open]");
     if (!b) return;
+    if (b.dataset.raw) return openRaw(b.dataset.raw, b.dataset.cap);
     const scope = b.closest("#gal, #floor-rail");
     lbList = $$("[data-open]", scope).filter(x => !x.closest("[hidden]")).map(x => Number(x.dataset.open));
     lbPos = lbList.indexOf(Number(b.dataset.open));
@@ -1585,6 +1607,33 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     if (adm.photos.has(e.key)) return show(adm.photos.get(e.key));
     box.textContent = "Loading…";
     adm.ops.photo(e).then(src => { adm.photos.set(e.key, src); show(src); }).catch(() => { box.textContent = "Photo unavailable"; });
+  }
+  // Show cars page: approved cars only, car name and photo (owner details stay private)
+  let carsLoaded = 0;
+  async function loadShowCars() {
+    if (Date.now() - carsLoaded < 60000) return;
+    const gal = $("#cars-gal"), empty = $("#cars-empty"), count = $("#cars-count");
+    if (!sb) { gal.innerHTML = ""; count.textContent = ""; empty.hidden = false; return; }
+    if (!carsLoaded) count.textContent = "Loading the line-up…";
+    const { data, error } = await sb.rpc("show_cars");
+    if (error) { count.textContent = "The line-up didn't load. Refresh to try again."; return; }
+    carsLoaded = Date.now();
+    const paths = data.map(c => c.photo_path).filter(Boolean);
+    const urls = new Map();
+    if (paths.length) {
+      const r = await sb.storage.from("car-photos").createSignedUrls(paths, 3600);
+      (r.data || []).forEach(u => { if (u.signedUrl) urls.set(u.path, u.signedUrl); });
+    }
+    const spots = 70;
+    count.textContent = `${data.length} of ${spots} show car spots confirmed`;
+    empty.hidden = data.length > 0;
+    gal.innerHTML = data.map(c => {
+      const cap = c.car || "Show car", url = urls.get(c.photo_path);
+      const pic = url
+        ? `<button type="button" data-open="car" data-raw="${esc(url)}" data-cap="${esc(cap)}" aria-label="View larger: ${esc(cap)}"><img src="${esc(url)}" alt="${esc(cap)}" loading="lazy" decoding="async"></button>`
+        : ph("#1a1d27", "Photo coming soon");
+      return `<figure class="shot">${pic}<figcaption>Accepted<span>${esc(cap)}</span></figcaption></figure>`;
+    }).join("");
   }
   function openRaw(src, cap) {
     $("#lb-img").src = src; $("#lb-img").alt = cap || ""; $("#lb-img").removeAttribute("width"); $("#lb-img").removeAttribute("height");
@@ -2004,6 +2053,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     if (name === "register") setType(h === "booth" ? "booth" : "car");
     if (isTicket) showTicket(h.slice(7).toUpperCase());
     if (name === "cashia") renderTierChoices();
+    if (name === "cars") loadShowCars();
     scrollTop();
     onScroll();
     railUpdates.forEach(f => f());
