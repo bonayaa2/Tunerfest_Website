@@ -55,6 +55,16 @@ drop policy if exists "admins remove" on public.registrations;
 create policy "admins remove" on public.registrations
   for delete to authenticated using (public.is_admin());
 
+-- Table privileges for the website (newer projects don't grant these automatically).
+-- The policies above still decide which rows each visitor can touch.
+revoke all on public.admins from anon, authenticated;
+revoke all on public.registrations from anon, authenticated;
+grant select on public.admins to authenticated;
+grant insert on public.registrations to anon, authenticated;
+grant select, update, delete on public.registrations to authenticated;
+revoke execute on function public.is_admin() from public, anon;
+grant execute on function public.is_admin() to authenticated;
+
 -- 4. Private photo storage (JPEG only, 5 MB max)
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('car-photos', 'car-photos', false, 5242880, array['image/jpeg'])
