@@ -3,6 +3,7 @@
 // Secrets (Supabase → Edge Functions → Secrets):
 //   RESEND_API_KEY  – from resend.com, after verifying shiftnation.com there
 //   FROM_EMAIL      – optional, defaults to "Shift Nation <info@shiftnation.com>"
+// Runs as the signed-in admin who calls it; no service key is used.
 import { createClient } from "npm:@supabase/supabase-js@2.58.0";
 
 const CORS = {
@@ -72,16 +73,19 @@ Deno.serve(async (req) => {
   if (req.method !== "POST") return json(405, { error: "method_not_allowed" });
 
   const url = Deno.env.get("SUPABASE_URL")!;
-  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  // the site's public (publishable) key, as sent by the browser; falls back to the built-in anon key
+  const anonKey = req.headers.get("apikey") || Deno.env.get("SUPABASE_ANON_KEY")!;
   const resendKey = Deno.env.get("RESEND_API_KEY");
   const from = Deno.env.get("FROM_EMAIL") || "Shift Nation <info@shiftnation.com>";
 
-  // who is calling?
-  const token = (req.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
-  const admin = createClient(url, serviceKey, { auth: { persistSession: false } });
-  const { data: who } = await admin.auth.getUser(token);
-  if (!who?.user) return json(401, { error: "not_signed_in" });
-  const { data: isAdmin } = await admin.from("admins").select("user_id").eq("user_id", who.user.id).maybeSingle();
+  // Act as the signed-in caller, so the database's own admin rules decide what they can read and change.
+  const authHeader = req.headers.get("Authorization") || "";
+  const token = authHeader.replace(/^Bearer\s+/i, "");
+  const admin = createClient(url, anonKey, { auth: { persistSession: false }, global: { headers: { Authorization: authHeader } } });
+  const { data: who, error: whoErr } = await admin.auth.getUser(token);
+  if (!who?.user) { console.error("getUser failed", whoErr?.message); return json(401, { error: "not_signed_in" }); }
+  const { data: isAdmin, error: adminErr } = await admin.from("admins").select("user_id").eq("user_id", who.user.id).maybeSingle();
+  if (adminErr) console.error("admin check failed", adminErr.message);
   if (!isAdmin) return json(403, { error: "not_admin" });
 
   let id: string | undefined;
@@ -90,7 +94,7 @@ Deno.serve(async (req) => {
 
   const { data: r, error } = await admin.from("registrations")
     .select("id,type,status,name,email,car,business,booth_size").eq("id", id).maybeSingle();
-  if (error || !r) return json(404, { error: "not_found" });
+  if (error || !r) { if (error) console.error("load failed", error.message); return json(404, { error: "not_found" }); }
   if (r.status !== "approved" && r.status !== "declined") return json(409, { error: "not_reviewed" });
   if (!resendKey) return json(503, { error: "email_not_configured" });
 
