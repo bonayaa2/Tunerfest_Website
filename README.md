@@ -40,7 +40,7 @@ select id from auth.users where email = 'person@example.com';
 ## Approval emails
 
 Approving or declining a show car or booth in the admin panel emails the applicant from
-info@shiftnation.com, through the `notify-applicant` Supabase Edge Function (`supabase/functions/`)
+info@shiftnation.org, through the `notify-applicant` Supabase Edge Function (`supabase/functions/`)
 and Resend. It needs the `RESEND_API_KEY` secret in Supabase → Edge Functions → Secrets.
 
 ## Cashia tickets

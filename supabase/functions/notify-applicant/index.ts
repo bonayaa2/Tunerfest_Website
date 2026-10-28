@@ -1,8 +1,8 @@
 // Emails a show car or booth applicant when an admin approves or declines them.
 // Called from the admin panel with { id }. Only signed-in admins may call it.
 // Secrets (Supabase → Edge Functions → Secrets):
-//   RESEND_API_KEY  – from resend.com, after verifying shiftnation.com there
-//   FROM_EMAIL      – optional, defaults to "Shift Nation <info@shiftnation.com>"
+//   RESEND_API_KEY  – from resend.com, after verifying shiftnation.org there
+//   FROM_EMAIL      – optional, defaults to "Shift Nation <info@shiftnation.org>"
 // Runs as the signed-in admin who calls it; no service key is used.
 import { createClient } from "npm:@supabase/supabase-js@2.58.0";
 
@@ -54,7 +54,7 @@ function compose(r: Reg) {
       "We'd still love to see you at the show. Tickets are on sale at shiftnation.org.",
     ];
   }
-  const text = [`Hi ${first},`, "", ...lines, "", "Shift Nation", "info@shiftnation.com · shiftnation.org"].join("\n");
+  const text = [`Hi ${first},`, "", ...lines, "", "Shift Nation", "info@shiftnation.org · shiftnation.org"].join("\n");
   const html = `<!doctype html><html><body style="margin:0;background:#f4f4f6;font-family:Arial,Helvetica,sans-serif;color:#1a1a1f">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:24px 12px"><tr><td align="center">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:12px;overflow:hidden">
@@ -63,7 +63,7 @@ function compose(r: Reg) {
 <h1 style="margin:0 0 18px;font-size:22px;line-height:1.3">${esc(subject)}</h1>
 <p style="margin:0 0 14px;font-size:15px;line-height:1.6">Hi ${esc(first)},</p>
 ${lines.map((l) => `<p style="margin:0 0 14px;font-size:15px;line-height:1.6">${esc(l)}</p>`).join("")}
-<p style="margin:22px 0 0;font-size:15px;line-height:1.6">Shift Nation<br><a href="mailto:info@shiftnation.com" style="color:#1a1a1f">info@shiftnation.com</a> · <a href="https://shiftnation.org" style="color:#1a1a1f">shiftnation.org</a></p>
+<p style="margin:22px 0 0;font-size:15px;line-height:1.6">Shift Nation<br><a href="mailto:info@shiftnation.org" style="color:#1a1a1f">info@shiftnation.org</a> · <a href="https://shiftnation.org" style="color:#1a1a1f">shiftnation.org</a></p>
 </td></tr></table></td></tr></table></body></html>`;
   return { subject, text, html };
 }
@@ -76,7 +76,7 @@ Deno.serve(async (req) => {
   // the site's public (publishable) key, as sent by the browser; falls back to the built-in anon key
   const anonKey = req.headers.get("apikey") || Deno.env.get("SUPABASE_ANON_KEY")!;
   const resendKey = Deno.env.get("RESEND_API_KEY");
-  const from = Deno.env.get("FROM_EMAIL") || "Shift Nation <info@shiftnation.com>";
+  const from = Deno.env.get("FROM_EMAIL") || "Shift Nation <info@shiftnation.org>";
 
   // Act as the signed-in caller, so the database's own admin rules decide what they can read and change.
   const authHeader = req.headers.get("Authorization") || "";
@@ -102,7 +102,7 @@ Deno.serve(async (req) => {
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from, to: [r.email], reply_to: "info@shiftnation.com", subject: msg.subject, html: msg.html, text: msg.text }),
+    body: JSON.stringify({ from, to: [r.email], reply_to: "info@shiftnation.org", subject: msg.subject, html: msg.html, text: msg.text }),
   });
   if (!res.ok) {
     const detail = (await res.text()).slice(0, 400);

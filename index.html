@@ -687,7 +687,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       <div class="sec-head" style="align-content:start">
         <span class="eyebrow ruled" style="--c: var(--orange)">FAQ</span>
         <h2 class="mega"><span>Pit stop</span><span class="outline">questions</span></h2>
-        <p class="lede">Everything about tickets, exhibiting and booths. Still curious? Write to <span class="mail">info@shiftnation.com</span></p>
+        <p class="lede">Everything about tickets, exhibiting and booths. Still curious? Write to <span class="mail">info@shiftnation.org</span></p>
       </div>
       <div class="faq" id="faq"></div>
     </div>
@@ -1024,7 +1024,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       <div><h4>Connect</h4><ul>
         <!-- TODO: link these to the club's real profiles -->
         <li>Instagram</li><li>YouTube</li><li>TikTok</li>
-        <li class="mail">info@shiftnation.com</li></ul></div>
+        <li class="mail">info@shiftnation.org</li></ul></div>
       <div><h4>Venue</h4><ul>
         <li>Galleria Mall, Karen<br>Nairobi, Kenya</li>
         <li><a href="https://www.google.com/maps/search/?api=1&amp;query=Galleria+Mall+Karen+Nairobi" target="_blank" rel="noopener">Get directions</a></li></ul></div>
@@ -1437,7 +1437,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   form.addEventListener("change", e => { if (e.target.closest(".field.invalid") && e.target !== photoInput) validate(); });
 
   const showStatus = (msg, err) => { statusEl.textContent = msg; statusEl.classList.toggle("err", !!err); statusEl.hidden = !msg; };
-  const UNAVAILABLE = "Online applications aren't available here right now. Send your details and a photo to info@shiftnation.com and we'll register you.";
+  const UNAVAILABLE = "Online applications aren't available here right now. Send your details and a photo to info@shiftnation.org and we'll register you.";
 
   form.addEventListener("submit", async e => {
     e.preventDefault();
@@ -1467,7 +1467,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     } catch (err) {
       btn.disabled = false;
       const code = err && err.code;
-      showStatus(code === "quota_exceeded" ? "We can't take more applications online right now. Email info@shiftnation.com to register."
+      showStatus(code === "quota_exceeded" ? "We can't take more applications online right now. Email info@shiftnation.org to register."
         : code === "invalid_argument" ? UNAVAILABLE
         : "Your application didn't send. Check your connection and try again.", true);
       return;
@@ -1505,7 +1505,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       if (res.error) throw res.error;
     } catch {
       btn.disabled = false;
-      showStatus("Your application didn't send. Check your connection and try again. If it keeps failing, email info@shiftnation.com.", true);
+      showStatus("Your application didn't send. Check your connection and try again. If it keeps failing, email info@shiftnation.org.", true);
       return;
     }
     showDone({ ...row, boothSize: row.booth_size });
