@@ -517,6 +517,10 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
 .shot img { display: block; width: 100%; height: auto; transition: opacity .2s; }
 .shot > button:hover img { opacity: .85; }
 .shot .ph { aspect-ratio: 4 / 3; }
+/* show cars: a tidy grid where every photo has the same 4:3 frame (tap to see it uncropped) */
+#cars-gal { columns: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 16px; }
+#cars-gal .shot { margin: 0; align-content: start; }
+#cars-gal .shot img { aspect-ratio: 4 / 3; height: auto; object-fit: cover; }
 .cars-empty { text-align: center; padding: 20px 0 100px; display: grid; gap: 18px; justify-items: center; color: var(--muted); }
 .photo-rail { grid-auto-columns: max-content; }
 .photo-rail .shot { margin: 0; }
