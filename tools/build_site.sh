@@ -8,6 +8,8 @@ cd "$(dirname "$0")/.." || exit 1
   printf '</body>\n</html>\n'; } > site/index.html
 sed -i 's|^\* { box-sizing: border-box; }|* { box-sizing: border-box; }\nbody { margin: 0; }\nimg { max-width: 100%; }\n[hidden] { display: none !important; }|' site/index.html
 mkdir -p site/assets/gallery && cp assets/*.webp site/assets/ && cp assets/gallery/*.webp site/assets/gallery/
+# browser tab and home-screen icons; /favicon.ico is where browsers look by default
+mkdir -p site/assets/icons && cp assets/icons/* site/assets/icons/ && cp assets/icons/favicon.ico site/favicon.ico
 # Supabase client (login + registrations on your own host); not used in the claude.ai preview
 mkdir -p site/assets/vendor && cp assets/vendor/* site/assets/vendor/
 python3 - <<'PY'
