@@ -1,5 +1,6 @@
 # local backups and build outputs
 index-*.html
 *.zip
-*.png
+# screenshots, but keep the site icons
+/*.png
 site/__test.html
