@@ -1,0 +1,5 @@
+# local backups and build outputs
+index-*.html
+*.zip
+*.png
+site/__test.html

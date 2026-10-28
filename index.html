@@ -1,0 +1,1700 @@
+<title>TunerFest by Shift Nation</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Tuner Fest: Motorshow by Shift Nation. Sunday, November 29, 2026, Galleria Mall, Karen, Nairobi. Buy tickets, exhibit your car or reserve a booth.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,400..900;1,62..125,700..900&family=Kaushan+Script&family=Manrope:wght@400;500;600;700&family=Sora:wght@600;700&display=swap">
+<style>
+/* Layout: night-garage black with a blue cast; extra-wide caps headlines with one outlined word; three accent colors each tied to one action (yellow = tickets, red = exhibit, teal = booths). */
+:root {
+  --night: #07080c;        /* page */
+  --night-2: #0d0f16;      /* panels */
+  --line: #1e2230;         /* borders */
+  --text: #eef0f5;
+  --muted: #8b91a3;
+  --yellow: #f5b41f;       /* tickets */
+  --red: #e5372b;          /* exhibit */
+  --teal: #2fcfc3;         /* booths */
+  --orange: #ff8a1f;       /* highlights */
+  --on-accent: #07080c;
+
+  --f-display: "Archivo", "Arial Black", Impact, sans-serif;
+  --f-title: "Sora", "Archivo", sans-serif;
+  --f-body: "Manrope", "Helvetica Neue", Arial, sans-serif;
+  --f-script: "Kaushan Script", "Brush Script MT", cursive;
+
+  --max: 1200px;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+/* smooth wheel scrolling is driven from script; native smooth-scroll would fight it */
+html.smooth-wheel { scroll-behavior: auto; }
+body { background: var(--night); color: var(--text); font-family: var(--f-body); font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; overflow-x: clip; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 60; background: var(--night); }
+a { color: inherit; }
+h1, h2, h3, p { margin: 0; }
+:focus-visible { outline: 2px solid var(--yellow); outline-offset: 3px; }
+.wrap { max-width: var(--max); margin: 0 auto; padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: max(18px, env(safe-area-inset-right, 0px)); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- type ---------- */
+.mega { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; text-transform: uppercase; line-height: 0.95; letter-spacing: -0.01em; text-wrap: balance; }
+.outline { color: transparent; -webkit-text-stroke: 1.5px var(--stroke, var(--text)); }
+.eyebrow { font-family: var(--f-display); font-stretch: 125%; font-weight: 700; font-size: 0.68rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--c, var(--yellow)); display: inline-flex; align-items: center; gap: 12px; }
+.eyebrow.ruled::before, .eyebrow.ruled.both::after { content: ""; width: 28px; height: 1.5px; background: currentColor; flex: none; }
+.eyebrow.dot::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--orange); flex: none; }
+.lede { color: var(--muted); font-size: 1rem; line-height: 1.65; max-width: 56ch; }
+
+/* ---------- header + menu ---------- */
+.site-header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 50; background: linear-gradient(var(--night), color-mix(in srgb, var(--night) 70%, transparent)); }
+.site-header .wrap { display: flex; align-items: center; justify-content: space-between; padding-block: 12px; }
+/* Shift Nation logo (assets/shiftnation-logo.webp, transparent background) */
+.logo { display: inline-block; line-height: 0; text-decoration: none; }
+.logo img { height: 52px; width: auto; display: block; }
+.foot-brand .logo img { height: 60px; }
+.burger { width: 46px; height: 46px; display: grid; place-items: center; background: none; border: 0; color: var(--text); cursor: pointer; }
+.burger span, .burger span::before, .burger span::after { display: block; width: 22px; height: 2px; background: currentColor; position: relative; transition: transform .2s, background .2s; }
+.burger span::before, .burger span::after { content: ""; position: absolute; left: 0; }
+.burger span::before { top: -7px; } .burger span::after { top: 7px; }
+.menu-open .burger span { background: transparent; }
+.menu-open .burger span::before { transform: translateY(7px) rotate(45deg); }
+.menu-open .burger span::after { transform: translateY(-7px) rotate(-45deg); }
+.menu { position: fixed; inset: 0; z-index: 45; background: var(--night); padding-top: calc(env(safe-area-inset-top, 0px) + 84px); overflow-y: auto; }
+.menu .wrap { display: grid; gap: 28px; padding-block: 12px 40px; }
+.menu nav { display: grid; }
+.menu nav a { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; text-transform: uppercase; font-size: clamp(1.6rem, 7vw, 3rem); line-height: 1.1; text-decoration: none; padding-block: 10px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.menu nav a:hover, .menu nav a[aria-current="page"] { color: var(--yellow); }
+.menu nav a small { font-family: var(--f-body); font-stretch: 100%; font-weight: 600; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: none; color: var(--muted); text-align: right; }
+.menu .cta-stack { max-width: 420px; }
+
+/* ---------- buttons ---------- */
+.btn { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 0 26px; font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; border: 1.5px solid var(--c, var(--text)); color: var(--c, var(--text)); background: transparent; cursor: pointer; transition: background .15s, color .15s, transform .12s; }
+.btn:hover { background: color-mix(in srgb, var(--c, var(--text)) 14%, transparent); }
+.btn:active { transform: translateY(1px); }
+.btn .arr { font-size: 1rem; letter-spacing: 0; }
+.btn.fill { background: var(--c); color: var(--on-accent); }
+.btn.fill:hover { filter: brightness(1.08); background: var(--c); }
+.btn.red { --c: var(--red); } .btn.yellow { --c: var(--yellow); } .btn.teal { --c: var(--teal); } .btn.silver { --c: #dfe3ec; }
+/* ticket-stub shape: notches on both ends plus a perforation */
+.btn.tkt, .cta-tk {
+  border: 0; padding-left: 40px;
+  -webkit-mask: radial-gradient(circle 8px at 0 50%, #0000 97%, #000) 0 0 / 51% 100% no-repeat, radial-gradient(circle 8px at 100% 50%, #0000 97%, #000) 100% 0 / 51% 100% no-repeat;
+          mask: radial-gradient(circle 8px at 0 50%, #0000 97%, #000) 0 0 / 51% 100% no-repeat, radial-gradient(circle 8px at 100% 50%, #0000 97%, #000) 100% 0 / 51% 100% no-repeat;
+}
+.btn.tkt::before, .cta-tk::before { content: ""; position: absolute; left: 22px; top: 9px; bottom: 9px; border-left: 1.5px dashed color-mix(in srgb, var(--on-accent) 45%, transparent); }
+.cta-stack { display: grid; gap: 14px; width: 100%; }
+.cta-stack .btn { width: 100%; }
+.row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+
+/* ---------- photo placeholders (swap for real <img>) ---------- */
+.ph { position: relative; overflow: hidden; background:
+    radial-gradient(120% 70% at 50% 110%, color-mix(in srgb, var(--tint, #3a4a7a) 55%, transparent), transparent 60%),
+    linear-gradient(180deg, #1a2238 0%, #0d1220 55%, #07080c 100%); }
+.ph > svg { position: absolute; left: 8%; bottom: 14%; width: 84%; height: auto; opacity: .9; }
+.ph .ph-note { position: absolute; top: 12px; right: 12px; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--line); padding: 3px 8px; background: #07080caa; z-index: 1; }
+.ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+/* ---------- HOME: hero ---------- */
+/* photo runs up behind the sticky header; the overlay keeps the headline readable over the flames */
+.hero { position: relative; overflow: hidden; margin-top: -76px; padding-top: 76px; background: var(--night) url("assets/hero-m3.webp") 55% 47% / cover no-repeat; }
+.hero::before { content: ""; position: absolute; inset: 0; background:
+    radial-gradient(70% 38% at 50% 34%, #07080cb3, transparent 80%),
+    linear-gradient(180deg, #07080ce6 0%, #07080c73 28%, #07080c26 62%, #07080c66 82%, var(--night) 100%); }
+.hero .wrap { position: relative; padding-block: clamp(40px, 7vw, 84px) clamp(64px, 9vw, 110px); display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; gap: 26px; }
+.hero h1 { font-size: clamp(1.9rem, 8.4vw, 6.6rem); }
+.hero h1 span { display: block; }
+.date-chip { display: inline-flex; align-items: center; gap: 12px; padding: 9px 16px; background: #000; border: 1px solid var(--line); font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; }
+.date-chip::before { content: ""; width: 9px; height: 9px; background: var(--yellow); flex: none; }
+/* hero actions: three different shapes, one per job.
+   Exhibit = slanted race-livery plate, Tickets = the ticket stub (primary), Booth = dashed floor-plan plot */
+.hero-cta { display: grid; gap: 16px; width: 100%; max-width: 440px; margin-top: 6px; align-items: center; }
+@media (min-width: 900px) { .hero-cta { max-width: 1000px; grid-template-columns: 1fr 1.15fr 1fr; gap: 22px; } }
+.cta { position: relative; display: flex; align-items: center; gap: 14px; min-height: 64px; padding: 10px 22px; text-decoration: none; text-align: left; transition: transform .18s, background .18s, box-shadow .18s; }
+.cta .txt { display: grid; gap: 3px; flex: 1; min-width: 0; }
+.cta .label, .cta .sub { white-space: nowrap; }
+.cta .label { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.74rem; letter-spacing: 0.18em; text-transform: uppercase; line-height: 1.1; }
+.cta .sub { font-size: 0.78rem; font-weight: 500; line-height: 1.2; opacity: .8; }
+.cta .arr { font-size: 1.05rem; transition: transform .18s; }
+.cta:hover .arr { transform: translateX(4px); }
+.cta svg { width: 30px; height: 30px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+.cta-ex { color: var(--red); background: #07080cd0; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); border-left: 6px solid var(--red); transform: skewX(-12deg); margin-inline: 8px; padding: 0; }
+.cta-ex .in { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 64px; padding: 10px 22px; transform: skewX(12deg); }
+.cta-ex .sub { color: var(--text); }
+.cta-ex svg { width: 38px; }
+.cta-ex:hover { background: color-mix(in srgb, var(--red) 24%, #07080c); transform: skewX(-12deg) translateX(3px); }
+
+.cta-tk { background: var(--yellow); color: var(--on-accent); min-height: 82px; padding-left: 44px; padding-right: 30px; box-shadow: 0 14px 34px -14px color-mix(in srgb, var(--yellow) 70%, transparent); }
+.cta-tk .label { font-size: 0.95rem; }
+.cta-tk .sub { font-weight: 700; opacity: .75; }
+.cta-tk:hover { transform: translateY(-2px); box-shadow: 0 18px 40px -14px color-mix(in srgb, var(--yellow) 85%, transparent); }
+
+.cta-bo { color: var(--teal); background: #07080cb8; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); border: 1.5px dashed color-mix(in srgb, var(--teal) 70%, transparent); }
+.cta-bo .sub { color: var(--text); }
+.cta-bo::before, .cta-bo::after { content: ""; position: absolute; width: 12px; height: 12px; border: 2.5px solid var(--teal); }
+.cta-bo::before { top: -3px; left: -3px; border-right: 0; border-bottom: 0; }
+.cta-bo::after { bottom: -3px; right: -3px; border-left: 0; border-top: 0; }
+.cta-bo:hover { background: color-mix(in srgb, var(--teal) 16%, #07080c); border-style: solid; }
+@media (max-width: 899px) { .cta-tk { order: -1; } }
+
+/* ---------- HOME: pinned three-slide story ---------- */
+.pin { position: relative; height: 300vh; }
+.pin-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+.slide { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity .6s ease, visibility .6s; display: grid; }
+.slide.on { opacity: 1; visibility: visible; }
+.slide > .ph { position: absolute; inset: 0; }
+.slide > .ph::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, #07080c 0%, #07080c55 30%, #07080c99 62%, #07080c 100%); }
+.slide-body { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; align-content: center; text-align: center; gap: 14px; padding: 80px max(18px, env(safe-area-inset-right, 0px)) 70px max(18px, env(safe-area-inset-left, 0px)); }
+.slide-body .lede { color: #c9cdd8; max-width: 44ch; font-size: 0.95rem; }
+.slide-body h2 { font-size: clamp(3rem, 13vw, 7rem); color: var(--c); line-height: 0.88; }
+.pin-foot { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; }
+.pin-foot .wrap { display: flex; justify-content: space-between; align-items: center; padding-block: 18px; font-family: var(--f-display); font-stretch: 125%; font-weight: 700; font-size: 0.66rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+.pin-foot b { color: var(--text); font-variant-numeric: tabular-nums; }
+.pin-progress { display: flex; gap: 6px; }
+.pin-progress i { width: 26px; height: 3px; background: var(--line); transition: background .3s; }
+.pin-progress i.on { background: var(--text); }
+
+/* event logo (assets/tunerfest-logo.webp, transparent background) */
+.tf-logo { display: block; width: min(560px, 92%); max-width: 100%; height: auto; filter: drop-shadow(0 10px 30px #000a); }
+.slide-body .tf-logo { width: min(480px, 88%); }
+.page-top .tf-logo { width: min(620px, 94%); }
+
+.countdown { display: inline-grid; grid-template-columns: repeat(4, minmax(54px, auto)); background: #000c; border: 1px solid var(--line); }
+.countdown div { padding: 10px 12px 8px; text-align: center; border-right: 1px solid var(--line); }
+.countdown div:last-child { border-right: 0; }
+.countdown b { display: block; font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: 1.35rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.countdown .cd-msg { grid-column: 1 / -1; border-right: 0; padding: 12px 22px; }
+.countdown .cd-msg b { font-size: 1.1rem; color: var(--yellow); text-transform: uppercase; }
+.countdown span { font-size: 0.55rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+
+@media (prefers-reduced-motion: reduce) {
+  .pin { height: auto; } .pin-stage { position: static; height: auto; }
+  .slide { position: relative; opacity: 1; visibility: visible; min-height: 640px; } .pin-foot { display: none; }
+}
+
+/* ---------- sections ---------- */
+.section { padding-block: clamp(64px, 11vw, 120px); position: relative; }
+.section.tight { padding-top: 0; }
+.sec-head { display: grid; gap: 16px; margin-bottom: 36px; justify-items: start; }
+.sec-head h2 { font-size: clamp(2rem, 8vw, 4.4rem); }
+.sec-head h2 span { display: block; }
+
+.stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 20px; margin-top: 44px; }
+@media (min-width: 900px) { .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.stats b { display: block; font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: clamp(1.9rem, 6vw, 3rem); line-height: 1; color: var(--yellow); font-variant-numeric: tabular-nums; }
+.stats div:nth-child(even) b { color: var(--text); }
+.stats b.stat-words { font-size: clamp(1.15rem, 3.4vw, 1.75rem); line-height: 1.05; text-wrap: balance; }
+.stats span { display: block; margin-top: 8px; font-family: var(--f-display); font-stretch: 125%; font-weight: 700; font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+.about-grid { display: grid; gap: 22px; }
+@media (min-width: 900px) { .about-grid { grid-template-columns: 1.1fr 1fr; gap: 60px; align-items: end; } }
+.about-grid .big { font-family: var(--f-title); font-weight: 700; font-size: clamp(1.1rem, 3.2vw, 1.5rem); line-height: 1.4; }
+
+/* carousels */
+.rail-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 18px; flex-wrap: wrap; }
+.counter { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.8rem; letter-spacing: 0.1em; font-variant-numeric: tabular-nums; min-width: 5ch; text-align: center; }
+.rail-nav { display: flex; gap: 8px; align-items: center; }
+.rail-nav button { width: 44px; height: 44px; border: 1px solid var(--line); background: transparent; color: var(--text); cursor: pointer; font-size: 1.1rem; }
+.rail-nav button:hover:not(:disabled) { border-color: var(--text); }
+.rail-nav button:disabled { opacity: .3; cursor: default; }
+.rail { display: grid; grid-auto-flow: column; grid-auto-columns: min(86%, 380px); gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding-bottom: 4px; }
+.rail::-webkit-scrollbar { display: none; }
+.rail > * { scroll-snap-align: start; }
+
+
+.polaroid { margin: 0; background: #11131b; border: 1px solid var(--line); padding: 12px 12px 14px; display: grid; gap: 12px; }
+.polaroid .ph { aspect-ratio: 4 / 3; max-width: 100%; }
+.polaroid figcaption, .shot figcaption { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); }
+.polaroid figcaption span, .shot figcaption span { color: var(--muted); font-weight: 600; letter-spacing: 0.02em; text-transform: none; font-family: var(--f-body); font-stretch: 100%; font-size: 0.8rem; text-align: right; }
+
+ 
+/* FAQ */
+.faq { border-top: 1px solid var(--line); }
+.faq details { border-bottom: 1px solid var(--line); }
+.faq summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 30px minmax(0, 1fr) 36px; gap: 10px; align-items: center; padding: 20px 0; min-height: 44px; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary .n { font-family: var(--f-display); font-stretch: 125%; font-weight: 700; font-size: 0.65rem; color: var(--muted); }
+.faq summary .q { font-family: var(--f-title); font-weight: 700; font-size: 1.02rem; line-height: 1.3; }
+.faq summary .pm { width: 34px; height: 34px; border: 1px solid var(--line); border-radius: 50%; display: grid; place-items: center; font-size: 1.1rem; color: var(--muted); transition: transform .2s, color .2s, border-color .2s; }
+.faq details[open] .q { color: var(--orange); }
+.faq details[open] .pm { transform: rotate(45deg); color: var(--orange); border-color: var(--orange); }
+.faq .a { padding: 0 46px 22px 40px; color: var(--muted); max-width: 70ch; }
+.faq-grid { display: grid; gap: 28px; }
+@media (min-width: 900px) { .faq-grid { grid-template-columns: 0.9fr 1.3fr; gap: 64px; } }
+.mail { color: var(--orange); font-weight: 600; user-select: all; }
+
+/* closing CTA */
+.closer { text-align: center; }
+.closer h2 { font-size: clamp(2.5rem, 12vw, 7rem); }
+.closer h2 span { display: block; }
+.closer .outline { --stroke: var(--orange); }
+.closer .cta-stack { max-width: 380px; margin: 34px auto 0; }
+
+/* footer */
+.site-footer { border-top: 1px solid var(--line); }
+.site-footer .wrap { padding-block: 56px 36px; display: grid; gap: 40px; }
+.foot-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 36px 24px; }
+@media (min-width: 900px) { .site-footer .wrap { grid-template-columns: 1.2fr 2fr; } .foot-cols { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.foot-cols h4 { margin: 0 0 14px; font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.66rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--orange); }
+.foot-cols ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; font-size: 0.92rem; color: #c3c7d2; }
+.foot-cols a { text-decoration: none; }
+.foot-cols a:hover { color: var(--text); text-decoration: underline; }
+.foot-cols .mail { overflow-wrap: anywhere; }
+.foot-brand p { color: var(--muted); font-size: 0.9rem; max-width: 40ch; margin-top: 18px; }
+.foot-base { grid-column: 1 / -1; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; padding-top: 24px; border-top: 1px solid var(--line); font-family: var(--f-display); font-stretch: 125%; font-weight: 700; font-size: 0.58rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+.foot-base .open::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--teal); margin-right: 8px; }
+
+/* ---------- inner pages ---------- */
+.page-top { padding-block: clamp(36px, 8vw, 80px) 24px; display: grid; justify-items: center; text-align: center; gap: 18px; }
+.page-top h1.mega { font-size: clamp(2.2rem, 9vw, 5rem); }
+.page-top .sub { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em; font-size: clamp(1rem, 4vw, 1.5rem); }
+
+/* tickets */
+.tiers { display: grid; gap: 22px; padding-block: 24px 40px; }
+@media (min-width: 960px) { .tiers { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; } }
+.tier-main { align-content: start; }
+.tier .btn, .tier .gate-note { margin-top: auto; }
+.tier { border: 1px solid var(--line); background: var(--night-2); display: grid; }
+.tier.pop { border-color: var(--yellow); }
+.tier-main { padding: 28px 24px 26px; display: grid; gap: 14px; }
+.tier-name { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.tier-name h2 { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: 0.82rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--c); }
+.tier-name .badge { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.55rem; letter-spacing: 0.14em; text-transform: uppercase; background: var(--yellow); color: var(--on-accent); padding: 4px 8px; }
+.tier .kind { font-family: var(--f-display); font-stretch: 125%; font-weight: 700; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-top: -8px; }
+.price { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.price b { white-space: nowrap; font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: clamp(2.2rem, 9vw, 2.7rem); line-height: 1; color: #dfe3ec; font-variant-numeric: tabular-nums; }
+.price span { font-family: var(--f-display); font-stretch: 125%; font-weight: 700; font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+.tier .pitch { color: var(--muted); font-size: 0.92rem; }
+.tier ul { list-style: none; margin: 4px 0 6px; padding: 0; display: grid; gap: 9px; font-size: 0.9rem; color: #c9cdd8; }
+.tier li { display: flex; gap: 10px; }
+.tier li::before { content: "›"; color: var(--c); font-weight: 700; }
+.tier .btn { width: 100%; }
+.stub { border-top: 1.5px dashed var(--line); padding: 16px 24px 18px; display: flex; justify-content: space-between; align-items: center; gap: 14px; position: relative; }
+.stub::before, .stub::after { content: ""; position: absolute; top: -10px; width: 18px; height: 18px; border-radius: 50%; background: var(--night); border: 1px solid var(--line); }
+.stub::before { left: -10px; clip-path: inset(0 0 0 50%); }
+.stub::after { right: -10px; clip-path: inset(0 50% 0 0); }
+.tier.pop .stub::before, .tier.pop .stub::after { border-color: var(--yellow); }
+.stub small { display: block; font-family: var(--f-display); font-stretch: 125%; font-weight: 700; font-size: 0.52rem; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; }
+.stub b { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: 0.82rem; letter-spacing: 0.06em; color: var(--text); }
+.stub svg { height: 34px; width: 90px; flex: none; }
+.deadline { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--orange); font-variant-numeric: tabular-nums; }
+.tier.ended .price b { color: var(--muted); text-decoration: line-through; text-decoration-thickness: 3px; }
+.gate-note { display: flex; align-items: center; justify-content: center; min-height: 48px; border: 1.5px dashed var(--line); color: var(--muted); font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; }
+.ussd { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; color: var(--yellow); letter-spacing: 0.04em; white-space: nowrap; user-select: all; }
+.dial { border: 1px solid var(--line); background: var(--night-2); padding: 24px; display: flex; flex-wrap: wrap; gap: 18px 28px; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+.dial > div { display: grid; gap: 8px; min-width: 0; }
+.dial-code { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; text-transform: uppercase; font-size: clamp(1.6rem, 6vw, 2.4rem); line-height: 1.05; }
+.tickets-note { color: var(--muted); font-size: 0.9rem; text-align: center; max-width: 60ch; margin: 0 auto; padding-bottom: 100px; }
+
+/* register */
+.seg { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border: 1px solid var(--line); max-width: 560px; margin: 0 auto 32px; }
+.seg button { min-height: 52px; background: transparent; border: 0; color: var(--muted); cursor: pointer; font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.66rem; letter-spacing: 0.18em; text-transform: uppercase; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--c); color: var(--on-accent); }
+.form-wrap { max-width: 760px; margin: 0 auto; padding-bottom: 100px; }
+fieldset { border: 0; border-top: 1px solid var(--line); padding: 26px 0 8px; margin: 0; min-width: 0; }
+legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--c, var(--red)); padding-right: 12px; }
+.fgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 10px; }
+.fgrid .full { grid-column: 1 / -1; }
+@media (max-width: 620px) { .fgrid { grid-template-columns: minmax(0, 1fr); } }
+.field { display: grid; gap: 6px; min-width: 0; align-content: start; }
+.field > label { font-size: 0.85rem; font-weight: 600; }
+.field .hint { font-size: 0.8rem; color: var(--muted); }
+.field .error { font-size: 0.8rem; color: var(--red); display: none; }
+.field.invalid .error { display: block; }
+.field input[type=text], .field input[type=email], .field input[type=tel], .field input[type=number], .field input[type=password], .field select, .field textarea {
+  width: 100%; min-height: 48px; padding: 10px 14px; background: var(--night-2); color: var(--text); border: 1px solid var(--line); font: inherit; border-radius: 0; }
+.field textarea { min-height: 100px; resize: vertical; }
+.field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--c, var(--red)); }
+.field.invalid input, .field.invalid select { border-color: var(--red); }
+.check { display: flex; gap: 12px; align-items: flex-start; font-size: 0.92rem; font-weight: 500; cursor: pointer; }
+.check input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--c, var(--red)); flex: none; }
+.form-actions { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-top: 26px; }
+.form-actions .hint { color: var(--muted); font-size: 0.88rem; }
+.done { border: 1px solid var(--c); padding: 30px 26px; display: grid; gap: 14px; background: color-mix(in srgb, var(--c) 8%, transparent); }
+.done h2 { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; text-transform: uppercase; font-size: clamp(1.4rem, 5vw, 2.2rem); line-height: 1.05; }
+.done p { color: #c9cdd8; max-width: 60ch; }
+
+/* registration additions */
+.spots-note { max-width: 760px; margin: 0 auto 28px; display: flex; gap: 18px; align-items: center; padding: 16px 20px; border: 1px solid color-mix(in srgb, var(--yellow) 55%, transparent); background: color-mix(in srgb, var(--yellow) 8%, transparent); }
+.spots-note b { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: 2.2rem; line-height: 1; color: var(--yellow); }
+.spots-note p { font-size: 0.92rem; color: #c9cdd8; }
+.spots-note strong { color: var(--text); }
+.label-like { font-size: 0.85rem; font-weight: 600; }
+.drop { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px; align-items: center; min-height: 120px; padding: 16px; border: 1.5px dashed var(--line); background: var(--night-2); cursor: pointer; transition: border-color .15s; }
+.drop:hover, .drop:focus-within { border-color: var(--c, var(--red)); }
+.drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+.drop img { width: 120px; height: 90px; object-fit: cover; display: block; }
+.drop-txt { display: grid; gap: 4px; grid-column: 1 / -1; }
+.drop img:not([hidden]) + .drop-txt { grid-column: 2; }
+.drop-txt b { color: var(--c, var(--red)); font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; }
+.drop-txt span { font-size: 0.85rem; color: var(--muted); }
+.field.invalid .drop { border-color: var(--red); }
+.form-status { margin-top: 16px; padding: 12px 14px; border: 1px solid var(--line); font-size: 0.92rem; }
+.form-status.err { border-color: var(--red); color: #ffb3ad; }
+.form-actions .btn[disabled] { opacity: .55; cursor: progress; }
+.mine { margin-top: 36px; display: grid; gap: 12px; }
+.mine h2 { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); }
+.mine-row { display: flex; gap: 14px; align-items: center; padding: 10px; border: 1px solid var(--line); }
+.mine-row img { width: 64px; height: 48px; object-fit: cover; }
+.mine-row .t { flex: 1; min-width: 0; font-weight: 600; overflow-wrap: anywhere; }
+.pill { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.56rem; letter-spacing: 0.16em; text-transform: uppercase; padding: 4px 9px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+.pill.pending { color: var(--yellow); } .pill.approved { color: #5fd38a; } .pill.declined { color: var(--red); }
+
+/* admin */
+.adm-locked { border: 1px solid var(--line); padding: 24px; margin-bottom: 100px; color: var(--muted); }
+.adm-stats { display: flex; flex-wrap: wrap; gap: 1px; background: var(--line); border: 1px solid var(--line); margin-bottom: 22px; }
+.adm-stats div { flex: 1 1 150px; background: var(--night); padding: 16px 18px; display: grid; gap: 6px; }
+.adm-stats b { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: 1.8rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.adm-stats span { font-family: var(--f-display); font-stretch: 125%; font-weight: 700; font-size: 0.58rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+.adm-stats .meter { flex-basis: 100%; height: 6px; background: var(--line); padding: 0; position: relative; }
+.adm-stats .meter i { position: absolute; inset: 0 auto 0 0; background: var(--yellow); }
+.adm-stats .meter.over i { background: var(--red); }
+.adm-bar { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: center; margin-bottom: 18px; }
+.adm-search { min-height: 44px; min-width: 0; width: 220px; max-width: 100%; padding: 0 12px; background: var(--night-2); border: 1px solid var(--line); color: var(--text); font: inherit; }
+.adm-list { display: grid; gap: 12px; padding-bottom: 100px; }
+.adm-row { display: grid; grid-template-columns: 150px minmax(0, 1fr) auto; gap: 18px; align-items: start; padding: 14px; border: 1px solid var(--line); background: var(--night-2); }
+.adm-row.booth { grid-template-columns: minmax(0, 1fr) auto; }
+.adm-row .ph-box { width: 150px; aspect-ratio: 4 / 3; background: #11131b; display: grid; place-items: center; color: var(--muted); font-size: 0.75rem; }
+.adm-row .ph-box img { width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; }
+.adm-row h3 { font-family: var(--f-title); font-weight: 700; font-size: 1.1rem; line-height: 1.25; overflow-wrap: anywhere; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.adm-row dl { margin: 10px 0 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 14px; font-size: 0.88rem; }
+.adm-row dt { color: var(--muted); }
+.adm-row dd { margin: 0; overflow-wrap: anywhere; user-select: all; }
+.adm-actions { display: grid; gap: 8px; }
+.adm-actions .btn { min-height: 40px; padding: 0 14px; font-size: 0.6rem; }
+.adm-actions .confirm { font-size: 0.8rem; color: #ffb3ad; max-width: 160px; }
+.adm-empty { border: 1px dashed var(--line); padding: 28px; color: var(--muted); }
+@media (max-width: 700px) { .adm-row, .adm-row.booth { grid-template-columns: minmax(0, 1fr); } .adm-row .ph-box { width: 100%; } .adm-actions { grid-auto-flow: column; justify-content: start; } }
+
+/* admin sign in */
+.login { display: grid; justify-items: center; padding-bottom: 100px; }
+.login-card { width: 100%; max-width: 420px; display: grid; gap: 16px; padding: 30px 26px; border: 1px solid var(--line); background: var(--night-2); --c: var(--yellow); }
+.login-card img { height: 54px; width: auto; justify-self: start; }
+.login-card h2 { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; text-transform: uppercase; font-size: 1.5rem; line-height: 1; }
+.login-card .lede { font-size: 0.92rem; }
+.login-card .btn { width: 100%; }
+.login-card .btn[disabled] { opacity: .6; cursor: progress; }
+.login-card .form-status { margin: 0; }
+.pass { position: relative; }
+.pass input { padding-right: 70px; }
+.pass-toggle { position: absolute; right: 4px; top: 4px; bottom: 4px; padding: 0 12px; background: transparent; border: 0; color: var(--muted); font: 600 0.8rem var(--f-body); cursor: pointer; }
+.pass-toggle:hover { color: var(--text); }
+.link-btn { background: none; border: 0; padding: 6px 0; color: var(--muted); font: 600 0.85rem var(--f-body); text-decoration: underline; cursor: pointer; justify-self: center; min-height: 44px; }
+.link-btn:hover { color: var(--text); }
+.adm-who { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; padding: 10px 14px; border: 1px solid var(--line); margin-bottom: 16px; font-size: 0.9rem; color: var(--muted); }
+.adm-who span { margin-right: auto; overflow-wrap: anywhere; }
+.adm-who b { color: var(--text); font-weight: 600; }
+.adm-who .btn { min-height: 40px; padding: 0 14px; font-size: 0.6rem; }
+
+/* Cashia sponsor page, in Cashia's colors (pink #D71D5C + white, as on their brand material) */
+.cashia { --cx-brand: #d71d5c; --cx-brand-hi: #e32766; --cx-brand-deep: #9e1043; --cx-on-brand: #ffffff; --cx-accent: #ff4f8b; }
+.cx-hero { position: relative; overflow: hidden; color: var(--cx-on-brand); background:
+    radial-gradient(70% 90% at 90% 10%, var(--cx-brand-hi), transparent 60%),
+    linear-gradient(150deg, var(--cx-brand) 0%, var(--cx-brand) 55%, var(--cx-brand-deep) 100%); }
+.cx-hero::before { content: ""; position: absolute; inset: 0; opacity: .08; background: repeating-radial-gradient(circle at 15% 120%, transparent 0 38px, #fff 38px 40px); }
+.cx-hero .wrap { position: relative; padding-block: clamp(48px, 9vw, 110px); }
+.cx-hero-grid { display: grid; gap: 40px; align-items: center; }
+@media (min-width: 900px) { .cx-hero-grid { grid-template-columns: 1.3fr 1fr; gap: 64px; } }
+.cx-copy { display: grid; gap: 20px; justify-items: start; min-width: 0; }
+.cx-tag { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.66rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--cx-brand); background: var(--cx-on-brand); padding: 6px 12px; border-radius: 999px; }
+.cx-copy h1 { font-size: clamp(2.2rem, 7.5vw, 5rem); color: var(--cx-on-brand); }
+.cx-big { display: block; color: var(--cx-on-brand); -webkit-text-stroke: 0; text-shadow: 0 4px 0 var(--cx-brand-deep); }
+.cx-lede { color: #ffe3ec; font-size: 1.05rem; line-height: 1.6; max-width: 48ch; }
+.cx-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.cx-btn { display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 26px; border-radius: 999px; font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; text-decoration: none; transition: transform .15s, background .15s; }
+.cx-primary { background: var(--cx-on-brand); color: var(--cx-brand); box-shadow: 0 10px 24px -10px var(--cx-brand-deep); }
+.cx-primary:hover { transform: translateY(-2px); }
+.cx-ghost { border: 1.5px solid var(--cx-on-brand); color: var(--cx-on-brand); }
+.cx-ghost:hover { background: #ffffff22; }
+.cx-btn:focus-visible { outline-color: var(--cx-on-brand); }
+.cx-soon { font-size: 0.9rem; color: var(--cx-on-brand); background: #00000022; padding: 8px 12px; border-radius: 10px; }
+.cx-ticket { justify-self: center; width: min(360px, 100%); background: var(--cx-on-brand); color: #1a1a1f; border-radius: 22px; padding: 24px 26px; display: grid; gap: 18px; transform: rotate(-4deg); box-shadow: 0 30px 60px -24px #3a0618; position: relative; }
+.cx-ticket::before, .cx-ticket::after { content: ""; position: absolute; top: 58%; width: 22px; height: 22px; border-radius: 50%; background: var(--cx-brand); }
+.cx-ticket::before { left: -11px; } .cx-ticket::after { right: -11px; }
+.cx-ticket-top, .cx-ticket-foot { display: flex; justify-content: space-between; gap: 10px; font-family: var(--f-display); font-stretch: 125%; font-weight: 700; font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase; color: #6b6b75; }
+.cx-ticket-foot { border-top: 1.5px dashed #e3d3da; padding-top: 14px; align-items: center; color: var(--cx-brand); }
+.cx-price { display: grid; gap: 4px; }
+.cx-price s { font-size: 0.95rem; color: #8a8a94; font-variant-numeric: tabular-nums; }
+.cx-price b { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: clamp(2.4rem, 9vw, 3.2rem); line-height: 1; color: var(--cx-brand); font-variant-numeric: tabular-nums; }
+.cx-off { background: var(--cx-brand); color: var(--cx-on-brand); padding: 4px 10px; border-radius: 999px; font-size: 0.8rem; letter-spacing: 0.04em; }
+.cx-hl { color: var(--cx-accent); }
+.cx-section .sec-head h2 span { display: block; }
+.cx-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
+.cx-steps li { border: 1px solid color-mix(in srgb, var(--cx-brand) 45%, var(--line)); background: color-mix(in srgb, var(--cx-brand) 8%, var(--night)); border-radius: 18px; padding: 22px; display: grid; gap: 10px; align-content: start; }
+.cx-steps b { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--cx-brand); color: var(--cx-on-brand); font-family: var(--f-display); font-stretch: 125%; font-weight: 900; }
+.cx-steps h3 { font-family: var(--f-title); font-weight: 700; font-size: 1.15rem; }
+.cx-steps p { color: var(--muted); font-size: 0.95rem; }
+.cx-prices { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); max-width: 640px; }
+.cx-price-card { border-radius: 18px; padding: 20px 22px; display: grid; gap: 6px; background: var(--cx-on-brand); color: #1a1a1f; }
+.cx-price-card.off { opacity: .5; }
+.cx-price-card h3 { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: #6b6b75; }
+.cx-price-card s { color: #8a8a94; font-variant-numeric: tabular-nums; }
+.cx-price-card b { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: 2rem; line-height: 1.05; color: var(--cx-brand); font-variant-numeric: tabular-nums; }
+.cx-price-card span { font-size: 0.85rem; color: #6b6b75; }
+.cx-terms { margin-top: 18px; color: var(--muted); font-size: 0.85rem; max-width: 70ch; }
+/* promo strip used on the homepage and tickets page */
+.cashia-strip.in-hero { width: 100%; margin: 4px 0 0; text-align: left; box-shadow: 0 14px 30px -16px #000; }
+.cashia-strip:focus-visible { outline-color: #fff; }
+.cashia-strip { --cx-brand: #d71d5c; --cx-brand-deep: #9e1043; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; padding: 16px 20px; border-radius: 16px; text-decoration: none; color: #fff; background: linear-gradient(110deg, var(--cx-brand-deep), var(--cx-brand)); margin: 8px auto 24px; max-width: 980px; transition: transform .15s; }
+.cashia-strip:hover { transform: translateY(-2px); }
+.cs-tag { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.58rem; letter-spacing: 0.18em; text-transform: uppercase; background: #fff; color: var(--cx-brand); padding: 4px 10px; border-radius: 999px; }
+.cs-msg { flex: 1 1 260px; min-width: 0; font-size: 0.95rem; }
+.cs-msg b { font-weight: 700; }
+.cs-go { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: #fff; white-space: nowrap; }
+
+/* gallery page */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 28px; }
+.chips button { min-height: 44px; padding: 0 18px; border: 1px solid var(--line); background: transparent; color: var(--muted); cursor: pointer; font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; }
+.chips button:hover { color: var(--text); }
+.chips button[aria-pressed="true"] { border-color: var(--yellow); color: var(--yellow); }
+/* gallery: masonry columns so every photo keeps its full, uncropped shape */
+.gal { columns: 3 280px; column-gap: 16px; padding-bottom: 100px; }
+.shot { break-inside: avoid; margin: 0 0 16px; background: #11131b; border: 1px solid var(--line); padding: 10px 10px 12px; display: grid; gap: 10px; }
+.shot > button { display: block; width: 100%; padding: 0; border: 0; background: var(--night-2); cursor: zoom-in; }
+.shot img { display: block; width: 100%; height: auto; transition: opacity .2s; }
+.shot > button:hover img { opacity: .85; }
+.photo-rail { grid-auto-columns: max-content; }
+.photo-rail .shot { margin: 0; }
+.photo-rail .shot img { height: clamp(260px, 60vw, 420px); width: auto; max-width: none; }
+.photo-rail .shot figcaption { max-width: 0; min-width: 100%; }
+/* photo viewer */
+.lb { position: fixed; inset: 0; z-index: 70; background: #000000ee; display: grid; grid-template-columns: 52px minmax(0, 1fr) 52px; align-items: center; gap: 8px;
+  padding: calc(env(safe-area-inset-top, 0px) + 56px) max(8px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 24px) max(8px, env(safe-area-inset-left, 0px)); }
+.lb[hidden] { display: none; }
+.lb figure { margin: 0; display: grid; gap: 12px; justify-items: center; min-width: 0; }
+.lb img { max-width: 100%; max-height: calc(100vh - 150px); max-height: calc(100svh - 150px); width: auto; height: auto; object-fit: contain; }
+.lb figcaption { display: flex; gap: 16px; justify-content: space-between; width: 100%; max-width: 900px; color: #c9cdd8; font-size: 0.9rem; }
+.lb figcaption b { font-family: var(--f-display); font-stretch: 125%; font-size: 0.75rem; letter-spacing: 0.1em; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.lb-btn { width: 48px; height: 48px; border: 1px solid #ffffff33; background: #07080caa; color: var(--text); font-size: 1.3rem; cursor: pointer; }
+.lb-btn:hover { border-color: var(--text); }
+@media (max-width: 640px) {
+  .lb { grid-template-columns: minmax(0, 1fr); padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 84px); }
+  .lb img { max-height: calc(100svh - 220px); }
+  .lb-prev, .lb-next { position: absolute; bottom: calc(env(safe-area-inset-bottom, 0px) + 20px); }
+  .lb-prev { left: calc(50% - 56px); } .lb-next { right: calc(50% - 56px); }
+}
+.lb-close { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 8px); right: max(8px, env(safe-area-inset-right, 0px)); }
+
+/* events page */
+.ev-group { padding-bottom: 64px; display: grid; gap: 18px; }
+.ev-feature { border: 1px solid var(--yellow); display: grid; overflow: hidden; }
+@media (min-width: 900px) { .ev-feature { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); } }
+.ev-poster { display: block; width: 100%; max-width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; background: var(--night-2); }
+.ev-feature .body { padding: 28px 24px; display: grid; gap: 16px; align-content: center; justify-items: start; }
+.ev-feature h3, .ev-row h3 { font-family: var(--f-title); font-weight: 700; font-size: 1.4rem; line-height: 1.2; }
+.ev-feature .meta { font-family: var(--f-display); font-stretch: 125%; font-weight: 700; font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+.ev-row { border: 1px solid var(--line); padding: 22px 24px; display: grid; gap: 14px; justify-items: start; }
+.ev-row > div { display: grid; gap: 10px; justify-items: start; }
+@media (min-width: 760px) { .ev-row { grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 24px; } }
+.ev-row p { color: var(--muted); font-size: 0.92rem; }
+.status { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.58rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--c); border: 1px solid var(--c); padding: 5px 10px; border-radius: 999px; display: inline-flex; gap: 8px; align-items: center; }
+.status.live::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+@media (prefers-reduced-motion: no-preference) { .status.live::before { animation: blink 1.4s infinite; } }
+@keyframes blink { 50% { opacity: .2; } }
+.ev-stack { display: grid; gap: 14px; }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="car" viewBox="0 0 240 80">
+      <path fill="#cfd4df" opacity=".22" d="M8 58 L10 48 Q12 41 22 39 L66 34 Q84 18 112 15 L146 15 Q166 16 184 31 L216 36 Q230 39 232 48 L233 58 Q233 61 229 61 L203 61 A20 20 0 0 0 165 61 L79 61 A20 20 0 0 0 41 61 L12 61 Q8 61 8 58 Z"/>
+      <path fill="#07080c" opacity=".7" d="M76 35 Q92 21 113 19 L131 19 L133 35 Z M138 19 L147 19 Q163 20 176 33 L139 35 Z"/>
+      <path fill="#cfd4df" opacity=".5" d="M30 46 L212 44 L212 45.5 L30 47.5 Z"/>
+      <circle cx="60" cy="61" r="16" fill="#05060a"/><circle cx="60" cy="61" r="10" fill="none" stroke="#cfd4df" stroke-opacity=".35" stroke-width="3"/>
+      <circle cx="184" cy="61" r="16" fill="#05060a"/><circle cx="184" cy="61" r="10" fill="none" stroke="#cfd4df" stroke-opacity=".35" stroke-width="3"/>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="#home" aria-label="Shift Nation home"><img src="assets/shiftnation-logo.webp" alt="" width="640" height="247"></a>
+    <button class="burger" type="button" id="burger" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><span></span></button>
+  </div>
+</header>
+
+<div class="menu" id="menu" hidden data-native-scroll>
+  <div class="wrap">
+    <nav aria-label="Main">
+      <a href="#home">Home <small>Tuner Fest 2026</small></a>
+      <a href="#tickets">Tickets <small data-from-price>From KES 800</small></a>
+      <a href="#cashia">Cashia offer <small>KES 200 off</small></a>
+      <a href="#register">Exhibit <small>Register your car</small></a>
+      <a href="#booth">Booths <small>Reserve a space</small></a>
+      <a href="#events">Events <small>Now and next</small></a>
+      <a href="#gallery">Gallery <small>The floor, up close</small></a>
+    </nav>
+    <div class="cta-stack">
+      <a class="btn fill yellow tkt" href="https://apps.little.africa/events/tunerfest-2026" target="_blank" rel="noopener">Buy tickets <span class="arr">→</span></a>
+    </div>
+  </div>
+</div>
+
+<main>
+<!-- =========================== HOME =========================== -->
+<div class="view" data-view="home">
+  <section class="hero">
+    <div class="wrap">
+      <span class="eyebrow ruled both">East Africa's biggest automotive showcase</span>
+      <h1 class="mega"><span>Machines.</span><span class="outline">Culture.</span><span>Horsepower.</span></h1>
+      <span class="date-chip">November 29, 2026 — Galleria Mall, Karen</span>
+      <div class="hero-cta">
+        <a class="cta cta-ex" href="#register"><span class="in">
+          <svg viewBox="0 0 32 16" aria-hidden="true"><path d="M2 12 L3 8.5 Q3.6 7 6 6.8 L11 6.3 Q14 3 18 3 L22 3 Q25 3.3 27 6 L29.5 6.8 Q31 7.3 31 9 L31 12 M8 12 h11"/><circle cx="6" cy="12" r="2.4"/><circle cx="22.5" cy="12" r="2.4"/></svg>
+          <span class="txt"><span class="label">Exhibit</span><span class="sub">Show your car</span></span>
+          <span class="arr">→</span></span></a>
+        <a class="cta cta-tk" href="https://apps.little.africa/events/tunerfest-2026" target="_blank" rel="noopener">
+          <span class="txt"><span class="label">Buy tickets</span><span class="sub" data-from-price>From KES 800</span></span>
+          <span class="arr">→</span></a>
+        <a class="cta cta-bo" href="#booth">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 20 H22 M4 20 L12 5 L20 20 M12 5 V20 M9 20 L12 14 L15 20"/></svg>
+          <span class="txt"><span class="label">Reserve booth</span><span class="sub">Brands and vendors</span></span>
+          <span class="arr">→</span></a>
+      </div>
+      <a class="cashia-strip in-hero" href="#cashia">
+      <span class="cs-tag">Sponsor offer</span>
+      <span class="cs-msg"><b>Pay with Cashia, get KES 200 off</b> early bird and advanced tickets.</span>
+      <span class="cs-go">See how <span aria-hidden="true">→</span></span>
+    </a>
+    </div>
+  </section>
+
+  <section class="pin" id="pin" aria-label="Get involved">
+    <div class="pin-stage">
+      <div class="slide on" style="--c: var(--yellow)">
+        <div class="ph"><img src="assets/gallery/p005.webp" alt=""></div>
+        <div class="slide-body">
+          <span class="eyebrow" style="--c: var(--muted)">Upcoming motorshow · Sunday, Nov 29, 2026 · Galleria Mall, Karen</span>
+          <img class="tf-logo" src="assets/tunerfest-logo.webp" alt="Tuner Motorshow Event, presented by Al-Husnain Motors" width="1200" height="385">
+          <div class="countdown" aria-label="Time until Tuner Fest opens">
+            <div><b data-cd="d">0</b><span>Days</span></div><div><b data-cd="h">00</b><span>Hrs</span></div><div><b data-cd="m">00</b><span>Min</span></div><div><b data-cd="s">00</b><span>Sec</span></div>
+          </div>
+          <span class="eyebrow" style="--c: var(--orange)">Secure your pass</span>
+          <h2 class="mega">Buy<br>tickets</h2>
+          <p class="lede"><span data-price-line>Early bird KES 800 until Oct 30, then KES 1,000 advanced and KES 1,500 at the gate.</span> Buy online or dial <b class="ussd">*826*31#</b>.</p>
+          <a class="btn fill yellow tkt" href="https://apps.little.africa/events/tunerfest-2026" target="_blank" rel="noopener">Buy tickets <span class="arr">→</span></a>
+        </div>
+      </div>
+      <div class="slide" style="--c: var(--red)">
+        <div class="ph"><img src="assets/gallery/p002.webp" alt="" style="object-position:50% 45%"></div>
+        <div class="slide-body">
+          <img class="tf-logo" src="assets/tunerfest-logo.webp" alt="" width="1200" height="385">
+          <span class="eyebrow" style="--c: var(--red)">Bring your build</span>
+          <h2 class="mega">Exhibit</h2>
+          <p class="lede">Put your machine on the floor in front of 5,000+ enthusiasts, judges and the culture's biggest brands. Only 70 show car spots.</p>
+          <a class="btn fill red" href="#register">Register your car <span class="arr">→</span></a>
+        </div>
+      </div>
+      <div class="slide" style="--c: var(--teal)">
+        <div class="ph"><img src="assets/gallery/p019.webp" alt="" style="object-position:50% 40%"></div>
+        <div class="slide-body">
+          <img class="tf-logo" src="assets/tunerfest-logo.webp" alt="" width="1200" height="385">
+          <span class="eyebrow" style="--c: var(--teal)">Own the space</span>
+          <h2 class="mega">Reserve</h2>
+          <p class="lede">Booths for brands, garages and crews: product demos, activations and direct sales on the floor.</p>
+          <a class="btn fill teal" href="#booth">Reserve a booth <span class="arr">→</span></a>
+        </div>
+      </div>
+      <div class="pin-foot"><div class="wrap"><span>Keep scrolling</span><span class="pin-progress" aria-hidden="true"><i class="on"></i><i></i><i></i></span><b id="pin-count">01 / 03</b></div></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="about-grid">
+        <div class="sec-head" style="margin:0">
+          <span class="eyebrow ruled" style="--c: var(--orange)">About Shift Nation</span>
+          <h2 class="mega"><span>The culture</span><span class="outline">under one roof</span></h2>
+        </div>
+        <div style="display:grid;gap:16px">
+          <p class="big">East Africa's biggest automotive showcase, where builders, brands and the culture collide. From Nairobi garage builds to global launches, every machine here earns its place on the floor.</p>
+          <p class="lede">Shift Nation is built for people who want to attend, exhibit their cars, and put their products in front of a serious automotive audience.</p>
+        </div>
+      </div>
+      <div class="stats">
+        <div><b>70</b><span>Show car spots</span></div>
+        <div><b>5K+</b><span>Attendees</span></div>
+        <div><b class="stat-words">All of East Africa</b><span>Where our crowd comes from</span></div>
+        <div><b>1</b><span>Day of horsepower</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section tight">
+    <div class="wrap">
+      <div class="rail-head">
+        <span class="eyebrow dot" style="--c: var(--muted)">The floor, up close</span>
+        <div class="rail-nav"><button type="button" data-rail="floor-rail" data-dir="-1" aria-label="Previous photo">←</button><span class="counter" id="floor-count">1 / 12</span><button type="button" data-rail="floor-rail" data-dir="1" aria-label="Next photo">→</button></div>
+      </div>
+      <div class="rail photo-rail" id="floor-rail"></div>
+      <a class="btn" href="#gallery" id="floor-all" style="margin-top:22px">See all photos →</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap faq-grid">
+      <div class="sec-head" style="align-content:start">
+        <span class="eyebrow ruled" style="--c: var(--orange)">FAQ</span>
+        <h2 class="mega"><span>Pit stop</span><span class="outline">questions</span></h2>
+        <p class="lede">Everything about tickets, exhibiting and booths. Still curious? Write to <span class="mail">hello@shiftnation.co</span></p>
+      </div>
+      <div class="faq" id="faq"></div>
+    </div>
+  </section>
+
+  <section class="section closer">
+    <div class="wrap">
+      <h2 class="mega"><span>Don't hear</span><span>about it.</span><span class="outline">Be in it.</span></h2>
+      <div class="cta-stack">
+        <a class="btn fill yellow tkt" href="https://apps.little.africa/events/tunerfest-2026" target="_blank" rel="noopener">Buy tickets <span class="arr">→</span></a>
+        <a class="btn yellow" href="#register">Exhibit your car</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- =========================== TICKETS =========================== -->
+<div class="view" data-view="tickets" hidden>
+  <div class="wrap">
+    <div class="page-top">
+      <span class="eyebrow ruled both">6th edition · Nov 29, 2026</span>
+      <img class="tf-logo" src="assets/tunerfest-logo.webp" alt="Tuner Motorshow Event, presented by Al-Husnain Motors" width="1200" height="385">
+      <h1 class="sub">Tuner Fest 6.0 tickets</h1>
+      <p class="lede">Sunday, November 29 at Galleria Mall, Karen, Nairobi. The earlier you buy, the less you pay. Buy online or dial <b class="ussd">*826*31#</b> from your phone.</p>
+    </div>
+    <a class="cashia-strip" href="#cashia">
+      <span class="cs-tag">Sponsor offer</span>
+      <span class="cs-msg"><b>Pay with Cashia, get KES 200 off</b> early bird and advanced tickets.</span>
+      <span class="cs-go">See how <span aria-hidden="true">→</span></span>
+    </a>
+    <div class="tiers" id="tiers"></div>
+    <div class="dial">
+      <div><span class="eyebrow" style="--c: var(--muted)">Buy by phone</span><p class="dial-code">Dial <b class="ussd" id="ussd">*826*31#</b></p><p class="lede">Works on any phone. Follow the prompts to pay for your ticket.</p></div>
+      <button class="btn" type="button" id="copy-ussd">Copy code</button>
+    </div>
+    <p class="tickets-note">Online checkout opens on Little Africa, our ticketing partner, in a new tab.</p>
+  </div>
+</div>
+
+<!-- =========================== REGISTER / BOOTH =========================== -->
+<div class="view" data-view="register" hidden>
+  <div class="wrap">
+    <div class="page-top">
+      <span class="eyebrow ruled both" id="reg-eyebrow" style="--c: var(--red)">Applications for 2026 are open</span>
+      <h1 class="mega" id="reg-title">Exhibit <span class="outline">your car</span></h1>
+      <p class="lede" id="reg-lede">Put your build on the floor at Tuner Fest, November 29 at Galleria Mall, Karen. Every application is reviewed by the Shift Nation team.</p>
+    </div>
+    <div class="spots-note" id="spots-note">
+      <b>70</b>
+      <p><strong>Only 70 show car spots.</strong> Applications stay open, but spots go to approved cars first come, first served. Apply early to get a place on the floor.</p>
+    </div>
+    <div class="seg" role="group" aria-label="Application type">
+      <button type="button" data-type="car" aria-pressed="true" style="--c: var(--red)">Show car</button>
+      <button type="button" data-type="booth" aria-pressed="false" style="--c: var(--teal)">Vendor booth</button>
+    </div>
+    <div class="form-wrap" id="form-wrap" style="--c: var(--red)">
+      <form id="reg-form" novalidate>
+        <fieldset>
+          <legend>Owner</legend>
+          <div class="fgrid">
+            <div class="field"><label for="r-name">Owner's full name</label><input id="r-name" name="name" type="text" autocomplete="name" required><span class="error">Enter your full name.</span></div>
+            <div class="field"><label for="r-email">Email</label><input id="r-email" name="email" type="email" autocomplete="email" required><span class="error">Enter a valid email, like you@garage.co.</span></div>
+            <div class="field"><label for="r-phone">Phone (WhatsApp)</label><input id="r-phone" name="phone" type="tel" autocomplete="tel" placeholder="+254 7XX XXX XXX" required><span class="error">Enter a phone number we can reach you on.</span></div>
+            <div class="field"><label for="r-ig">Instagram</label><input id="r-ig" name="instagram" type="text" placeholder="@yourbuild"><span class="hint">Optional. We tag you when we post.</span></div>
+          </div>
+        </fieldset>
+
+        <fieldset id="fs-car">
+          <legend>The car</legend>
+          <div class="fgrid">
+            <div class="field full"><label for="r-car">Name of the car</label><input id="r-car" name="car" type="text" placeholder="Nissan GT-R R35" autocomplete="off" required><span class="hint">Make and model, plus a nickname if it has one.</span><span class="error">Enter the name of your car.</span></div>
+            <div class="field full" id="f-photo">
+              <span class="label-like" id="r-photo-label">Photo of the car</span>
+              <label class="drop" for="r-photo">
+                <input id="r-photo" type="file" accept="image/jpeg,image/png,image/webp" aria-labelledby="r-photo-label" required>
+                <img id="r-photo-preview" alt="" hidden>
+                <span class="drop-txt" id="r-photo-txt"><b>Upload a photo</b><span>A clear, well-lit shot of the whole car. JPG, PNG or WebP.</span></span>
+              </label>
+              <span class="error" id="r-photo-err">Add a photo of your car.</span>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset id="fs-booth" hidden>
+          <legend>Your booth</legend>
+          <div class="fgrid">
+            <div class="field"><label for="b-biz">Business or crew name</label><input id="b-biz" name="business" type="text" required><span class="error">Enter your business or crew name.</span></div>
+            <div class="field"><label for="b-cat">What you'll show</label>
+              <select id="b-cat" name="booth_category"><option>Parts &amp; accessories</option><option>Detailing &amp; wraps</option><option>Garage or tuning shop</option><option>Apparel &amp; merch</option><option>Food &amp; drinks</option><option>Brand activation</option><option>Other</option></select></div>
+            <div class="field"><label for="b-size">Booth size</label>
+              <select id="b-size" name="booth_size"><option>3 × 3 m</option><option>6 × 3 m</option><option>6 × 6 m</option><option>Custom</option></select></div>
+            <div class="field" style="align-content:end"><label class="check"><input type="checkbox" id="b-power" name="power"> We need power at the booth</label></div>
+            <div class="field full"><label for="b-notes">Tell us about your activation</label><textarea id="b-notes" name="booth_notes" placeholder="Product demos, giveaways, a car on display, sales"></textarea></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Agreement</legend>
+          <div class="field" style="margin-top:10px">
+            <label class="check"><input type="checkbox" id="r-terms" name="terms" required> I agree to the Shift Nation event rules and confirm my vehicle or stand is insured.</label>
+            <span class="error">Agree to the event rules to send your application.</span>
+          </div>
+        </fieldset>
+
+        <div class="form-actions">
+          <button class="btn fill" type="submit" id="reg-submit" style="--c: var(--red)">Send application <span class="arr">→</span></button>
+          <span class="hint">We review every application and reply by email.</span>
+        </div>
+        <p class="form-status" id="reg-status" role="status" hidden></p>
+      </form>
+      <div class="done" id="reg-done" hidden tabindex="-1">
+        <span class="eyebrow" style="--c: var(--c)">Application received</span>
+        <h2 id="done-title">You're on the list</h2>
+        <p id="done-body"></p>
+        <div class="row"><a class="btn fill yellow tkt" href="https://apps.little.africa/events/tunerfest-2026" target="_blank" rel="noopener">Buy tickets <span class="arr">→</span></a><button class="btn" type="button" id="reg-again">Send another</button></div>
+      </div>
+      <section class="mine" id="mine" hidden aria-labelledby="mine-h">
+        <h2 id="mine-h">Your applications</h2>
+        <div id="mine-list"></div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<!-- =========================== CASHIA OFFER =========================== -->
+<!-- Sponsor promotion. Colors live in the .cashia tokens below; buttons get their links later (see CASHIA_LINKS in the script). -->
+<div class="view cashia" data-view="cashia" hidden>
+  <section class="cx-hero">
+    <div class="wrap">
+      <div class="cx-hero-grid">
+        <div class="cx-copy">
+          <span class="cx-tag">Tuner Fest 6.0 × Cashia</span>
+          <h1 class="mega">Pay via Cashia.<span class="cx-big">Get KES&nbsp;200 off.</span></h1>
+          <p class="cx-lede">Sign up for Cashia, pay for your early bird or advanced Tuner Fest ticket with it, and KES 200 comes off the price. Cashia is a sponsor of Tuner Fest 6.0.</p>
+          <div class="cx-actions">
+            <a class="cx-btn cx-primary" href="#cashia" data-cashia="signup">Sign up for Cashia <span aria-hidden="true">→</span></a>
+            <a class="cx-btn cx-ghost" href="#cashia" data-cashia="pay">Pay with Cashia</a>
+          </div>
+          <p class="cx-soon" id="cx-soon" role="status" hidden>Cashia sign-up and checkout links are coming soon. Check back shortly.</p>
+        </div>
+        <div class="cx-ticket" aria-label="Example: Early bird ticket paid with Cashia">
+          <div class="cx-ticket-top"><span>Early bird</span><span>Nov 29 · Galleria</span></div>
+          <div class="cx-price"><s>KES 800</s><b>KES 600</b></div>
+          <div class="cx-ticket-foot"><span>Paid with Cashia</span><span class="cx-off">−200</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section cx-section">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow ruled" style="--c: var(--cx-accent)">How it works</span>
+        <h2 class="mega"><span>Three steps to</span><span class="cx-hl">KES 200 off</span></h2>
+      </div>
+      <ol class="cx-steps">
+        <li><b>1</b><h3>Get Cashia</h3><p>Download the Cashia app and create your free account.</p></li>
+        <li><b>2</b><h3>Add money</h3><p>Top up your Cashia wallet, for example from M-PESA.</p></li>
+        <li><b>3</b><h3>Pay with Cashia</h3><p>Choose Cashia when you buy an early bird or advanced ticket. KES 200 comes off.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section cx-section" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow ruled" style="--c: var(--cx-accent)">What you pay</span>
+        <h2 class="mega"><span>Your ticket,</span><span class="cx-hl">KES 200 cheaper</span></h2>
+      </div>
+      <div class="cx-prices" id="cx-prices"></div>
+      <p class="cx-terms">Applies to early bird and advanced tickets only. Not available on gate tickets. One discount per ticket. Full terms coming soon.</p>
+    </div>
+  </section>
+</div>
+
+<!-- =========================== ADMIN =========================== -->
+<div class="view" data-view="admin" hidden>
+  <div class="wrap">
+    <div class="page-top" style="justify-items:start;text-align:left">
+      <span class="eyebrow ruled">Shift Nation team</span>
+      <h1 class="mega">Admin</h1>
+      <p class="lede" id="adm-intro">Show car and booth applications for Tuner Fest 6.0. Approve, decline or remove entries, and export the list.</p>
+    </div>
+    <div id="adm-locked" class="adm-locked" hidden>
+      <p>This page is for the Shift Nation team. Ask the site owner for editor access.</p>
+    </div>
+    <div class="login" id="adm-login" hidden>
+      <form class="login-card" id="login-form" novalidate>
+        <img src="assets/shiftnation-logo.webp" alt="Shift Nation" width="640" height="247">
+        <h2>Team sign in</h2>
+        <p class="lede">Sign in with the email and password the Shift Nation team gave you.</p>
+        <div class="field"><label for="login-email">Email</label><input id="login-email" type="email" autocomplete="username" required></div>
+        <div class="field"><label for="login-pass">Password</label>
+          <div class="pass"><input id="login-pass" type="password" autocomplete="current-password" required><button type="button" class="pass-toggle" id="login-show" aria-pressed="false">Show</button></div>
+        </div>
+        <p class="form-status err" id="login-err" role="alert" hidden></p>
+        <button class="btn fill yellow" type="submit" id="login-btn">Sign in <span class="arr">→</span></button>
+        <button class="link-btn" type="button" id="login-forgot">Forgot your password?</button>
+        <p class="form-status" id="login-info" role="status" hidden></p>
+      </form>
+      <form class="login-card" id="reset-form" novalidate hidden>
+        <h2>Choose a new password</h2>
+        <p class="lede">Use at least 10 characters.</p>
+        <div class="field"><label for="reset-pass">New password</label><input id="reset-pass" type="password" autocomplete="new-password" minlength="10" required></div>
+        <p class="form-status err" id="reset-err" role="alert" hidden></p>
+        <button class="btn fill yellow" type="submit" id="reset-btn">Save password <span class="arr">→</span></button>
+      </form>
+    </div>
+    <div id="adm" hidden>
+      <div class="adm-who" id="adm-who" hidden>
+        <span>Signed in as <b id="adm-email"></b></span>
+        <button class="btn" type="button" id="adm-refresh">Refresh</button>
+        <button class="btn" type="button" id="adm-logout">Sign out</button>
+      </div>
+      <div class="adm-stats" id="adm-stats"></div>
+      <div class="adm-bar">
+        <div class="chips" id="adm-filter" role="group" aria-label="Filter applications" style="justify-content:flex-start;margin:0">
+          <button type="button" data-f="car" aria-pressed="true">Show cars</button>
+          <button type="button" data-f="booth" aria-pressed="false">Booths</button>
+        </div>
+        <div class="chips" id="adm-status" role="group" aria-label="Filter by status" style="justify-content:flex-start;margin:0">
+          <button type="button" data-s="all" aria-pressed="true">All</button>
+          <button type="button" data-s="pending" aria-pressed="false">Pending</button>
+          <button type="button" data-s="approved" aria-pressed="false">Approved</button>
+          <button type="button" data-s="declined" aria-pressed="false">Declined</button>
+        </div>
+        <div class="row" style="margin-left:auto">
+          <label class="sr" for="adm-q">Search</label>
+          <input class="adm-search" id="adm-q" type="search" placeholder="Search name, car, email">
+          <button class="btn" type="button" id="adm-export">Export CSV</button>
+        </div>
+      </div>
+      <p class="form-status" id="adm-msg" role="status" hidden></p>
+      <div class="adm-list" id="adm-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================== EVENTS =========================== -->
+<div class="view" data-view="events" hidden>
+  <div class="wrap">
+    <div class="page-top">
+      <span class="eyebrow ruled both">Shift Nation calendar</span>
+      <h1 class="mega">What's <span class="outline">on</span></h1>
+      <p class="lede">What's open right now and what's coming next from Shift Nation.</p>
+    </div>
+    <div id="events-root" style="padding-top:20px"></div>
+  </div>
+</div>
+
+<!-- =========================== GALLERY =========================== -->
+<div class="view" data-view="gallery" hidden>
+  <div class="wrap">
+    <div class="page-top">
+      <span class="eyebrow ruled both">The floor, up close</span>
+      <h1 class="mega">Gallery</h1>
+      <p class="lede">Builds, burnouts and the crowd at Shift Nation shows. Spotted your car? Tag us and we'll credit you.</p>
+      <span class="eyebrow" style="--c: var(--muted)" id="gal-count"></span>
+    </div>
+    <div class="chips" id="chips" role="group" aria-label="Filter photos"></div>
+    <div class="gal" id="gal"></div>
+  </div>
+</div>
+</main>
+
+<div class="lb" id="lb" hidden data-native-scroll role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <button class="lb-btn lb-close" id="lb-close" type="button" aria-label="Close">×</button>
+  <button class="lb-btn lb-prev" id="lb-prev" type="button" aria-label="Previous photo">←</button>
+  <figure><img id="lb-img" alt=""><figcaption><span id="lb-cap"></span><b id="lb-count"></b></figcaption></figure>
+  <button class="lb-btn lb-next" id="lb-next" type="button" aria-label="Next photo">→</button>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-brand">
+      <a class="logo" href="#home" aria-label="Shift Nation home"><img src="assets/shiftnation-logo.webp" alt="" width="640" height="247"></a>
+      <p>East Africa's biggest automotive showcase. A full day of builds, culture and horsepower on Sunday, November 29, 2026 at Galleria Mall, Karen, Nairobi.</p>
+    </div>
+    <div class="foot-cols">
+      <div><h4>Attend</h4><ul>
+        <li><a href="https://apps.little.africa/events/tunerfest-2026" target="_blank" rel="noopener">Buy tickets</a></li>
+        <li><a href="#tickets">Ticket prices</a></li>
+        <li><a href="#cashia">KES 200 off with Cashia</a></li>
+        <li><a href="#events">Events</a></li>
+        <li><a href="#gallery">Gallery</a></li></ul></div>
+      <div><h4>Showcase</h4><ul>
+        <li><a href="#register">Register your car</a></li>
+        <li><a href="#booth">Exhibit products</a></li>
+        <li><a href="#booth">Reserve a booth</a></li></ul></div>
+      <div><h4>Connect</h4><ul>
+        <!-- TODO: link these to the club's real profiles -->
+        <li>Instagram</li><li>YouTube</li><li>TikTok</li>
+        <li class="mail">hello@shiftnation.co</li></ul></div>
+      <div><h4>Venue</h4><ul>
+        <li>Galleria Mall, Karen<br>Nairobi, Kenya</li>
+        <li><a href="https://www.google.com/maps/search/?api=1&amp;query=Galleria+Mall+Karen+Nairobi" target="_blank" rel="noopener">Get directions</a></li></ul></div>
+    </div>
+    <div class="foot-base"><span>© 2026 Shift Nation. All machines reserved. <a href="#admin" id="admin-link" hidden>Team admin</a></span><span class="open">Applications for 2026 are open</span></div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const TICKETS_URL = "https://apps.little.africa/events/tunerfest-2026";
+  // Gates open 10:00 Nairobi time (UTC+3) on Sunday Nov 29, 2026; the night show ends 22:00
+  const SHOW_START = Date.UTC(2026, 10, 29, 7, 0, 0);
+  const SHOW_END = Date.UTC(2026, 10, 29, 19, 0, 0);
+  // Early bird sales close at the end of Friday Oct 30, 2026, Nairobi time
+  const EARLY_END = Date.UTC(2026, 9, 30, 20, 59, 59);
+  const earlyOpen = () => Date.now() <= EARLY_END;
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+  const pad = n => String(n).padStart(2, "0");
+
+  /* ---------- smooth scroll ---------- */
+  // Mouse-wheel scrolling glides to its wheelTo instead of jumping. Touch, keyboard
+  // and scrollbar dragging stay native, and reduced-motion visitors get normal scrolling.
+  const smooth = !matchMedia("(prefers-reduced-motion: reduce)").matches && matchMedia("(pointer: fine)").matches;
+  let wheelTo = scrollY, wheelAt = scrollY, gliding = false, locked = false;
+  const maxScroll = () => document.documentElement.scrollHeight - innerHeight;
+  function glide() {
+    wheelAt += (wheelTo - wheelAt) * 0.1;
+    if (Math.abs(wheelTo - wheelAt) < 0.5) { wheelAt = wheelTo; gliding = false; }
+    window.scrollTo(0, wheelAt);
+    if (gliding) requestAnimationFrame(glide);
+  }
+  if (smooth) {
+    document.documentElement.classList.add("smooth-wheel");
+    window.addEventListener("wheel", e => {
+      if (locked || e.ctrlKey || e.defaultPrevented) return;
+      // let horizontal swipes, the photo carousels and open overlays scroll themselves
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY) || e.target.closest("[data-native-scroll]")) return;
+      e.preventDefault();
+      const step = e.deltaMode === 1 ? e.deltaY * 40 : e.deltaMode === 2 ? e.deltaY * innerHeight : e.deltaY;
+      if (!gliding) wheelTo = wheelAt = scrollY;
+      wheelTo = Math.max(0, Math.min(maxScroll(), wheelTo + step));
+      if (!gliding) { gliding = true; requestAnimationFrame(glide); }
+    }, { passive: false });
+    // keep in sync when the page is scrolled some other way (keys, scrollbar, links)
+    window.addEventListener("scroll", () => { if (!gliding) wheelTo = wheelAt = scrollY; }, { passive: true });
+  }
+  const lockScroll = on => {
+    locked = on;
+    document.body.style.overflow = on ? "hidden" : "";
+  };
+  const scrollTop = () => { gliding = false; wheelTo = wheelAt = 0; window.scrollTo(0, 0); };
+
+  /* ---------- menu ---------- */
+  const menu = $("#menu"), burger = $("#burger");
+  function setMenu(open) {
+    menu.hidden = !open;
+    document.body.classList.toggle("menu-open", open);
+    burger.setAttribute("aria-expanded", String(open));
+    burger.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    lockScroll(open);
+  }
+  burger.addEventListener("click", () => setMenu(menu.hidden));
+  menu.addEventListener("click", e => { if (e.target.closest("a")) setMenu(false); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !menu.hidden) { setMenu(false); burger.focus(); } });
+
+  /* ---------- countdown ---------- */
+  function tick() {
+    let ms = Math.max(0, SHOW_START - Date.now());
+    const d = Math.floor(ms / 864e5); ms -= d * 864e5;
+    const h = Math.floor(ms / 36e5); ms -= h * 36e5;
+    const m = Math.floor(ms / 6e4); ms -= m * 6e4;
+    const s = Math.floor(ms / 1e3);
+    const v = { d, h: pad(h), m: pad(m), s: pad(s) };
+    $$("[data-cd]").forEach(el => { el.textContent = v[el.dataset.cd]; });
+    // once the gates open, swap the clock for a status message
+    const now = Date.now();
+    const state = now < SHOW_START ? "" : now <= SHOW_END ? "live" : "done";
+    if (state) $$(".countdown").forEach(c => {
+      if (c.dataset.state === state) return;
+      c.dataset.state = state;
+      c.innerHTML = state === "live"
+        ? `<div class="cd-msg"><b>Gates are open</b><span>Live at Galleria Mall until 22:00</span></div>`
+        : `<div class="cd-msg"><b>That's a wrap</b><span>See you at the next one</span></div>`;
+    });
+  }
+
+  /* ---------- pinned slides ---------- */
+  const pin = $("#pin"), slides = $$(".slide", pin), bars = $$(".pin-progress i", pin);
+  let current = 0;
+  function onScroll() {
+    if (pin.closest(".view").hidden) return;
+    const total = pin.offsetHeight - window.innerHeight;
+    if (total <= 0) return;
+    const p = Math.min(0.999, Math.max(0, -pin.getBoundingClientRect().top / total));
+    const i = Math.floor(p * slides.length);
+    if (i === current) return;
+    current = i;
+    slides.forEach((s, k) => s.classList.toggle("on", k === i));
+    bars.forEach((b, k) => b.classList.toggle("on", k <= i));
+    $("#pin-count").textContent = `${pad(i + 1)} / ${pad(slides.length)}`;
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+
+  /* ---------- content ---------- */
+  // Gallery photos: written by tools/add_photos.py (full size pNNN.webp, grid size pNNN-sm.webp)
+  const photos = /*PHOTOS*/[{"id":"p001","cap":"Walking the show lot","tag":"crowd","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p002","cap":"Subaru WRX STI, GrimmSpeed","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p003","cap":"Mercedes-AMG bucket seat","tag":"details","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p004","cap":"BMW E36 burnout","tag":"action","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p005","cap":"The crowd in the tyre smoke","tag":"crowd","w":1800,"h":1200,"sw":760,"sh":507},{"id":"p006","cap":"Friends at the tyre arch","tag":"crowd","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p007","cap":"Harley-Davidson Sportster","tag":"bikes","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p008","cap":"Phones out for the arrival","tag":"crowd","w":1800,"h":1200,"sw":760,"sh":507},{"id":"p009","cap":"Nissan 300ZX (Z31), bonnet up","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p010","cap":"BMW E30 drift car #22","tag":"action","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p011","cap":"BMW E30 #22, Tanzanite TT livery","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p012","cap":"Nissan 350Z drift car","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p013","cap":"Toyota Chaser JZX100","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p014","cap":"Subaru Forester \"Skittlez\"","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p015","cap":"\"Skittlez\" up close","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p016","cap":"Suzuki Swift Sport trio","tag":"builds","w":1800,"h":1200,"sw":760,"sh":507},{"id":"p017","cap":"Mercedes-AMG E63 in the display tent","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p018","cap":"Subaru WRX STI on the red carpet","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p019","cap":"Nissan GT-R in the display tent","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p020","cap":"Lamborghini under wraps","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p021","cap":"Polaris Slingshot","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p022","cap":"Classic Daimler saloon","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p023","cap":"Bentley Continental GT","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p024","cap":"BMW M Competition on the red carpet","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p025","cap":"BMW M5, yellow headlight DRLs","tag":"details","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p026","cap":"Bentley Continental GT, red calipers","tag":"details","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p027","cap":"The superbike ride-in","tag":"bikes","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p028","cap":"Yamaha R7, two up","tag":"bikes","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p029","cap":"Kawasaki Ninja ZX-6R","tag":"bikes","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p030","cap":"Kawasaki Ninja ZX-10R","tag":"bikes","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p031","cap":"Ducati 1299 Panigale S Final Edition","tag":"bikes","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p032","cap":"Toyota 86 drifting for the crowd","tag":"action","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p033","cap":"Al-Husnain Motors 86 in the smoke","tag":"action","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p034","cap":"Subaru WRX STI, carbon bonnet","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p035","cap":"Carbon-bonnet STI, head-on","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p036","cap":"Mercedes-AMG, \"MOODY\" plate","tag":"details","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p037","cap":"Rolling in","tag":"crowd","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p038","cap":"Nissan GT-R, Sleek Motorsports","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p039","cap":"Kawasaki Ninja ZX-6R #55","tag":"bikes","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p040","cap":"ZX-6R #55, posed","tag":"bikes","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p041","cap":"Toyota 86, Carscene","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p042","cap":"Porsche 911 Turbo through the Red Bull arch","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p043","cap":"911 Turbo arrives","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p044","cap":"Porsche Cayenne Coupe rolls in","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p045","cap":"Ford Ranger Raptor","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p046","cap":"Mercedes-AMG G63, best seats in the house","tag":"crowd","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p047","cap":"Toyota Harrier \"SPACESHIP\"","tag":"builds","w":1800,"h":1200,"sw":760,"sh":507},{"id":"p048","cap":"Behind the wheel of \"SPACESHIP\"","tag":"crowd","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p049","cap":"Custom orange yoke wheel","tag":"details","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p050","cap":"Everyone wants a look inside","tag":"crowd","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p051","cap":"Canon Motorsports 86, donuts","tag":"action","w":1800,"h":1200,"sw":760,"sh":507},{"id":"p052","cap":"Race-day style","tag":"crowd","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p053","cap":"Nissan 350Z, Monster livery","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p054","cap":"Walking the drift pad","tag":"action","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p055","cap":"Al-Husnain Motors 350Z drift car","tag":"action","w":1800,"h":1200,"sw":760,"sh":507},{"id":"p056","cap":"Twin drift: Canon 86 and Al-Husnain 350Z","tag":"action","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p057","cap":"Canon Motorsports 86 in tandem","tag":"action","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p058","cap":"Monster Energy 350Z through the smoke","tag":"action","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p059","cap":"Mercedes-AMG E63 S","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p060","cap":"Behind the wheel of the E63","tag":"crowd","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p061","cap":"Toyota Land Cruiser, overland build","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p062","cap":"Mercedes-AMG G63, Al-Husnain Motors","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p063","cap":"G63 from the back","tag":"details","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p064","cap":"The Subaru row","tag":"builds","w":1800,"h":1200,"sw":760,"sh":507},{"id":"p065","cap":"Custom blue build, doors up","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p066","cap":"Kawasaki Ninja ZX-10R, head-on","tag":"bikes","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p067","cap":"Audi TT RS and Land Rover Defender","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p068","cap":"Matte black Audi TT RS","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p069","cap":"Wheelie show","tag":"bikes","w":1800,"h":1200,"sw":760,"sh":507},{"id":"p070","cap":"Holding the wheelie","tag":"bikes","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p071","cap":"Stunt bike, rolling out","tag":"bikes","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p072","cap":"AMG Panamericana grilles","tag":"details","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p073","cap":"Mercedes-Benz W123, red","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p074","cap":"Carscene Africa GT-R meets the crowd","tag":"crowd","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p075","cap":"Nissan GT-R, \"300Z\" plate","tag":"details","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p076","cap":"Yamaha R7 and rider","tag":"bikes","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p077","cap":"Nissan GT-R \"KIP\" arrives","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p078","cap":"GT-R \"KIP\" from the rear","tag":"details","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p079","cap":"Phones up for the arrival","tag":"crowd","w":1800,"h":1200,"sw":760,"sh":507},{"id":"p080","cap":"The crowd loses it for \"KIP\"","tag":"crowd","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p081","cap":"Mercedes C-Class \"MISSY\"","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p082","cap":"\"MISSY\" from the back, GT wing","tag":"details","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p083","cap":"Yorqi Garage Forester rolls in","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p084","cap":"White Forester at the gate","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p085","cap":"Shift Nation crew at the Red Bull arch","tag":"crowd","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p086","cap":"Harley-Davidson Iron 883","tag":"bikes","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p087","cap":"Iron 883 rolling out","tag":"bikes","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p088","cap":"Nissan Skyline R32 sedan","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p089","cap":"Classic Range Rover P38","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p090","cap":"BMW S1000RR #44","tag":"bikes","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p091","cap":"Suzuki Swift Sport, Al-Husnain Motors","tag":"builds","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p092","cap":"Matte purple Nissan GT-R in the crowd","tag":"crowd","w":1200,"h":1800,"sw":507,"sh":760},{"id":"p093","cap":"Nissan GT-R \"GOGO\" spitting flames","tag":"action","w":1200,"h":1800,"sw":507,"sh":760}]/*END PHOTOS*/;
+  const TAG_LABELS = { builds: "Builds", action: "Burnouts & flames", crowd: "Crowd", details: "Details", night: "Night shows", bikes: "Bikes" };
+  const faqs = [
+    ["When and where is Tuner Fest: Motorshow?", "Tuner Fest: Motorshow is on Sunday, November 29, 2026 at Galleria Mall, Karen, Nairobi. Doors open at 10:00 and the night show runs until 22:00."],
+    ["Where do I buy tickets?", "Online through our ticketing partner Little Africa, or dial *826*31# from your phone. Early bird tickets are KES 800 until Friday, October 30. After that, advanced tickets are KES 1,000, and tickets at the gate on the day are KES 1,500."],
+    ["How do I get my car on the floor?", "Send an application through Register your car with photos of the build and a list of what's been done. The Shift Nation team reviews every car and replies by email."],
+    ["How long does admission review take?", "We aim to reply within 7 days of your application. Applications close when the floor is full, so apply early."],
+    ["Can I sell products at my booth?", "Yes. Vendor booths can run demos and sell directly on the floor. Tell us what you'll sell when you reserve your booth."],
+    ["Is parking available at the venue?", "Yes, there is visitor parking at the venue. Show cars get a separate roll-in time and entrance, sent with your acceptance email."],
+  ];
+  // Prices from the Tuner Fest 6.0 poster. `buy: false` means pay on the day, no online button.
+  const tiers = [
+    { id: "early", name: "Early bird", kind: "Until Fri, Oct 30", price: "800", pitch: "The lowest price for Tuner Fest 6.0. Sales close at midnight on Friday, October 30.", c: "var(--yellow)", btn: "yellow", label: "Buy early bird", pop: true, buy: true },
+    { id: "advanced", name: "Advanced", kind: "Before the day", price: "1,000", pitch: "Buy online or by phone any time before November 29.", c: "#dfe3ec", btn: "silver", label: "Buy advanced", buy: true },
+    { id: "gate", name: "Gate", kind: "On the day", price: "1,500", pitch: "Pay at the entrance at Galleria Mall on November 29.", c: "var(--muted)", buy: false },
+  ];
+
+  const ph = (tint, note, photo, alt) => photo
+    ? `<div class="ph"><img src="${photo}" alt="${alt}" loading="lazy"></div>`
+    : `<div class="ph" style="--tint:${tint}"><svg viewBox="0 0 240 80" aria-hidden="true"><use href="#car"/></svg><span class="ph-note">${note}</span></div>`;
+  const src = (p, size) => `assets/gallery/${p.id}${size === "sm" ? "-sm" : ""}.webp`;
+  const esc = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const shot = (p, i) => `<figure class="shot" data-tag="${p.tag}">
+      <button type="button" data-open="${i}" aria-label="View larger: ${esc(p.cap)}"><img src="${src(p, "sm")}" alt="${esc(p.cap)}" width="${p.sw}" height="${p.sh}" loading="lazy" decoding="async"></button>
+      <figcaption>Shift Nation<span>${esc(p.cap)}</span></figcaption></figure>`;
+  // newest first, so each new batch shows up at the top
+  const ordered = photos.map((p, i) => [p, i]).reverse();
+  $("#floor-rail").innerHTML = ordered.slice(0, 12).map(([p, i]) => shot(p, i)).join("");
+  $("#gal").innerHTML = ordered.map(([p, i]) => shot(p, i)).join("");
+  $("#gal-count").textContent = `${photos.length} ${photos.length === 1 ? "photo" : "photos"}`;
+  $("#floor-all").textContent = `See all ${photos.length} photos →`;
+  const tagsUsed = Object.keys(TAG_LABELS).filter(t => photos.some(p => p.tag === t));
+  $("#chips").innerHTML = `<button type="button" data-f="all" aria-pressed="true">All</button>` +
+    tagsUsed.map(t => `<button type="button" data-f="${t}" aria-pressed="false">${TAG_LABELS[t]}</button>`).join("");
+  $("#faq").innerHTML = faqs.map(([q, a], i) => `
+    <details${i === 0 ? " open" : ""}><summary><span class="n">${pad(i + 1)}</span><span class="q">${q}</span><span class="pm" aria-hidden="true">+</span></summary><p class="a">${a}</p></details>`).join("");
+
+
+  // carousel counters + arrows
+  function railCounter(railId, countId, fmt) {
+    const rail = $("#" + railId), out = $("#" + countId), total = rail.children.length;
+    const update = () => {
+      if (!rail.offsetWidth) return;
+      const atEnd = rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 4;
+      const lefts = [...rail.children].map(c => c.offsetLeft - rail.firstElementChild.offsetLeft);
+      const i = atEnd ? total - 1 : lefts.reduce((best, x, k) => Math.abs(x - rail.scrollLeft) < Math.abs(lefts[best] - rail.scrollLeft) ? k : best, 0);
+      out.textContent = fmt(i + 1, total);
+      $$(`[data-rail="${railId}"]`).forEach(b => { b.disabled = b.dataset.dir === "-1" ? rail.scrollLeft <= 2 : atEnd; });
+    };
+    rail.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return update;
+  }
+  const railUpdates = [
+    railCounter("floor-rail", "floor-count", (i, t) => `${i} / ${pad(t)}`),
+  ];
+  $$("[data-rail]").forEach(b => b.addEventListener("click", () => {
+    const rail = $("#" + b.dataset.rail), kids = [...rail.children], base = rail.firstElementChild.offsetLeft;
+    const cur = kids.findIndex(c => c.offsetLeft - base >= rail.scrollLeft - 4);
+    const next = kids[Math.max(0, Math.min(kids.length - 1, (cur < 0 ? 0 : cur) + Number(b.dataset.dir)))];
+    rail.scrollTo({ left: next.offsetLeft - base, behavior: "smooth" });
+  }));
+
+  // gallery filter
+  $("#chips").addEventListener("click", e => {
+    const btn = e.target.closest("button[data-f]");
+    if (!btn) return;
+    $$("#chips button").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
+    $$("#gal .shot").forEach(f => { f.hidden = btn.dataset.f !== "all" && f.dataset.tag !== btn.dataset.f; });
+  });
+
+  // photo viewer: steps through whatever is visible in the list the photo was opened from
+  const lb = $("#lb");
+  let lbList = [], lbPos = 0, lbReturn = null;
+  function lbShow() {
+    const p = photos[lbList[lbPos]];
+    $("#lb-img").src = src(p); $("#lb-img").alt = p.cap;
+    $("#lb-img").width = p.w; $("#lb-img").height = p.h;
+    $("#lb-cap").textContent = p.cap;
+    $("#lb-count").textContent = `${lbPos + 1} / ${lbList.length}`;
+  }
+  document.addEventListener("click", e => {
+    const b = e.target.closest("[data-open]");
+    if (!b) return;
+    const scope = b.closest("#gal, #floor-rail");
+    lbList = $$("[data-open]", scope).filter(x => !x.closest("[hidden]")).map(x => Number(x.dataset.open));
+    lbPos = lbList.indexOf(Number(b.dataset.open));
+    lbReturn = b; $("#lb-prev").hidden = $("#lb-next").hidden = false; lb.hidden = false; lockScroll(true); lbShow(); $("#lb-close").focus();
+  });
+  const lbStep = d => { if (lbList.length < 2) return; lbPos = (lbPos + d + lbList.length) % lbList.length; lbShow(); };
+  const lbClose = () => { lb.hidden = true; lockScroll(false); lbReturn?.focus(); };
+  $("#lb-prev").addEventListener("click", () => lbStep(-1));
+  $("#lb-next").addEventListener("click", () => lbStep(1));
+  $("#lb-close").addEventListener("click", lbClose);
+  lb.addEventListener("click", e => { if (e.target === lb) lbClose(); });
+  document.addEventListener("keydown", e => {
+    if (lb.hidden) return;
+    if (e.key === "Escape") lbClose(); else if (e.key === "ArrowLeft") lbStep(-1); else if (e.key === "ArrowRight") lbStep(1);
+  });
+
+  /* ---------- tickets ---------- */
+  const barcode = seed => {
+    let x = 0, bars = "", n = [...seed].reduce((a, c) => (a * 31 + c.charCodeAt(0)) & 0x7fffffff, 7);
+    while (x < 88) { n = (Math.imul(n, 1103515245) + 12345) & 0x7fffffff; const w = 1 + (n % 3); if ((n >> 4) % 4) bars += `<rect x="${x}" width="${w}" height="34"/>`; x += w + 1; }
+    return `<svg viewBox="0 0 90 34" fill="currentColor" aria-hidden="true">${bars}</svg>`;
+  };
+  // Early bird closes itself after EARLY_END: card greys out and Advanced becomes the highlighted ticket.
+  function renderTiers() {
+    const open = earlyOpen();
+    $("#tiers").innerHTML = tiers.map(t => {
+      const ended = t.id === "early" && !open;
+      const pop = open ? t.pop : t.id === "advanced";
+      const badge = !pop ? "" : open ? "Best price" : "On sale now";
+      const action = ended ? `<span class="gate-note">Early bird has ended</span>`
+        : t.buy ? `<a class="btn fill ${pop ? "yellow" : t.btn}" href="${TICKETS_URL}" target="_blank" rel="noopener">${t.label} <span class="arr">→</span></a>`
+        : `<span class="gate-note">Pay at the gate</span>`;
+      return `
+    <article class="tier${pop ? " pop" : ""}${ended ? " ended" : ""}" style="--c:${pop ? "var(--yellow)" : ended ? "var(--muted)" : t.c}">
+      <div class="tier-main">
+        <div class="tier-name"><h2>${t.name}</h2>${badge ? `<span class="badge">${badge}</span>` : ""}</div>
+        <span class="kind">${ended ? "Ended Oct 30" : t.kind}</span>
+        <div class="price"><b>KES ${t.price}</b><span>Per person</span></div>
+        <p class="pitch">${ended ? "Early bird sales closed on October 30. Advanced tickets are on sale now." : t.pitch}</p>
+        ${t.id === "early" && open ? `<p class="deadline" data-early-left></p>` : ""}
+        ${action}
+      </div>
+      <div class="stub" style="color:${pop ? "var(--yellow)" : "var(--muted)"}">
+        <div><small>Tunerfest · Motorshow</small><b>GALLERIA · NOV 29</b></div>${barcode(t.id)}
+      </div>
+    </article>`;
+    }).join("");
+    $$("[data-from-price]").forEach(el => { el.textContent = open ? "From KES 800" : "From KES 1,000"; });
+    $$("[data-price-line]").forEach(el => { el.textContent = open
+      ? "Early bird KES 800 until Oct 30, then KES 1,000 advanced and KES 1,500 at the gate."
+      : "Advanced KES 1,000, or KES 1,500 at the gate."; });
+  }
+  let earlyWasOpen = earlyOpen();
+  function earlyTick() {
+    if (earlyOpen() !== earlyWasOpen) { earlyWasOpen = earlyOpen(); renderTiers(); }
+    const el = $("[data-early-left]");
+    if (!el) return;
+    let ms = EARLY_END - Date.now();
+    const d = Math.floor(ms / 864e5); ms -= d * 864e5;
+    const h = Math.floor(ms / 36e5); ms -= h * 36e5;
+    const m = Math.floor(ms / 6e4);
+    const parts = d ? [`${d} ${d === 1 ? "day" : "days"}`, `${h} hr${h === 1 ? "" : "s"}`] : h ? [`${h} hr${h === 1 ? "" : "s"}`, `${m} min`] : [`${m} min`];
+    el.textContent = `Ends in ${parts.join(" ")}`;
+  }
+  renderTiers(); earlyTick(); setInterval(earlyTick, 1000);
+
+  $("#copy-ussd").addEventListener("click", e => {
+    const btn = e.currentTarget, code = "*826*31#";
+    const done = ok => { btn.textContent = ok ? "Copied" : "Select the code to copy"; setTimeout(() => { btn.textContent = "Copy code"; }, 2000); };
+    if (navigator.clipboard) navigator.clipboard.writeText(code).then(() => done(true), () => { getSelection().selectAllChildren($("#ussd")); done(false); });
+    else { getSelection().selectAllChildren($("#ussd")); done(false); }
+  });
+
+  /* ---------- events (status follows today's date) ---------- */
+  function renderEvents() {
+    const now = Date.now();
+    const show = now < SHOW_START ? "next" : now <= SHOW_END ? "live" : "past";
+    const feature = `
+      <div class="ev-feature">
+        <img class="ev-poster" src="assets/tunerfest-6-poster.webp" alt="Tuner Fest 6.0 poster: 6th edition, presented by Al-Husnain Motors. A matte blue Nissan GT-R. Tickets 800 early bird, 1000 advanced, 1500 at the gate. Dial *826*31#. Galleria Mall, Karen, Nairobi, 29th Nov 2026." width="1200" height="1500">
+        <div class="body">
+          <span class="eyebrow" style="--c: var(--muted)">6th edition · 2026</span>
+          <span class="status${show === "live" ? " live" : ""}" style="--c:${show === "live" ? "var(--red)" : show === "past" ? "var(--muted)" : "var(--yellow)"}">${show === "live" ? "Happening now" : show === "past" ? "That's a wrap" : "Next up"}</span>
+          <h3>Tuner Fest 6.0</h3>
+          <span class="meta">Sun, Nov 29, 2026 · Galleria Mall, Karen · Doors 10:00</span>
+          <p class="lede">A full day of builds, drift demos, a night show and the Build of the Show award.</p>
+          ${show === "next" ? `<div class="countdown" aria-label="Time until Tuner Fest opens"><div><b data-cd="d">0</b><span>Days</span></div><div><b data-cd="h">00</b><span>Hrs</span></div><div><b data-cd="m">00</b><span>Min</span></div><div><b data-cd="s">00</b><span>Sec</span></div></div>` : ""}
+          <div class="row">${show === "past" ? "" : `<a class="btn fill yellow tkt" href="${TICKETS_URL}" target="_blank" rel="noopener">Buy tickets <span class="arr">→</span></a><a class="btn" href="#tickets">See prices</a>`}<a class="btn" href="https://www.google.com/maps/search/?api=1&amp;query=Galleria+Mall+Karen+Nairobi" target="_blank" rel="noopener">Directions</a></div>
+        </div>
+      </div>`;
+    const row = (c, status, title, text, cta) => `<div class="ev-row"><div><span class="status live" style="--c:${c}">${status}</span><h3>${title}</h3><p>${text}</p></div>${cta}</div>`;
+    const present = [];
+    // after the show it stays here as the latest event until the next one is added
+    if (show !== "next") present.push(feature);
+    if (show === "next") {
+      present.push(row("var(--red)", "Open now", "Show car applications", "Apply to put your build on the floor at Tuner Fest 6.0.", `<a class="btn red" href="#register">Register your car <span class="arr">→</span></a>`));
+      present.push(row("var(--teal)", "Open now", "Vendor booth bookings", "Brands, garages and crews can reserve floor space.", `<a class="btn teal" href="#booth">Reserve a booth <span class="arr">→</span></a>`));
+    }
+    const future = [];
+    if (show === "next") future.push(feature);
+    const group = (label, c, body) => `<section class="ev-group"><span class="eyebrow ruled" style="--c:${c}">${label}</span>${body}</section>`;
+    $("#events-root").innerHTML =
+      (present.length ? group("Now", "var(--red)", `<div class="ev-stack">${present.join("")}</div>`) : "") +
+      (future.length ? group("Next", "var(--yellow)", `<div class="ev-stack">${future.join("")}</div>`) : "");
+  }
+  renderEvents();
+  tick(); setInterval(tick, 1000);
+
+  /* ---------- platform capabilities (artifact viewer only) ---------- */
+  // On claude.ai these resolve to the database, the viewer's identity and file saving.
+  // Anywhere else (e.g. the site uploaded to your own host) they resolve null.
+  const cap = name => window.claude && typeof window.claude.use === "function" ? window.claude.use(name).catch(() => null) : Promise.resolve(null);
+  const dbP = cap("db"), userP = cap("user"), dlP = cap("downloads");
+
+  // Supabase: used when the site runs on your own web host. Paste your project's
+  // URL and anon (public) key from Supabase → Project Settings → API.
+  // The anon key is meant to be public; the database rules in supabase-setup.sql protect the data.
+  const SUPABASE_URL = "https://kzafeanvmrlmshhbgbbz.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_sfoxXldi-G_SdRFo7-8uHw_jraWmuJ4";
+  const sb = !window.claude && SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+  const SPOTS = 70;
+  const el = (tag, props = {}, ...kids) => {
+    const n = document.createElement(tag);
+    for (const [k, v] of Object.entries(props)) {
+      if (k === "class") n.className = v; else if (k === "text") n.textContent = v; else if (k.startsWith("on")) n.addEventListener(k.slice(2), v); else n.setAttribute(k, v);
+    }
+    kids.flat(Infinity).forEach(k => k != null && n.append(k));
+    return n;
+  };
+  const safePhoto = v => typeof v === "string" && /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(v) ? v : null;
+  const fmtTime = t => typeof t === "number" ? new Date(t).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "";
+
+  // Shrink a photo to a JPEG small enough to store with the application (well under the 256 KB document limit).
+  async function compressPhoto(file) {
+    const url = URL.createObjectURL(file);
+    try {
+      const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url; });
+      for (const [edge, q] of [[1280, 0.78], [1100, 0.7], [960, 0.62], [800, 0.55], [640, 0.5]]) {
+        const k = Math.min(1, edge / Math.max(img.naturalWidth, img.naturalHeight));
+        const c = document.createElement("canvas");
+        c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        const out = c.toDataURL("image/jpeg", q);
+        if (out.length < 190000) return out;
+      }
+      throw new Error("too big");
+    } finally { URL.revokeObjectURL(url); }
+  }
+
+  /* ---------- register / booth ---------- */
+  const form = $("#reg-form"), done = $("#reg-done"), wrapEl = $("#form-wrap"), statusEl = $("#reg-status");
+  let type = "car", photoData = null;
+  const copy = {
+    car: { c: "var(--red)", title: `Exhibit <span class="outline">your car</span>`, lede: "Put your build on the floor at Tuner Fest, November 29 at Galleria Mall, Karen. Every application is reviewed by the Shift Nation team." },
+    booth: { c: "var(--teal)", title: `Reserve <span class="outline">a booth</span>`, lede: "Floor space for brands, garages and crews. Run demos, activations and direct sales in front of 5,000+ enthusiasts." },
+  };
+  function setType(t) {
+    type = t;
+    const k = copy[t];
+    wrapEl.style.setProperty("--c", k.c);
+    $("#reg-eyebrow").style.setProperty("--c", k.c);
+    $("#reg-title").innerHTML = k.title;
+    $("#reg-lede").textContent = k.lede;
+    $("#reg-submit").style.setProperty("--c", k.c);
+    $("#fs-car").hidden = t !== "car";
+    $("#fs-booth").hidden = t !== "booth";
+    $("#spots-note").hidden = t !== "car";
+    $$(".seg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.type === t)));
+    $$(".field.invalid", form).forEach(f => f.classList.remove("invalid"));
+  }
+  $$(".seg button").forEach(b => b.addEventListener("click", () => {
+    const h = b.dataset.type === "booth" ? "#booth" : "#register";
+    if (location.hash !== h) history.replaceState(null, "", h);
+    setType(b.dataset.type);
+  }));
+
+  const photoInput = $("#r-photo");
+  function resetPhoto() {
+    photoData = null; photoInput.value = "";
+    $("#r-photo-preview").hidden = true; $("#r-photo-preview").removeAttribute("src");
+    $("#r-photo-txt b").textContent = "Upload a photo";
+  }
+  photoInput.addEventListener("change", async () => {
+    const f = photoInput.files[0];
+    const field = $("#f-photo");
+    if (!f) { resetPhoto(); return; }
+    $("#r-photo-txt b").textContent = "Preparing photo…";
+    try {
+      photoData = await compressPhoto(f);
+      $("#r-photo-preview").src = photoData; $("#r-photo-preview").hidden = false;
+      $("#r-photo-txt b").textContent = "Change photo";
+      field.classList.remove("invalid");
+    } catch {
+      resetPhoto();
+      $("#r-photo-err").textContent = "That photo couldn't be read. Use a JPG or PNG (iPhone HEIC photos need converting first).";
+      field.classList.add("invalid");
+    }
+  });
+
+  function validate() {
+    let first = null;
+    $$("input[required]", form).forEach(input => {
+      if (input.closest("fieldset").hidden || input === photoInput) return;
+      const ok = input.type === "checkbox" ? input.checked : input.value.trim() !== "" && input.checkValidity();
+      input.closest(".field").classList.toggle("invalid", !ok);
+      input.setAttribute("aria-invalid", String(!ok));
+      if (!ok && !first) first = input;
+    });
+    if (type === "car" && !photoData) {
+      $("#r-photo-err").textContent = "Add a photo of your car.";
+      $("#f-photo").classList.add("invalid");
+      if (!first) first = photoInput;
+    }
+    return first;
+  }
+  form.addEventListener("input", e => { if (e.target.closest(".field.invalid") && e.target !== photoInput) validate(); });
+  form.addEventListener("change", e => { if (e.target.closest(".field.invalid") && e.target !== photoInput) validate(); });
+
+  const showStatus = (msg, err) => { statusEl.textContent = msg; statusEl.classList.toggle("err", !!err); statusEl.hidden = !msg; };
+  const UNAVAILABLE = "Online applications aren't available here right now. Send your details and a photo to hello@shiftnation.co and we'll register you.";
+
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    showStatus("");
+    const bad = validate();
+    if (bad) { bad.focus(); return; }
+    const d = Object.fromEntries(new FormData(form));
+    if (sb) return submitSupabase(d);
+    const [db, user] = await Promise.all([dbP, userP]);
+    const uid = user ? await user.id() : null;
+    if (!db || !uid) { showStatus(UNAVAILABLE, true); return; }
+    const entry = {
+      type, status: "pending", createdAt: Date.now(),
+      name: d.name.trim(), email: d.email.trim(), phone: d.phone.trim(), instagram: (d.instagram || "").trim(),
+      ...(type === "car"
+        ? { car: d.car.trim() }
+        : { business: d.business.trim(), boothCategory: d.booth_category, boothSize: d.booth_size, power: !!d.power, notes: (d.booth_notes || "").trim() }),
+    };
+    const btn = $("#reg-submit");
+    btn.disabled = true; showStatus("Sending your application…");
+    try {
+      const mine = db.doc(`registrations/${uid}`);
+      const ref = mine.collection("entries").doc();
+      if (type === "car") await mine.collection("photos").doc(ref.id).set({ data: photoData });
+      await ref.set(entry);
+      await mine.set({ updatedAt: Date.now() });
+    } catch (err) {
+      btn.disabled = false;
+      const code = err && err.code;
+      showStatus(code === "quota_exceeded" ? "We can't take more applications online right now. Email hello@shiftnation.co to register."
+        : code === "invalid_argument" ? UNAVAILABLE
+        : "Your application didn't send. Check your connection and try again.", true);
+      return;
+    }
+    showDone(entry);
+  });
+  function showDone(entry) {
+    $("#reg-submit").disabled = false; showStatus("");
+    const first = entry.name.split(/\s+/)[0];
+    $("#done-title").textContent = `You're on the list, ${first}`;
+    $("#done-body").textContent = type === "car"
+      ? `We've got your ${entry.car}. There are only ${SPOTS} show car spots, so the team reviews applications in order and will email ${entry.email} to confirm your spot and roll-in time.`
+      : `We've got your ${entry.boothSize} booth request for ${entry.business}. We'll email ${entry.email} with availability, pricing and setup times.`;
+    form.hidden = true; done.hidden = false; done.focus();
+  }
+  async function submitSupabase(d) {
+    const btn = $("#reg-submit");
+    btn.disabled = true; showStatus("Sending your application…");
+    const row = {
+      type, name: d.name.trim(), email: d.email.trim(), phone: d.phone.trim(), instagram: (d.instagram || "").trim() || null,
+      ...(type === "car"
+        ? { car: d.car.trim() }
+        : { business: d.business.trim(), booth_category: d.booth_category, booth_size: d.booth_size, power: !!d.power, notes: (d.booth_notes || "").trim() || null }),
+    };
+    try {
+      if (type === "car") {
+        const blob = await (await fetch(photoData)).blob();
+        const path = `${new Date().toISOString().slice(0, 10)}/${crypto.randomUUID()}.jpg`;
+        const up = await sb.storage.from("car-photos").upload(path, blob, { contentType: "image/jpeg", upsert: false });
+        if (up.error) throw up.error;
+        row.photo_path = path;
+      }
+      // no .select(): the public may add an application but never read one back
+      const res = await sb.from("registrations").insert(row);
+      if (res.error) throw res.error;
+    } catch {
+      btn.disabled = false;
+      showStatus("Your application didn't send. Check your connection and try again. If it keeps failing, email hello@shiftnation.co.", true);
+      return;
+    }
+    showDone({ ...row, boothSize: row.booth_size });
+  }
+  $("#reg-again").addEventListener("click", () => {
+    form.reset(); resetPhoto(); setType(type); done.hidden = true; form.hidden = false; $("#r-name").focus();
+  });
+
+  // The applicant's own applications and their status
+  (async () => {
+    const [db, user] = await Promise.all([dbP, userP]);
+    const uid = user ? await user.id() : null;
+    if (!db || !uid) return;
+    const mine = db.doc(`registrations/${uid}`);
+    const photos = {};
+    mine.collection("entries").orderBy("createdAt", "desc").onSnapshot(async snap => {
+      const list = $("#mine-list");
+      $("#mine").hidden = snap.empty;
+      const rows = snap.docs.map(doc => {
+        const v = doc.data();
+        const img = el("img", { alt: "" });
+        if (v.type === "car") {
+          const show = src => { const ok = safePhoto(src); if (ok) img.src = ok; };
+          if (photos[doc.id]) show(photos[doc.id]);
+          else mine.collection("photos").doc(doc.id).get().then(p => { photos[doc.id] = p.exists ? p.data().data : null; show(photos[doc.id]); }).catch(() => {});
+        }
+        const st = ["pending", "approved", "declined"].includes(v.status) ? v.status : "pending";
+        return el("div", { class: "mine-row" }, v.type === "car" ? img : null,
+          el("span", { class: "t", text: v.type === "car" ? String(v.car || "") : `Booth: ${v.business || ""}` }),
+          el("span", { class: `pill ${st}`, text: st === "pending" ? "In review" : st }));
+      });
+      list.replaceChildren(...rows);
+    }, () => {});
+  })();
+
+  /* ---------- admin ---------- */
+  const adm = { entries: new Map(), photos: new Map(), kind: "car", status: "all", q: "", confirm: null };
+  (async () => {
+    if (sb) return initSupabaseAdmin();
+    const [db, user] = await Promise.all([dbP, userP]);
+    const editor = user ? await user.canEdit() : false;
+    if (editor) $("#admin-link").hidden = false;
+    if (!db || !editor) { $("#adm-locked").hidden = false; return; }
+    $("#adm").hidden = false;
+    const dl = await dlP;
+    if (!dl) $("#adm-export").hidden = true;
+    adm.db = db;
+    adm.ops = {
+      status: (e, status) => db.doc(`registrations/${e.uid}/entries/${e.id}`).update({ status, reviewedAt: Date.now() }),
+      remove: async e => { await db.doc(`registrations/${e.uid}/entries/${e.id}`).delete(); if (e.type === "car") await db.doc(`registrations/${e.uid}/photos/${e.id}`).delete(); },
+      photo: async e => { const p = await db.doc(`registrations/${e.uid}/photos/${e.id}`).get(); return p.exists ? safePhoto(p.data().data) : null; },
+      save: async (filename, data) => { const dl = await dlP; if (dl) await dl.save({ filename, data }); },
+    };
+    const load = async uid => {
+      try {
+        const snap = await db.doc(`registrations/${uid}`).collection("entries").get();
+        for (const k of [...adm.entries.keys()]) if (k.startsWith(uid + "/")) adm.entries.delete(k);
+        snap.docs.forEach(doc => adm.entries.set(`${uid}/${doc.id}`, { ...doc.data(), uid, id: doc.id, key: `${uid}/${doc.id}` }));
+      } catch {}
+    };
+    db.collection("registrations").onSnapshot(async snap => {
+      const changed = snap.docChanges().filter(c => c.type !== "removed").map(c => c.doc.id);
+      await Promise.all(changed.map(load));
+      renderAdmin();
+    }, () => admMsg("The application list stopped updating. Reload the page to reconnect.", true));
+    renderAdmin();
+  })();
+  const admMsg = (msg, err) => { const m = $("#adm-msg"); m.textContent = msg; m.classList.toggle("err", !!err); m.hidden = !msg; };
+  function admPhoto(e, box) {
+    const show = ok => box.replaceChildren(ok ? el("img", { src: ok, alt: `Photo of ${e.car || "the car"}`, onclick: () => openRaw(ok, e.car) }) : document.createTextNode("No photo"));
+    if (adm.photos.has(e.key)) return show(adm.photos.get(e.key));
+    box.textContent = "Loading…";
+    adm.ops.photo(e).then(src => { adm.photos.set(e.key, src); show(src); }).catch(() => { box.textContent = "Photo unavailable"; });
+  }
+  function openRaw(src, cap) {
+    $("#lb-img").src = src; $("#lb-img").alt = cap || ""; $("#lb-img").removeAttribute("width"); $("#lb-img").removeAttribute("height");
+    $("#lb-cap").textContent = cap || ""; $("#lb-count").textContent = "";
+    lbList = []; $("#lb-prev").hidden = $("#lb-next").hidden = true;
+    lbReturn = document.activeElement; lb.hidden = false; lockScroll(true); $("#lb-close").focus();
+  }
+  async function setStatus(e, status) {
+    try { await adm.ops.status(e, status); e.status = status; admMsg(""); renderAdmin(); }
+    catch { admMsg("That change didn't save. Try again.", true); }
+  }
+  async function removeEntry(e) {
+    try {
+      await adm.ops.remove(e);
+      adm.entries.delete(e.key); adm.photos.delete(e.key); adm.confirm = null; admMsg(""); renderAdmin();
+    } catch { admMsg("That entry couldn't be removed. Try again.", true); }
+  }
+  function renderAdmin() {
+    if ($("#adm").hidden) return;
+    const all = [...adm.entries.values()].sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+    const cars = all.filter(e => e.type === "car"), booths = all.filter(e => e.type === "booth");
+    const n = st => cars.filter(e => (e.status || "pending") === st).length;
+    const approved = n("approved");
+    $("#adm-stats").replaceChildren(
+      el("div", {}, el("b", { text: `${approved} / ${SPOTS}` }), el("span", { text: "Spots filled (approved)" })),
+      el("div", {}, el("b", { text: String(cars.length) }), el("span", { text: "Car applications" })),
+      el("div", {}, el("b", { text: String(n("pending")) }), el("span", { text: "Waiting for review" })),
+      el("div", {}, el("b", { text: String(n("declined")) }), el("span", { text: "Declined" })),
+      el("div", {}, el("b", { text: String(booths.length) }), el("span", { text: "Booth requests" })),
+      el("div", { class: `meter${approved > SPOTS ? " over" : ""}`, role: "img", "aria-label": `${approved} of ${SPOTS} spots filled` }, el("i", { style: `width:${Math.min(100, approved / SPOTS * 100)}%` })),
+    );
+    const q = adm.q.toLowerCase();
+    const rows = (adm.kind === "car" ? cars : booths)
+      .filter(e => adm.status === "all" || (e.status || "pending") === adm.status)
+      .filter(e => !q || [e.name, e.car, e.business, e.email, e.phone, e.instagram].some(v => String(v || "").toLowerCase().includes(q)));
+    if (!rows.length) {
+      $("#adm-list").replaceChildren(el("div", { class: "adm-empty", text: all.length ? "No applications match these filters." : "No applications yet. They appear here as soon as someone registers." }));
+      return;
+    }
+    const carIndex = new Map(cars.map((e, i) => [e, i + 1]));
+    $("#adm-list").replaceChildren(...rows.map(e => {
+      const st = ["pending", "approved", "declined"].includes(e.status) ? e.status : "pending";
+      const key = e.key;
+      const box = el("div", { class: "ph-box" });
+      if (e.type === "car") admPhoto(e, box);
+      const details = e.type === "car"
+        ? [["Owner", e.name], ["Phone", e.phone], ["Email", e.email], ["Instagram", e.instagram || "—"], ["Applied", fmtTime(e.createdAt)]]
+        : [["Contact", e.name], ["Phone", e.phone], ["Email", e.email], ["Shows", e.boothCategory], ["Size", `${e.boothSize || ""}${e.power ? " · needs power" : ""}`], ["Notes", e.notes || "—"], ["Applied", fmtTime(e.createdAt)]];
+      const title = e.type === "car" ? `#${carIndex.get(e)} ${e.car || ""}` : String(e.business || "");
+      const actions = adm.confirm === key
+        ? [el("span", { class: "confirm", text: "Remove this application for good?" }),
+           el("button", { class: "btn red", type: "button", text: "Remove", onclick: () => removeEntry(e) }),
+           el("button", { class: "btn", type: "button", text: "Keep", onclick: () => { adm.confirm = null; renderAdmin(); } })]
+        : [st !== "approved" ? el("button", { class: "btn fill", style: "--c:#5fd38a", type: "button", text: "Approve", onclick: () => setStatus(e, "approved") }) : null,
+           st !== "declined" ? el("button", { class: "btn red", type: "button", text: "Decline", onclick: () => setStatus(e, "declined") }) : null,
+           st !== "pending" ? el("button", { class: "btn", type: "button", text: "Back to review", onclick: () => setStatus(e, "pending") }) : null,
+           el("button", { class: "btn", type: "button", text: "Remove", onclick: () => { adm.confirm = key; renderAdmin(); } })];
+      return el("article", { class: `adm-row${e.type === "booth" ? " booth" : ""}` },
+        e.type === "car" ? box : null,
+        el("div", { style: "min-width:0" },
+          el("h3", {}, el("span", { text: title }), el("span", { class: `pill ${st}`, text: st === "pending" ? "In review" : st })),
+          el("dl", {}, details.map(([k, v]) => [el("dt", { text: k }), el("dd", { text: String(v ?? "") })]))),
+        el("div", { class: "adm-actions" }, actions));
+    }));
+  }
+  $("#adm-filter").addEventListener("click", ev => { const b = ev.target.closest("[data-f]"); if (!b) return; adm.kind = b.dataset.f; $$("#adm-filter button").forEach(x => x.setAttribute("aria-pressed", String(x === b))); renderAdmin(); });
+  $("#adm-status").addEventListener("click", ev => { const b = ev.target.closest("[data-s]"); if (!b) return; adm.status = b.dataset.s; $$("#adm-status button").forEach(x => x.setAttribute("aria-pressed", String(x === b))); renderAdmin(); });
+  $("#adm-q").addEventListener("input", ev => { adm.q = ev.target.value.trim(); renderAdmin(); });
+  // Email + password sign-in for the site on your own host (Supabase Auth)
+  function initSupabaseAdmin() {
+    const show = which => {
+      $("#adm-login").hidden = which === "panel";
+      $("#login-form").hidden = which !== "login";
+      $("#reset-form").hidden = which !== "reset";
+      $("#adm").hidden = which !== "panel";
+      $("#adm-intro").hidden = which !== "panel";
+    };
+    const err = (id, msg) => { const m = $(id); m.textContent = msg || ""; m.hidden = !msg; };
+    const fromRow = r => ({ key: r.id, id: r.id, type: r.type, status: r.status, createdAt: Date.parse(r.created_at), name: r.name, email: r.email, phone: r.phone,
+      instagram: r.instagram, car: r.car, photoPath: r.photo_path, business: r.business, boothCategory: r.booth_category, boothSize: r.booth_size, power: r.power, notes: r.notes });
+    adm.ops = {
+      status: async (e, status) => { const r = await sb.from("registrations").update({ status, reviewed_at: new Date().toISOString() }).eq("id", e.id); if (r.error) throw r.error; },
+      remove: async e => {
+        const r = await sb.from("registrations").delete().eq("id", e.id); if (r.error) throw r.error;
+        if (e.photoPath) await sb.storage.from("car-photos").remove([e.photoPath]);
+      },
+      photo: async e => {
+        if (!e.photoPath) return null;
+        const r = await sb.storage.from("car-photos").createSignedUrl(e.photoPath, 3600);
+        return r.error ? null : r.data.signedUrl;
+      },
+      save: async (filename, data) => {
+        const url = URL.createObjectURL(new Blob([data], { type: "text/csv" }));
+        const a = el("a", { href: url, download: filename }); document.body.append(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+      },
+    };
+    async function loadAll() {
+      const r = await sb.from("registrations").select("*").order("created_at", { ascending: true }).limit(1000);
+      if (r.error) { admMsg("Applications couldn't load. Try Refresh.", true); return; }
+      adm.entries = new Map(r.data.map(row => [row.id, fromRow(row)]));
+      admMsg(""); renderAdmin();
+    }
+    async function enter(session) {
+      // signed in, but only people listed in the admins table get the panel
+      const a = await sb.from("admins").select("user_id").eq("user_id", session.user.id).maybeSingle();
+      if (a.error || !a.data) {
+        await sb.auth.signOut();
+        show("login"); err("#login-err", "This account isn't on the Shift Nation team list. Ask the site owner to add you.");
+        return;
+      }
+      $("#adm-email").textContent = session.user.email || "";
+      $("#adm-who").hidden = false;
+      show("panel"); loadAll();
+    }
+    $("#admin-link").hidden = false;
+    show("login");
+    let recovering = false;
+    sb.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY") { recovering = true; show("reset"); }
+      else if (event === "SIGNED_OUT") { adm.entries = new Map(); adm.photos.clear(); $("#adm-list").replaceChildren(); $("#adm-stats").replaceChildren(); $("#adm-who").hidden = true; show("login"); }
+    });
+    sb.auth.getSession().then(({ data }) => { if (data.session && !recovering) enter(data.session); });
+
+    $("#login-show").addEventListener("click", ev => {
+      const i = $("#login-pass"), on = i.type === "password";
+      i.type = on ? "text" : "password"; ev.currentTarget.textContent = on ? "Hide" : "Show"; ev.currentTarget.setAttribute("aria-pressed", String(on));
+    });
+    $("#login-form").addEventListener("submit", async ev => {
+      ev.preventDefault(); err("#login-err"); err("#login-info");
+      const email = $("#login-email").value.trim(), password = $("#login-pass").value;
+      if (!email || !password) { err("#login-err", "Enter your email and password."); return; }
+      const btn = $("#login-btn"); btn.disabled = true;
+      const r = await sb.auth.signInWithPassword({ email, password });
+      btn.disabled = false;
+      if (r.error) { err("#login-err", /invalid/i.test(r.error.message) ? "That email and password don't match. Check them and try again." : "Sign-in didn't work. Check your connection and try again."); return; }
+      $("#login-pass").value = "";
+      enter(r.data.session);
+    });
+    $("#login-forgot").addEventListener("click", async () => {
+      err("#login-err"); err("#login-info");
+      const email = $("#login-email").value.trim();
+      if (!email) { err("#login-err", "Enter your email above first, then choose Forgot your password."); $("#login-email").focus(); return; }
+      await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname + "#admin" });
+      err("#login-info", `If ${email} is a team account, a reset link is on its way. Open it on this device.`);
+    });
+    $("#reset-form").addEventListener("submit", async ev => {
+      ev.preventDefault(); err("#reset-err");
+      const password = $("#reset-pass").value;
+      if (password.length < 10) { err("#reset-err", "Use at least 10 characters."); return; }
+      const r = await sb.auth.updateUser({ password });
+      if (r.error) { err("#reset-err", "The new password didn't save. Open the reset link again and retry."); return; }
+      recovering = false; $("#reset-pass").value = "";
+      const { data } = await sb.auth.getSession(); if (data.session) enter(data.session);
+    });
+    $("#adm-logout").addEventListener("click", () => sb.auth.signOut());
+    $("#adm-refresh").addEventListener("click", loadAll);
+  }
+
+  $("#adm-export").addEventListener("click", async () => {
+    const cols = ["type", "status", "car", "business", "name", "phone", "email", "instagram", "boothCategory", "boothSize", "power", "notes", "createdAt"];
+    const cell = v => { let t = v == null ? "" : String(v); if (/^[=+\-@]/.test(t)) t = "'" + t; return /[",\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t; };
+    const rows = [...adm.entries.values()].sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0))
+      .map(e => cols.map(c => cell(c === "createdAt" && e.createdAt ? new Date(e.createdAt).toISOString() : e[c])).join(","));
+    try { await adm.ops.save("tunerfest-applications.csv", [cols.join(","), ...rows].join("\n")); }
+    catch (err) { if (err && err.code !== "cancelled") admMsg("The export didn't save. Try again.", true); }
+  });
+
+  /* ---------- Cashia sponsor offer ---------- */
+  // Fill these in when Cashia sends the links; until then the buttons show a "coming soon" note.
+  const CASHIA_LINKS = { signup: "", pay: "" };
+  const CASHIA_OFF = 200;
+  $$("[data-cashia]").forEach(a => {
+    const url = CASHIA_LINKS[a.dataset.cashia];
+    if (url) { a.href = url; a.target = "_blank"; a.rel = "noopener"; return; }
+    a.addEventListener("click", ev => { ev.preventDefault(); $("#cx-soon").hidden = false; });
+  });
+  function renderCashiaPrices() {
+    const early = earlyOpen();
+    $("#cx-prices").replaceChildren(...tiers.filter(t => t.id !== "gate").map(t => {
+      const full = Number(String(t.price).replace(/,/g, ""));
+      const ended = t.id === "early" && !early;
+      const fmt = n => "KES " + n.toLocaleString("en-US");
+      return el("div", { class: `cx-price-card${ended ? " off" : ""}` },
+        el("h3", { text: t.name }),
+        el("s", { text: fmt(full) }),
+        el("b", { text: fmt(full - CASHIA_OFF) }),
+        el("span", { text: ended ? "Early bird ended Oct 30" : "Paid with Cashia" }));
+    }));
+  }
+  renderCashiaPrices();
+
+  /* ---------- routing ---------- */
+  const views = $$(".view");
+  function route() {
+    const h = location.hash.slice(1);
+    const name = h === "booth" ? "register" : (views.some(v => v.dataset.view === h) ? h : "home");
+    views.forEach(v => { v.hidden = v.dataset.view !== name; });
+    $$(".menu nav a").forEach(a => {
+      const target = a.getAttribute("href").slice(1);
+      if (target === (h || "home") || (name === "home" && target === "home")) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+    });
+    if (name === "register") setType(h === "booth" ? "booth" : "car");
+    scrollTop();
+    onScroll();
+    railUpdates.forEach(f => f());
+  }
+  window.addEventListener("hashchange", route);
+  route();
+})();
+</script>

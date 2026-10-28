@@ -1,0 +1,129 @@
+<title>TunerFest Font Options</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wdth,wght@62..125,400..900&family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&family=Bebas+Neue&family=Chakra+Petch:wght@600;700&family=Exo+2:wght@400;500&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500&family=Inter:wght@400;500&family=Montserrat:wght@400;500&family=Orbitron:wght@700;900&family=Rajdhani:wght@600;700&family=Roboto:wght@400;500&family=Russo+One&family=Titillium+Web:wght@400;600&display=swap">
+<style>
+/* Layout: a grid of eight identical mini TunerFest heroes on the site's own black/yellow, so only the type changes between them. */
+:root {
+  --ink: #0b0b0a;
+  --asphalt: #151513;
+  --kerb: #2a2924;
+  --smoke: #a19e93;
+  --chalk: #f2f0e8;
+  --shift: #ffd400;
+  --on-shift: #0b0b0a;
+  --f-ui: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--ink); color: var(--chalk); font-family: "Barlow", system-ui, sans-serif; font-size: 16px; line-height: 1.5; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-block: 40px 72px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.top { display: flex; flex-wrap: wrap; gap: 20px 40px; align-items: end; justify-content: space-between; margin-bottom: 28px; }
+.top h1 { margin: 0; font-family: "Archivo", sans-serif; font-stretch: 125%; font-weight: 900; text-transform: uppercase; font-size: clamp(2rem, 5vw, 3.25rem); line-height: 0.95; }
+.top h1 span { color: var(--shift); }
+.top p { margin: 10px 0 0; color: var(--smoke); max-width: 52ch; }
+.try { display: flex; flex-direction: column; gap: 6px; min-width: 0; flex: 0 1 340px; }
+.try label { font-family: var(--f-ui); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--smoke); }
+.try input { width: 100%; min-height: 46px; padding: 10px 12px; border-radius: 4px; border: 1px solid var(--kerb); background: var(--asphalt); color: var(--chalk); font: inherit; }
+.try input:focus { outline: none; border-color: var(--shift); box-shadow: 0 0 0 3px #ffd40033; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 520px), 1fr)); gap: 16px; }
+.card { border: 1px solid var(--kerb); border-radius: 4px; overflow: hidden; display: flex; flex-direction: column; min-width: 0; background: var(--ink); }
+.card.current { border-color: var(--shift); }
+.label { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; padding: 12px 18px; background: var(--asphalt); border-bottom: 1px solid var(--kerb); font-family: var(--f-ui); font-size: 0.78rem; letter-spacing: 0.04em; }
+.label b { color: var(--chalk); font-weight: 600; }
+.label span { color: var(--smoke); }
+.label .tag { color: var(--on-shift); background: var(--shift); padding: 1px 8px; border-radius: 2px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.7rem; }
+
+.hero { padding: 26px 22px 24px; display: flex; flex-direction: column; gap: 14px; position: relative; flex: 1; }
+.hero::after { content: ""; position: absolute; inset: auto 0 0 0; height: 6px; background: repeating-linear-gradient(90deg, var(--shift) 0 20px, var(--ink) 20px 40px); }
+.eyebrow { font-family: var(--f-ui); font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--shift); }
+.hero h2 { margin: 0; text-transform: uppercase; line-height: 0.92; font-size: clamp(2.4rem, 6.5vw, 3.6rem); overflow-wrap: anywhere; text-wrap: balance; }
+.hero h2 .yr { color: var(--shift); display: block; }
+.hero p { margin: 0; color: var(--smoke); font-size: 1.02rem; line-height: 1.5; max-width: 46ch; }
+.hero p strong { color: var(--chalk); }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 4px; }
+.btn { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 4px; background: var(--shift); color: var(--on-shift); text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.92rem; }
+.btn.ghost { background: transparent; color: var(--chalk); border: 2px solid var(--kerb); }
+.data { display: flex; flex-wrap: wrap; gap: 6px 18px; font-family: var(--f-ui); font-size: 0.8rem; color: var(--smoke); font-variant-numeric: tabular-nums; margin-bottom: 8px; }
+.data b { color: var(--chalk); font-weight: 600; }
+
+/* each pairing: heading font on h2 + buttons, body font on paragraph */
+.p1 h2, .p1 .btn { font-family: "Archivo", "Arial Black", sans-serif; font-stretch: 125%; font-weight: 900; }
+.p1 .btn { font-weight: 800; font-stretch: 112%; }
+.p1 p { font-family: "Barlow", sans-serif; }
+.p2 h2, .p2 .btn { font-family: "Barlow Condensed", "Arial Narrow", sans-serif; font-weight: 800; }
+.p2 h2 { font-size: clamp(2.8rem, 8vw, 4.4rem); }
+.p2 .btn { font-weight: 700; font-size: 1.05rem; }
+.p2 p { font-family: "Barlow", sans-serif; }
+.p3 h2, .p3 .btn { font-family: "Orbitron", sans-serif; font-weight: 900; }
+.p3 h2 { font-size: clamp(2rem, 5.6vw, 3rem); }
+.p3 .btn { font-weight: 700; font-size: 0.8rem; }
+.p3 p { font-family: "Exo 2", sans-serif; }
+.p4 h2, .p4 .btn { font-family: "Russo One", sans-serif; font-weight: 400; }
+.p4 p { font-family: "Roboto", sans-serif; }
+.p5 h2, .p5 .btn { font-family: "Anton", Impact, sans-serif; font-weight: 400; }
+.p5 h2 { font-size: clamp(2.8rem, 8vw, 4.4rem); letter-spacing: 0.01em; }
+.p5 .btn { font-size: 1rem; letter-spacing: 0.06em; }
+.p5 p { font-family: "Inter", sans-serif; font-size: 0.98rem; }
+.p6 h2, .p6 .btn { font-family: "Rajdhani", sans-serif; font-weight: 700; }
+.p6 h2 { font-size: clamp(2.8rem, 8vw, 4.2rem); }
+.p6 .btn { font-size: 1.05rem; }
+.p6 p { font-family: "Titillium Web", sans-serif; }
+.p7 h2, .p7 .btn { font-family: "Bebas Neue", Impact, sans-serif; font-weight: 400; }
+.p7 h2 { font-size: clamp(3rem, 9vw, 4.8rem); letter-spacing: 0.02em; }
+.p7 .btn { font-size: 1.15rem; letter-spacing: 0.08em; }
+.p7 p { font-family: "Montserrat", sans-serif; font-size: 0.95rem; }
+.p8 h2, .p8 .btn { font-family: "Chakra Petch", sans-serif; font-weight: 700; }
+.p8 h2 { font-size: clamp(2.6rem, 7.4vw, 4rem); }
+.p8 p { font-family: "IBM Plex Sans", sans-serif; }
+</style>
+
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>TunerFest <span>fonts</span></h1>
+      <p>Eight heading and body pairings on the site's black and yellow. Everything except the fonts is the same, so you can compare them directly.</p>
+    </div>
+    <div class="try">
+      <label for="headline">Try your own headline</label>
+      <input id="headline" type="text" value="TunerFest" maxlength="28" autocomplete="off">
+    </div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+</div>
+
+<script>
+const pairs = [
+  { n: 1, head: "Archivo (extra wide)", body: "Barlow", feel: "Race-team livery", current: true },
+  { n: 2, head: "Barlow Condensed", body: "Barlow", feel: "Motorsport timing board" },
+  { n: 3, head: "Orbitron", body: "Exo 2", feel: "Digital dash" },
+  { n: 4, head: "Russo One", body: "Roboto", feel: "Tuning-shop decal" },
+  { n: 5, head: "Anton", body: "Inter", feel: "Street-race flyer" },
+  { n: 6, head: "Rajdhani", body: "Titillium Web", feel: "Japanese tuner brand" },
+  { n: 7, head: "Bebas Neue", body: "Montserrat", feel: "Classic event poster" },
+  { n: 8, head: "Chakra Petch", body: "IBM Plex Sans", feel: "Gauge cluster" },
+];
+const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const grid = document.getElementById("grid");
+grid.innerHTML = pairs.map(p => `
+  <article class="card p${p.n}${p.current ? " current" : ""}">
+    <div class="label">
+      <span><b>${p.n}. ${p.head}</b> + ${p.body}</span>
+      ${p.current ? `<span class="tag">On your site now</span>` : `<span>${p.feel}</span>`}
+    </div>
+    <div class="hero">
+      <span class="eyebrow">Shift Nation presents · Nov 14–15</span>
+      <h2><span class="name">TunerFest</span><span class="yr">2026</span></h2>
+      <p><strong>Two days of show cars and dyno pulls.</strong> 250 show spots in six classes, judging walk at 15:00, awards at 17:30.</p>
+      <div class="row"><span class="btn">Buy tickets</span><span class="btn ghost">Register your car</span></div>
+      <div class="data"><span>Dyno King '25 <b>811 whp</b></span><span>Roll-in <b>07:00</b></span><span>GA <b>$25</b></span></div>
+    </div>
+  </article>`).join("");
+document.getElementById("headline").addEventListener("input", e => {
+  const v = esc(e.target.value.trim() || "TunerFest");
+  grid.querySelectorAll(".name").forEach(el => { el.innerHTML = v; });
+});
+</script>
