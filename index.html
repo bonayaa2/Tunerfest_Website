@@ -918,7 +918,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     <div class="page-top" style="justify-items:start;text-align:left">
       <span class="eyebrow ruled">Shift Nation team</span>
       <h1 class="mega">Admin</h1>
-      <p class="lede" id="adm-intro">Show car and booth applications, Cashia tickets and Little Events sales for Tuner Fest 6.0. Review applications, confirm Cashia payments, check people in at the gate, and export the lists.</p>
+      <p class="lede" id="adm-intro">Show car and booth applications and Cashia tickets for Tuner Fest 6.0. Review applications, confirm Cashia payments, check people in at the gate, and export the lists.</p>
     </div>
     <div id="adm-locked" class="adm-locked" hidden>
       <p>This page is for the Shift Nation team. Ask the site owner for editor access.</p>
@@ -957,7 +957,6 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
           <button type="button" data-f="car" aria-pressed="true">Show cars</button>
           <button type="button" data-f="booth" aria-pressed="false">Booths</button>
           <button type="button" data-f="cashia" aria-pressed="false" id="adm-cashia-tab" hidden>Cashia tickets</button>
-          <button type="button" data-f="little" aria-pressed="false" id="adm-little-tab" hidden>Little Events sales</button>
         </div>
         <div class="chips" id="adm-ostatus" role="group" aria-label="Filter Cashia orders" style="justify-content:flex-start;margin:0" hidden>
           <button type="button" data-o="all" aria-pressed="true">All</button>
@@ -1720,75 +1719,12 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
         el("div", { class: "adm-actions" }, actions));
     }));
   }
-  // Little Events sales, fetched through the little-sales server function (the API key stays on the server)
-  const pickField = (o, names, re) => {
-    const keys = Object.keys(o || {});
-    for (const n of names) { const k = keys.find(x => x.toLowerCase() === n.toLowerCase()); if (k && o[k] != null) return o[k]; }
-    const k = re && keys.find(x => re.test(x) && o[x] != null && typeof o[x] !== "object");
-    return k ? o[k] : null;
-  };
-  const prettyKey = k => k.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/_/g, " ").replace(/^./, c => c.toUpperCase());
-  const LITTLE_ERRORS = {
-    not_configured: "Little Events isn't connected yet. Add the API key in Supabase → Edge Functions → Secrets as LITTLE_EVENTS_API_KEY.",
-    bad_key: "Little Events rejected the API key. Generate a new one in Little Events → Integrations and update LITTLE_EVENTS_API_KEY in Supabase.",
-    little_failed: "Little Events didn't answer. Try Refresh in a minute.",
-  };
-  async function loadLittle() {
-    if (adm.littleLoading) return;
-    adm.littleLoading = true; adm.littleErr = null;
-    if (adm.kind === "little") renderAdmin();
-    const res = await sb.functions.invoke("little-sales", { body: {} });
-    adm.littleLoading = false;
-    if (res.error) {
-      let body = {};
-      try { body = await res.error.context.json(); } catch {}
-      adm.littleErr = body.error === "event_not_found"
-        ? `Tuner Fest wasn't found in your Little Events account. Events found: ${(body.events || []).map(e => e.name).join(", ") || "none"}.`
-        : LITTLE_ERRORS[body.error] || "Little Events sales couldn't load. Try Refresh.";
-    } else adm.little = res.data;
-    if (adm.kind === "little") renderAdmin();
-  }
-  function renderLittle() {
-    const d = adm.little;
-    if (!d) {
-      $("#adm-stats").replaceChildren();
-      $("#adm-list").replaceChildren(el("div", { class: "adm-empty", text: adm.littleErr || "Loading Little Events sales…" }));
-      if (!adm.littleErr) loadLittle();
-      return;
-    }
-    const tiers = (d.breakdown || []).map(t => ({
-      name: pickField(t, ["TicketType", "TicketName", "PriceName", "Name", "Label", "Type"], /name|type|label/i) || "Ticket",
-      sold: pickField(t, ["TotalSales", "TicketsSold", "Sold", "Quantity", "Count", "Sales"], /sold|quantity|count|sales/i),
-      revenue: pickField(t, ["TotalRevenue", "Revenue", "Amount", "Total"], /revenue|amount/i),
-    }));
-    $("#adm-stats").replaceChildren(
-      el("div", {}, el("b", { text: d.totalSales == null ? "—" : String(d.totalSales) }), el("span", { text: "Little Events tickets sold" })),
-      el("div", {}, el("b", { text: d.totalRevenue == null ? "—" : kes(d.totalRevenue) }), el("span", { text: "Little Events revenue" })),
-      ...tiers.map(t => el("div", {}, el("b", { text: t.sold == null ? "—" : String(t.sold) }),
-        el("span", { text: `${t.name}${t.revenue != null ? ` · ${kes(t.revenue)}` : ""}` }))));
-    const q = adm.q.toLowerCase().replace(/\s/g, "");
-    const fields = p => Object.entries(p).filter(([k, v]) => v != null && v !== "" && typeof v !== "object" && !/id$/i.test(k));
-    const when = p => Date.parse(pickField(p, ["CreatedAt", "PaymentDate", "Date", "Timestamp"], /date|time|created/i) || "") || 0;
-    const rows = (d.payments || []).slice().sort((a, b) => when(b) - when(a))
-      .filter(p => !q || fields(p).some(([, v]) => String(v).toLowerCase().replace(/\s/g, "").includes(q)));
-    const note = el("p", { class: "adm-empty", style: "padding:0 0 4px;text-align:left", text: `${d.event?.name || "Tuner Fest"} on Little Events · updated ${fmtTime(Date.parse(d.fetchedAt))}. Scan these tickets with Little Events' own Scan Tickets screen.` });
-    if (!rows.length) { $("#adm-list").replaceChildren(note, el("div", { class: "adm-empty", text: (d.payments || []).length ? "No payments match your search." : "No Little Events payments yet." })); return; }
-    $("#adm-list").replaceChildren(note, ...rows.map(p => {
-      const title = pickField(p, ["CustomerName", "Name", "FullName", "BuyerName", "PhoneNumber", "Phone", "Reference"], /name|phone|reference/i) || "Payment";
-      const status = pickField(p, ["Status", "PaymentStatus"], /status/i);
-      return el("article", { class: "adm-row booth" },
-        el("div", { style: "min-width:0" },
-          el("h3", {}, el("span", { text: String(title) }), ...(status ? [el("span", { class: `pill ${/success|paid|complete/i.test(status) ? "approved" : /fail|cancel/i.test(status) ? "declined" : "pending"}`, text: String(status) })] : [])),
-          el("dl", {}, fields(p).slice(0, 10).map(([k, v]) => [el("dt", { text: prettyKey(k) }), el("dd", { text: /amount|total|price/i.test(k) && !isNaN(v) ? kes(v) : /date|time|At$|_at$/i.test(k) && Date.parse(v) ? fmtTime(Date.parse(v)) : String(v) })]))));
-    }));
-  }
   function renderAdmin() {
     if ($("#adm").hidden) return;
-    const cashiaMode = adm.kind === "cashia", littleMode = adm.kind === "little";
-    $("#adm-status").hidden = cashiaMode || littleMode; $("#adm-ostatus").hidden = !cashiaMode;
-    $("#adm-q").placeholder = cashiaMode ? "Search code, name, phone" : littleMode ? "Search payments" : "Search name, car, email";
+    const cashiaMode = adm.kind === "cashia";
+    $("#adm-status").hidden = cashiaMode; $("#adm-ostatus").hidden = !cashiaMode;
+    $("#adm-q").placeholder = cashiaMode ? "Search code, name, phone" : "Search name, car, email";
     if (cashiaMode) return renderOrders();
-    if (littleMode) return renderLittle();
     const all = [...adm.entries.values()].sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
     const cars = all.filter(e => e.type === "car"), booths = all.filter(e => e.type === "booth");
     const n = st => cars.filter(e => (e.status || "pending") === st).length;
@@ -1881,8 +1817,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       const o = await sb.from("cashia_orders").select("*").order("created_at", { ascending: true }).limit(1000);
       if (o.error) { admMsg("Cashia orders couldn't load. Try Refresh.", true); }
       else adm.orders = o.data;
-      $("#adm-cashia-tab").hidden = false; $("#adm-little-tab").hidden = false;
-      adm.little = null; adm.littleErr = null;
+      $("#adm-cashia-tab").hidden = false;
       admMsg(""); renderAdmin();
     }
     async function enter(session) {
@@ -1942,14 +1877,6 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   }
 
   $("#adm-export").addEventListener("click", async () => {
-    if (adm.kind === "little") {
-      const pays = adm.little?.payments || [];
-      const lc = [...new Set(pays.flatMap(p => Object.keys(p).filter(k => typeof p[k] !== "object")))];
-      const c3 = v => { let t = v == null ? "" : String(v); if (/^[=+\-@]/.test(t)) t = "'" + t; return /[",\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t; };
-      try { await adm.ops.save("tunerfest-little-events-payments.csv", [lc.join(","), ...pays.map(p => lc.map(k => c3(p[k])).join(","))].join("\n")); }
-      catch { admMsg("The export didn't save. Try again.", true); }
-      return;
-    }
     if (adm.kind === "cashia") {
       const oc = ["code", "status", "tier", "quantity", "unit_price", "total", "name", "phone", "email", "cashia_ref", "created_at", "paid_at", "checked_in_at"];
       const c2 = v => { let t = v == null ? "" : String(v); if (/^[=+\-@]/.test(t)) t = "'" + t; return /[",\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t; };
