@@ -14,6 +14,11 @@ Website for Tuner Fest 6.0: Sunday, November 29, 2026 at Galleria Mall, Karen, N
 | `tools/add_photos.py` | Adds a batch of photos to the gallery. |
 | `tools/build_site.sh` | Rebuilds `site/` from `index.html` and `assets/`. |
 
+## Hosting
+
+Vercel deploys the `site/` folder (set in `vercel.json`) on every push to `main`.
+After editing `index.html` or `assets/`, run `tools/build_site.sh` so `site/` is rebuilt before committing.
+
 ## Pages
 
 Home, Tickets, Register (show car or vendor booth), Events, Gallery, the Cashia KES 200 offer, and the team admin panel at `/admin`.
