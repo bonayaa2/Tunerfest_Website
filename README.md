@@ -37,6 +37,12 @@ insert into public.admins (user_id)
 select id from auth.users where email = 'person@example.com';
 ```
 
+## Approval emails
+
+Approving or declining a show car or booth in the admin panel emails the applicant from
+info@shiftnation.com, through the `notify-applicant` Supabase Edge Function (`supabase/functions/`)
+and Resend. It needs the `RESEND_API_KEY` secret in Supabase → Edge Functions → Secrets.
+
 ## Cashia tickets
 
 Sold on the Cashia page, separately from Little Africa. A buyer orders, pays with Cashia using their
