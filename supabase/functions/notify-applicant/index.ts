@@ -30,14 +30,14 @@ function compose(r: Reg) {
     subject = "You're in: your car is on the floor at Tuner Fest 6.0";
     lines = [
       `Great news. ${what} has been approved as a show car at Tuner Fest 6.0, ${EVENT}.`,
-      "There are only 70 show car spots, and yours is confirmed.",
+      "There are only 130 show car spots, and yours is confirmed.",
       "We'll send your roll-in time and entry details closer to the day. Keep your car insured and show-ready.",
     ];
   } else if (r.type === "car") {
     subject = "Your Tuner Fest 6.0 show car application";
     lines = [
       `Thank you for applying to show ${what} at Tuner Fest 6.0.`,
-      "We had far more applications than our 70 show car spots, and we couldn't fit your car in this time.",
+      "We had far more applications than our 130 show car spots, and we couldn't fit your car in this time.",
       "We'd still love to see you there. Tickets are on sale at shiftnation.org.",
     ];
   } else if (approved) {

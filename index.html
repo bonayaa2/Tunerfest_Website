@@ -641,7 +641,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
           <img class="tf-logo" src="assets/tunerfest-logo.webp" alt="" width="1200" height="385">
           <span class="eyebrow" style="--c: var(--red)">Bring your build</span>
           <h2 class="mega">Exhibit</h2>
-          <p class="lede">Put your machine on the floor in front of 5,000+ enthusiasts, judges and the culture's biggest brands. Only 70 show car spots.</p>
+          <p class="lede">Put your machine on the floor in front of 5,000+ enthusiasts, judges and the culture's biggest brands. Only 130 show car spots.</p>
           <a class="btn fill red" href="#register">Register your car <span class="arr">→</span></a>
         </div>
       </div>
@@ -672,7 +672,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
         </div>
       </div>
       <div class="stats">
-        <div><b>70</b><span>Show car spots</span></div>
+        <div><b>130</b><span>Show car spots</span></div>
         <div><b>5K+</b><span>Attendees</span></div>
         <div><b class="stat-words">All of East Africa</b><span>Where our crowd comes from</span></div>
         <div><b>1</b><span>Day of horsepower</span></div>
@@ -745,8 +745,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       <p class="lede" id="reg-lede">Put your build on the floor at Tuner Fest, November 29 at Galleria Mall, Karen. Every application is reviewed by the Shift Nation team.</p>
     </div>
     <div class="spots-note" id="spots-note">
-      <b>70</b>
-      <p><strong>Only 70 show car spots.</strong> Applications stay open, but spots go to approved cars first come, first served. Apply early to get a place on the floor.</p>
+      <b>130</b>
+      <p><strong>Only 130 show car spots.</strong> Applications stay open, but spots go to approved cars first come, first served. Apply early to get a place on the floor.</p>
     </div>
     <div class="seg" role="group" aria-label="Application type">
       <button type="button" data-type="car" aria-pressed="true" style="--c: var(--red)">Show car</button>
@@ -1366,7 +1366,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   const SUPABASE_ANON_KEY = "sb_publishable_sfoxXldi-G_SdRFo7-8uHw_jraWmuJ4";
   const sb = !window.claude && SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase
     ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
-  const SPOTS = 70;
+  const SPOTS = 130;
   const el = (tag, props = {}, ...kids) => {
     const n = document.createElement(tag);
     for (const [k, v] of Object.entries(props)) {
@@ -1624,7 +1624,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       const r = await sb.storage.from("car-photos").createSignedUrls(paths, 3600);
       (r.data || []).forEach(u => { if (u.signedUrl) urls.set(u.path, u.signedUrl); });
     }
-    const spots = 70;
+    const spots = SPOTS;
     count.textContent = `${data.length} of ${spots} show car spots confirmed`;
     empty.hidden = data.length > 0;
     gal.innerHTML = data.map(c => {
