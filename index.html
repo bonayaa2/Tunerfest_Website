@@ -433,6 +433,54 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
 .cx-price-card b { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: 2rem; line-height: 1.05; color: var(--cx-brand); font-variant-numeric: tabular-nums; }
 .cx-price-card span { font-size: 0.85rem; color: #6b6b75; }
 .cx-terms { margin-top: 18px; color: var(--muted); font-size: 0.85rem; max-width: 70ch; }
+/* Cashia ordering */
+.cx-mine { font-size: 0.9rem; color: var(--cx-on-brand); }
+.cx-mine a { color: var(--cx-on-brand); font-weight: 700; }
+.cx-form { display: grid; gap: 20px; max-width: 720px; }
+.cx-form .cx-btn { justify-self: start; border: 0; cursor: pointer; }
+.cx-form .cx-btn[disabled] { opacity: .6; cursor: progress; }
+.cx-form .field input:focus, .cx-form .field select:focus { border-color: var(--cx-brand); }
+.cx-tiers { border: 0; padding: 0; margin: 0; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); }
+.cx-tier { position: relative; display: grid; gap: 4px; padding: 16px 18px; border-radius: 16px; border: 1.5px solid var(--line); background: var(--night-2); cursor: pointer; }
+.cx-tier input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+.cx-tier:has(input:checked) { border-color: var(--cx-brand); background: color-mix(in srgb, var(--cx-brand) 14%, var(--night-2)); }
+.cx-tier:has(input:focus-visible) { outline: 2px solid var(--cx-accent); outline-offset: 2px; }
+.cx-tier:has(input:disabled) { opacity: .45; cursor: not-allowed; }
+.cx-tier .n { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+.cx-tier b { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: 1.6rem; color: var(--cx-accent); font-variant-numeric: tabular-nums; }
+.cx-tier s { font-size: 0.85rem; color: var(--muted); }
+.cx-total { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 16px 18px; border-radius: 16px; background: var(--cx-brand); color: var(--cx-on-brand); }
+.cx-total span { font-weight: 600; }
+.cx-total b { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: 1.6rem; font-variant-numeric: tabular-nums; }
+/* ticket page */
+.tk-page { display: grid; justify-items: center; gap: 22px; padding-block: clamp(36px, 7vw, 72px) 100px; text-align: center; }
+.tk-page h1 { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; text-transform: uppercase; font-size: clamp(1.6rem, 5vw, 2.4rem); line-height: 1.05; }
+.tk-page .lede { margin: 0 auto; }
+.tk-steps { width: min(520px, 100%); display: grid; gap: 14px; text-align: left; }
+.tk-box { border: 1px solid color-mix(in srgb, var(--cx-brand) 45%, var(--line)); background: color-mix(in srgb, var(--cx-brand) 8%, var(--night)); border-radius: 18px; padding: 18px 20px; display: grid; gap: 10px; }
+.tk-box h2 { font-family: var(--f-title); font-weight: 700; font-size: 1.05rem; }
+.tk-box p { color: #c9cdd8; font-size: 0.92rem; }
+.tk-code { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: clamp(1.2rem, 5vw, 1.6rem); letter-spacing: 0.06em; color: var(--cx-accent); user-select: all; }
+.tk-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.tk-row .cx-btn { min-height: 46px; font-size: 0.66rem; padding: 0 20px; cursor: pointer; }
+.tk-row .cx-primary { border: 0; }
+.tk-row .cx-ghost, .tk-code .cx-ghost { background: transparent; border: 1.5px solid var(--cx-on-brand); cursor: pointer; min-height: 40px; padding: 0 16px; font-size: 0.6rem; }
+.tk-small { font-size: 0.85rem; color: var(--muted); }
+.tk-ticket { width: min(380px, 100%); background: #fff; color: #1a1a1f; border-radius: 24px; overflow: hidden; text-align: left; box-shadow: 0 30px 60px -24px #000; }
+.tk-ticket .top { background: var(--cx-brand); color: #fff; padding: 18px 22px; display: grid; gap: 4px; }
+.tk-ticket .top b { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: 1.3rem; text-transform: uppercase; }
+.tk-ticket .top span { font-size: 0.85rem; opacity: .9; }
+.tk-ticket .qr { display: grid; place-items: center; padding: 22px 22px 10px; }
+.tk-ticket .qr svg { width: min(240px, 70vw); height: auto; display: block; }
+.tk-ticket .code { text-align: center; font-family: var(--f-display); font-stretch: 125%; font-weight: 900; letter-spacing: 0.08em; color: var(--cx-brand); padding-bottom: 14px; }
+.tk-ticket dl { margin: 0; padding: 16px 22px 20px; border-top: 1.5px dashed #e3d3da; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 14px; font-size: 0.9rem; }
+.tk-ticket dt { color: #6b6b75; }
+.tk-ticket dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+.tk-stamp { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em; color: #5fd38a; border: 2px solid currentColor; border-radius: 10px; padding: 6px 12px; }
+.adm-row .ref { display: flex; gap: 6px; }
+.adm-row .ref input { min-height: 40px; width: 150px; padding: 0 10px; background: var(--night); border: 1px solid var(--line); color: var(--text); font: inherit; font-size: 0.85rem; }
+.pill.paid { color: #5fd38a; } .pill.cancelled { color: var(--red); } .pill.in { color: #8ab4ff; }
+
 /* promo strip used on the homepage and tickets page */
 .cashia-strip.in-hero { width: 100%; margin: 4px 0 0; text-align: left; box-shadow: 0 14px 30px -16px #000; }
 .cashia-strip:focus-visible { outline-color: #fff; }
@@ -775,10 +823,11 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
           <h1 class="mega">Pay via Cashia.<span class="cx-big">Get KES&nbsp;200 off.</span></h1>
           <p class="cx-lede">Sign up for Cashia, pay for your early bird or advanced Tuner Fest ticket with it, and KES 200 comes off the price. Cashia is a sponsor of Tuner Fest 6.0.</p>
           <div class="cx-actions">
-            <a class="cx-btn cx-primary" href="#cashia" data-cashia="signup">Sign up for Cashia <span aria-hidden="true">→</span></a>
-            <a class="cx-btn cx-ghost" href="#cashia" data-cashia="pay">Pay with Cashia</a>
+            <button class="cx-btn cx-primary" type="button" id="cx-go-buy">Buy a Cashia ticket <span aria-hidden="true">→</span></button>
+            <a class="cx-btn cx-ghost" href="#cashia" data-cashia="signup">Sign up for Cashia</a>
           </div>
-          <p class="cx-soon" id="cx-soon" role="status" hidden>Cashia sign-up and checkout links are coming soon. Check back shortly.</p>
+          <p class="cx-soon" id="cx-soon" role="status" hidden>The Cashia sign-up link is coming soon. You can download Cashia from your app store.</p>
+          <p class="cx-mine" id="cx-mine" hidden></p>
         </div>
         <div class="cx-ticket" aria-label="Example: Early bird ticket paid with Cashia">
           <div class="cx-ticket-top"><span>Early bird</span><span>Nov 29 · Galleria</span></div>
@@ -798,7 +847,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       <ol class="cx-steps">
         <li><b>1</b><h3>Get Cashia</h3><p>Download the Cashia app and create your free account.</p></li>
         <li><b>2</b><h3>Add money</h3><p>Top up your Cashia wallet, for example from M-PESA.</p></li>
-        <li><b>3</b><h3>Pay with Cashia</h3><p>Choose Cashia when you buy an early bird or advanced ticket. KES 200 comes off.</p></li>
+        <li><b>3</b><h3>Order and pay</h3><p>Order below, pay with Cashia using your order code, and your QR ticket is issued once payment is confirmed.</p></li>
       </ol>
     </div>
   </section>
@@ -813,6 +862,41 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       <p class="cx-terms">Applies to early bird and advanced tickets only. Not available on gate tickets. One discount per ticket. Full terms coming soon.</p>
     </div>
   </section>
+
+  <section class="section cx-section" style="padding-top:0" id="cx-buy">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow ruled" style="--c: var(--cx-accent)">Order</span>
+        <h2 class="mega"><span>Get your</span><span class="cx-hl">Cashia ticket</span></h2>
+        <p class="lede">These tickets are sold here, separately from Little Africa tickets. Pay with Cashia and you get a QR ticket to show at the gate.</p>
+      </div>
+      <form class="cx-form" id="cx-form" novalidate>
+        <fieldset class="cx-tiers" id="cx-tiers">
+          <legend class="sr">Ticket type</legend>
+        </fieldset>
+        <div class="fgrid">
+          <div class="field"><label for="cx-qty">Number of tickets</label>
+            <select id="cx-qty"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></div>
+          <div class="field"><label for="cx-name">Full name</label><input id="cx-name" type="text" autocomplete="name" required><span class="error">Enter your full name.</span></div>
+          <div class="field"><label for="cx-email">Email</label><input id="cx-email" type="email" autocomplete="email" required><span class="error">Enter a valid email, like you@example.com.</span></div>
+          <div class="field"><label for="cx-phone">Phone (the number on your Cashia account)</label><input id="cx-phone" type="tel" autocomplete="tel" placeholder="+254 7XX XXX XXX" required><span class="error">Enter the phone number you'll pay from.</span></div>
+        </div>
+        <div class="cx-total"><span>Total to pay with Cashia</span><b id="cx-total">KES 0</b></div>
+        <p class="form-status err" id="cx-err" role="alert" hidden></p>
+        <button class="cx-btn cx-primary" type="submit" id="cx-submit">Place order <span aria-hidden="true">→</span></button>
+        <p class="hint">Next you'll get an order code to use as the payment reference in Cashia.</p>
+      </form>
+    </div>
+  </section>
+</div>
+
+<!-- =========================== CASHIA TICKET (#ticket-CODE) =========================== -->
+<div class="view cashia" data-view="ticket" hidden>
+  <div class="wrap">
+    <div class="tk-page" id="tk-page">
+      <p class="lede">Loading your ticket…</p>
+    </div>
+  </div>
 </div>
 
 <!-- =========================== ADMIN =========================== -->
@@ -821,7 +905,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     <div class="page-top" style="justify-items:start;text-align:left">
       <span class="eyebrow ruled">Shift Nation team</span>
       <h1 class="mega">Admin</h1>
-      <p class="lede" id="adm-intro">Show car and booth applications for Tuner Fest 6.0. Approve, decline or remove entries, and export the list.</p>
+      <p class="lede" id="adm-intro">Show car and booth applications and Cashia tickets for Tuner Fest 6.0. Review applications, confirm Cashia payments, check people in at the gate, and export the lists.</p>
     </div>
     <div id="adm-locked" class="adm-locked" hidden>
       <p>This page is for the Shift Nation team. Ask the site owner for editor access.</p>
@@ -859,6 +943,14 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
         <div class="chips" id="adm-filter" role="group" aria-label="Filter applications" style="justify-content:flex-start;margin:0">
           <button type="button" data-f="car" aria-pressed="true">Show cars</button>
           <button type="button" data-f="booth" aria-pressed="false">Booths</button>
+          <button type="button" data-f="cashia" aria-pressed="false" id="adm-cashia-tab" hidden>Cashia tickets</button>
+        </div>
+        <div class="chips" id="adm-ostatus" role="group" aria-label="Filter Cashia orders" style="justify-content:flex-start;margin:0" hidden>
+          <button type="button" data-o="all" aria-pressed="true">All</button>
+          <button type="button" data-o="pending" aria-pressed="false">Awaiting payment</button>
+          <button type="button" data-o="paid" aria-pressed="false">Paid</button>
+          <button type="button" data-o="in" aria-pressed="false">Checked in</button>
+          <button type="button" data-o="cancelled" aria-pressed="false">Cancelled</button>
         </div>
         <div class="chips" id="adm-status" role="group" aria-label="Filter by status" style="justify-content:flex-start;margin:0">
           <button type="button" data-s="all" aria-pressed="true">All</button>
@@ -1450,7 +1542,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   })();
 
   /* ---------- admin ---------- */
-  const adm = { entries: new Map(), photos: new Map(), kind: "car", status: "all", q: "", confirm: null };
+  const adm = { entries: new Map(), photos: new Map(), orders: [], kind: "car", status: "all", ostatus: "all", q: "", confirm: null };
   (async () => {
     if (sb) return initSupabaseAdmin();
     const [db, user] = await Promise.all([dbP, userP]);
@@ -1504,8 +1596,56 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       adm.entries.delete(e.key); adm.photos.delete(e.key); adm.confirm = null; admMsg(""); renderAdmin();
     } catch { admMsg("That entry couldn't be removed. Try again.", true); }
   }
+  async function updateOrder(o, patch) {
+    const r = await sb.from("cashia_orders").update(patch).eq("id", o.id);
+    if (r.error) { admMsg("That change didn't save. Try again.", true); return; }
+    Object.assign(o, patch); admMsg(""); renderAdmin();
+  }
+  function renderOrders() {
+    const orders = adm.orders || [];
+    const paid = orders.filter(o => o.status === "paid");
+    const sum = (l, f) => l.reduce((a, o) => a + f(o), 0);
+    $("#adm-stats").replaceChildren(
+      el("div", {}, el("b", { text: String(sum(paid, o => o.quantity)) }), el("span", { text: "Cashia tickets paid" })),
+      el("div", {}, el("b", { text: kes(sum(paid, o => o.total)) }), el("span", { text: "Cashia revenue" })),
+      el("div", {}, el("b", { text: String(orders.filter(o => o.status === "pending").length) }), el("span", { text: "Awaiting payment" })),
+      el("div", {}, el("b", { text: `${sum(paid.filter(o => o.checked_in_at), o => o.quantity)} / ${sum(paid, o => o.quantity)}` }), el("span", { text: "People checked in" })));
+    const q = adm.q.toLowerCase().replace(/\s/g, "");
+    const rows = orders.slice().reverse()
+      .filter(o => adm.ostatus === "all" || (adm.ostatus === "in" ? !!o.checked_in_at : o.status === adm.ostatus && !(adm.ostatus === "paid" && o.checked_in_at)))
+      .filter(o => !q || [o.code, o.name, o.email, o.phone, o.cashia_ref].some(v => String(v || "").toLowerCase().replace(/\s/g, "").includes(q)));
+    if (!rows.length) { $("#adm-list").replaceChildren(el("div", { class: "adm-empty", text: orders.length ? "No Cashia orders match these filters." : "No Cashia orders yet." })); return; }
+    $("#adm-list").replaceChildren(...rows.map(o => {
+      const st = o.checked_in_at ? "in" : o.status;
+      const label = { pending: "Awaiting payment", paid: "Paid", in: "Checked in", cancelled: "Cancelled" }[st];
+      let actions;
+      if (o.status === "pending") {
+        const ref = el("input", { type: "text", placeholder: "Cashia transaction ID", "aria-label": `Cashia transaction ID for ${o.code}` });
+        actions = [el("div", { class: "ref" }, ref),
+          el("button", { class: "btn fill", style: "--c:#5fd38a", type: "button", text: "Mark paid", onclick: () => {
+            if (!ref.value.trim()) { admMsg(`Enter the Cashia transaction ID for ${o.code} first, so payments can be traced.`, true); ref.focus(); return; }
+            updateOrder(o, { status: "paid", paid_at: new Date().toISOString(), cashia_ref: ref.value.trim().slice(0, 100) }); } }),
+          el("button", { class: "btn red", type: "button", text: "Cancel order", onclick: () => updateOrder(o, { status: "cancelled" }) })];
+      } else if (o.status === "paid" && !o.checked_in_at) {
+        actions = [el("button", { class: "btn fill yellow", type: "button", text: `Check in (${o.quantity})`, onclick: () => updateOrder(o, { checked_in_at: new Date().toISOString() }) })];
+      } else if (o.checked_in_at) {
+        actions = [el("button", { class: "btn", type: "button", text: "Undo check-in", onclick: () => updateOrder(o, { checked_in_at: null }) })];
+      } else actions = [el("button", { class: "btn", type: "button", text: "Reopen", onclick: () => updateOrder(o, { status: "pending" }) })];
+      return el("article", { class: "adm-row booth" },
+        el("div", { style: "min-width:0" },
+          el("h3", {}, el("span", { text: o.code }), el("span", { class: `pill ${st}`, text: label })),
+          el("dl", {}, [["Name", o.name], ["Phone", o.phone], ["Email", o.email], ["Tickets", `${o.quantity} × ${o.tier === "early" ? "Early bird" : "Advanced"}`], ["Total", kes(o.total)],
+            ["Cashia ref", o.cashia_ref || "—"], ["Ordered", fmtTime(Date.parse(o.created_at))], ...(o.checked_in_at ? [["Checked in", fmtTime(Date.parse(o.checked_in_at))]] : [])]
+            .map(([k, v]) => [el("dt", { text: k }), el("dd", { text: String(v ?? "") })]))),
+        el("div", { class: "adm-actions" }, actions));
+    }));
+  }
   function renderAdmin() {
     if ($("#adm").hidden) return;
+    const cashiaMode = adm.kind === "cashia";
+    $("#adm-status").hidden = cashiaMode; $("#adm-ostatus").hidden = !cashiaMode;
+    $("#adm-q").placeholder = cashiaMode ? "Search code, name, phone" : "Search name, car, email";
+    if (cashiaMode) return renderOrders();
     const all = [...adm.entries.values()].sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
     const cars = all.filter(e => e.type === "car"), booths = all.filter(e => e.type === "booth");
     const n = st => cars.filter(e => (e.status || "pending") === st).length;
@@ -1553,6 +1693,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     }));
   }
   $("#adm-filter").addEventListener("click", ev => { const b = ev.target.closest("[data-f]"); if (!b) return; adm.kind = b.dataset.f; $$("#adm-filter button").forEach(x => x.setAttribute("aria-pressed", String(x === b))); renderAdmin(); });
+  $("#adm-ostatus").addEventListener("click", ev => { const b = ev.target.closest("[data-o]"); if (!b) return; adm.ostatus = b.dataset.o; $$("#adm-ostatus button").forEach(x => x.setAttribute("aria-pressed", String(x === b))); renderAdmin(); });
   $("#adm-status").addEventListener("click", ev => { const b = ev.target.closest("[data-s]"); if (!b) return; adm.status = b.dataset.s; $$("#adm-status button").forEach(x => x.setAttribute("aria-pressed", String(x === b))); renderAdmin(); });
   $("#adm-q").addEventListener("input", ev => { adm.q = ev.target.value.trim(); renderAdmin(); });
   // Email + password sign-in for the site on your own host (Supabase Auth)
@@ -1588,6 +1729,10 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       const r = await sb.from("registrations").select("*").order("created_at", { ascending: true }).limit(1000);
       if (r.error) { admMsg("Applications couldn't load. Try Refresh.", true); return; }
       adm.entries = new Map(r.data.map(row => [row.id, fromRow(row)]));
+      const o = await sb.from("cashia_orders").select("*").order("created_at", { ascending: true }).limit(1000);
+      if (o.error) { admMsg("Cashia orders couldn't load. Try Refresh.", true); }
+      else adm.orders = o.data;
+      $("#adm-cashia-tab").hidden = false;
       admMsg(""); renderAdmin();
     }
     async function enter(session) {
@@ -1647,6 +1792,13 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   }
 
   $("#adm-export").addEventListener("click", async () => {
+    if (adm.kind === "cashia") {
+      const oc = ["code", "status", "tier", "quantity", "unit_price", "total", "name", "phone", "email", "cashia_ref", "created_at", "paid_at", "checked_in_at"];
+      const c2 = v => { let t = v == null ? "" : String(v); if (/^[=+\-@]/.test(t)) t = "'" + t; return /[",\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t; };
+      try { await adm.ops.save("tunerfest-cashia-tickets.csv", [oc.join(","), ...(adm.orders || []).map(o => oc.map(k => c2(o[k])).join(","))].join("\n")); }
+      catch { admMsg("The export didn't save. Try again.", true); }
+      return;
+    }
     const cols = ["type", "status", "car", "business", "name", "phone", "email", "instagram", "boothCategory", "boothSize", "power", "notes", "createdAt"];
     const cell = v => { let t = v == null ? "" : String(v); if (/^[=+\-@]/.test(t)) t = "'" + t; return /[",\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t; };
     const rows = [...adm.entries.values()].sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0))
@@ -1656,9 +1808,14 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   });
 
   /* ---------- Cashia sponsor offer ---------- */
-  // Fill these in when Cashia sends the links; until then the buttons show a "coming soon" note.
-  const CASHIA_LINKS = { signup: "", pay: "" };
+  // Fill these in when Cashia sends them:
+  //   signup: link to download / sign up for Cashia
+  //   pay:    Cashia payment link (or leave empty and fill payInstructions)
+  //   payInstructions: how to pay, e.g. "Pay to Cashia business ID 12345"
+  const CASHIA_LINKS = { signup: "", pay: "", payInstructions: "" };
   const CASHIA_OFF = 200;
+  const CASHIA_PRICES = { early: 600, advanced: 800 };
+  const kes = n => "KES " + Number(n).toLocaleString("en-US");
   $$("[data-cashia]").forEach(a => {
     const url = CASHIA_LINKS[a.dataset.cashia];
     if (url) { a.href = url; a.target = "_blank"; a.rel = "noopener"; return; }
@@ -1669,27 +1826,152 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     $("#cx-prices").replaceChildren(...tiers.filter(t => t.id !== "gate").map(t => {
       const full = Number(String(t.price).replace(/,/g, ""));
       const ended = t.id === "early" && !early;
-      const fmt = n => "KES " + n.toLocaleString("en-US");
       return el("div", { class: `cx-price-card${ended ? " off" : ""}` },
-        el("h3", { text: t.name }),
-        el("s", { text: fmt(full) }),
-        el("b", { text: fmt(full - CASHIA_OFF) }),
+        el("h3", { text: t.name }), el("s", { text: kes(full) }), el("b", { text: kes(full - CASHIA_OFF) }),
         el("span", { text: ended ? "Early bird ended Oct 30" : "Paid with Cashia" }));
     }));
   }
   renderCashiaPrices();
 
+  // remembered order codes on this device (a convenience only)
+  const myCodes = {
+    get() { try { return JSON.parse(localStorage.getItem("tf6-cashia-codes") || "[]"); } catch { return []; } },
+    add(c) { try { const l = myCodes.get().filter(x => x !== c); l.unshift(c); localStorage.setItem("tf6-cashia-codes", JSON.stringify(l.slice(0, 10))); } catch {} },
+  };
+  function renderMine() {
+    const codes = myCodes.get(), box = $("#cx-mine");
+    box.hidden = !codes.length;
+    if (!codes.length) return;
+    box.replaceChildren(document.createTextNode(codes.length === 1 ? "Your Cashia ticket: " : "Your Cashia tickets: "),
+      ...codes.flatMap((c, i) => [i ? document.createTextNode(", ") : null, el("a", { href: `#ticket-${c}`, text: c })]).filter(Boolean));
+  }
+  renderMine();
+
+  function renderTierChoices() {
+    const early = earlyOpen();
+    const opts = [["early", "Early bird", 800], ["advanced", "Advanced", 1000]];
+    const current = ($('#cx-tiers input:checked') || {}).value;
+    $("#cx-tiers").replaceChildren(el("legend", { class: "sr", text: "Ticket type" }), ...opts.map(([id, name, full]) => {
+      const disabled = id === "early" && !early;
+      const input = el("input", { type: "radio", name: "cx-tier", value: id });
+      if (disabled) input.disabled = true;
+      if ((current === id && !disabled) || (!current && (early ? id === "early" : id === "advanced"))) input.checked = true;
+      return el("label", { class: "cx-tier" }, input, el("span", { class: "n", text: disabled ? `${name} · ended Oct 30` : name }),
+        el("b", { text: kes(CASHIA_PRICES[id]) }), el("s", { text: kes(full) }));
+    }));
+    updateTotal();
+  }
+  function updateTotal() {
+    const t = ($('#cx-tiers input:checked') || {}).value || "advanced";
+    $("#cx-total").textContent = kes(CASHIA_PRICES[t] * Number($("#cx-qty").value));
+  }
+  $("#cx-tiers").addEventListener("change", updateTotal);
+  $("#cx-qty").addEventListener("change", updateTotal);
+  renderTierChoices();
+  $("#cx-go-buy").addEventListener("click", () => { $("#cx-buy").scrollIntoView({ behavior: "smooth" }); setTimeout(() => $("#cx-name").focus({ preventScroll: true }), 600); });
+
+  const newCode = () => {
+    const A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789", b = crypto.getRandomValues(new Uint8Array(10));
+    return "TF6-" + [...b].map(x => A[x % A.length]).join("");
+  };
+  const cxErr = msg => { $("#cx-err").textContent = msg || ""; $("#cx-err").hidden = !msg; };
+  $("#cx-form").addEventListener("submit", async ev => {
+    ev.preventDefault(); cxErr("");
+    let bad = null;
+    ["#cx-name", "#cx-email", "#cx-phone"].forEach(id => {
+      const i = $(id), ok = i.value.trim() !== "" && i.checkValidity();
+      i.closest(".field").classList.toggle("invalid", !ok); if (!ok && !bad) bad = i;
+    });
+    if (bad) { bad.focus(); return; }
+    if (!sb) { cxErr("Cashia tickets can only be ordered on shiftnation.org."); return; }
+    const tier = $('#cx-tiers input:checked').value;
+    if (tier === "early" && !earlyOpen()) { renderTierChoices(); cxErr("Early bird has ended. Choose an advanced ticket."); return; }
+    const order = { code: newCode(), tier, quantity: Number($("#cx-qty").value), unit_price: CASHIA_PRICES[tier],
+      name: $("#cx-name").value.trim(), email: $("#cx-email").value.trim(), phone: $("#cx-phone").value.trim() };
+    const btn = $("#cx-submit"); btn.disabled = true;
+    // no .select(): buyers can create an order but never read the orders table
+    const r = await sb.from("cashia_orders").insert(order);
+    btn.disabled = false;
+    if (r.error) { cxErr("Your order didn't go through. Check your connection and try again."); return; }
+    myCodes.add(order.code); renderMine();
+    $("#cx-form").reset(); renderTierChoices();
+    location.hash = `ticket-${order.code}`;
+  });
+
+  // Ticket page: #ticket-TF6-XXXXXXXXXX
+  function qrSvg(text) {
+    if (typeof window.qrcode !== "function") return null;
+    const q = window.qrcode(0, "M"); q.addData(text); q.make();
+    const n = q.getModuleCount(), m = 2, size = n + m * 2;
+    let d = "";
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) d += `M${c + m} ${r + m}h1v1h-1z`;
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", `0 0 ${size} ${size}`); svg.setAttribute("role", "img"); svg.setAttribute("aria-label", `QR code for ticket ${text}`); svg.setAttribute("shape-rendering", "crispEdges");
+    const bg = document.createElementNS(svg.namespaceURI, "rect"); bg.setAttribute("width", size); bg.setAttribute("height", size); bg.setAttribute("fill", "#fff");
+    const path = document.createElementNS(svg.namespaceURI, "path"); path.setAttribute("d", d); path.setAttribute("fill", "#1a1a1f");
+    svg.append(bg, path); return svg;
+  }
+  const copyBtn = (label, text) => el("button", { class: "cx-btn cx-ghost", type: "button", text: label, onclick: async e => {
+    const b = e.currentTarget;
+    try { await navigator.clipboard.writeText(text); b.textContent = "Copied"; } catch { b.textContent = "Select and copy it"; }
+    setTimeout(() => { b.textContent = label; }, 2000);
+  } });
+  async function showTicket(code) {
+    const page = $("#tk-page");
+    const put = (...k) => page.replaceChildren(...k.flat().filter(x => x != null));
+    const head = (title, text) => [el("span", { class: "cx-tag", text: "Tuner Fest 6.0 × Cashia" }), el("h1", { text: title }), text ? el("p", { class: "lede", text }) : null];
+    if (!/^TF6-[A-Z2-9]{10}$/.test(code)) { put(...head("Ticket not found", "Check the link and try again.")); return; }
+    if (!sb) { put(...head("Open this on shiftnation.org", "Cashia tickets are only available on the live website.")); return; }
+    put(el("p", { class: "lede", text: "Loading your ticket…" }));
+    const r = await sb.rpc("get_cashia_ticket", { ticket_code: code });
+    if (r.error) { put(...head("Couldn't load your ticket", "Check your connection, then reload this page.")); return; }
+    const t = r.data && r.data[0];
+    if (!t) { put(...head("Ticket not found", "Check the link, or contact the Shift Nation team.")); return; }
+    myCodes.add(t.code); renderMine();
+    const tierName = t.tier === "early" ? "Early bird" : "Advanced";
+    const link = location.origin + location.pathname + "#ticket-" + t.code;
+    if (t.status === "cancelled") { put(...head("This order was cancelled", `Order ${t.code}. If you paid, contact the Shift Nation team with your Cashia receipt.`)); return; }
+    if (t.status === "pending") {
+      const payBtn = CASHIA_LINKS.pay ? el("a", { class: "cx-btn cx-primary", href: CASHIA_LINKS.pay, target: "_blank", rel: "noopener", text: `Pay ${kes(t.total)} with Cashia` }) : null;
+      put(...head("Almost there. Pay with Cashia", `${t.quantity} × ${tierName} for ${t.name}.`),
+        el("div", { class: "tk-steps" },
+          el("div", { class: "tk-box" }, el("h2", { text: `1. Pay ${kes(t.total)} with Cashia` }),
+            el("p", { text: CASHIA_LINKS.payInstructions || "Cashia payment details are being finalised and will appear here. Keep this page link so you can come back." }),
+            payBtn ? el("div", { class: "tk-row" }, payBtn) : null),
+          el("div", { class: "tk-box" }, el("h2", { text: "2. Use this as your payment reference" }),
+            el("div", { class: "tk-code" }, el("span", { text: t.code }), copyBtn("Copy code", t.code)),
+            el("p", { text: "Enter this code in the reference or note field when you pay, so we can match your payment." })),
+          el("div", { class: "tk-box" }, el("h2", { text: "3. Get your QR ticket" }),
+            el("p", { text: "Once your payment is confirmed, your QR ticket appears on this page. Save this link to come back to it." }),
+            el("div", { class: "tk-row" }, copyBtn("Copy page link", link), el("button", { class: "cx-btn cx-ghost", type: "button", text: "Check status", onclick: () => showTicket(code) })))));
+      return;
+    }
+    const qr = qrSvg(t.code);
+    put(...head(t.checked_in ? "You're checked in" : "Your ticket is confirmed", t.checked_in ? "Enjoy Tuner Fest 6.0." : "Show this QR code at the gate. Screenshot it in case you lose signal."),
+      t.checked_in ? el("span", { class: "tk-stamp", text: "Checked in" }) : null,
+      el("div", { class: "tk-ticket" },
+        el("div", { class: "top" }, el("b", { text: "Tuner Fest 6.0" }), el("span", { text: "Sun, Nov 29, 2026 · Galleria Mall, Karen · Doors 10:00" })),
+        el("div", { class: "qr" }, qr || el("p", { text: "QR unavailable. Show your code at the gate." })),
+        el("div", { class: "code", text: t.code }),
+        el("dl", {}, [["Name", t.name], ["Ticket", `${tierName} (Cashia)`], ["Admits", `${t.quantity} ${t.quantity === 1 ? "person" : "people"}`], ["Paid", kes(t.total)]].map(([k, v]) => [el("dt", { text: k }), el("dd", { text: v })]))),
+      el("div", { class: "tk-row" }, copyBtn("Copy page link", link)));
+  }
+
+
   /* ---------- routing ---------- */
   const views = $$(".view");
   function route() {
     const h = location.hash.slice(1);
-    const name = h === "booth" ? "register" : (views.some(v => v.dataset.view === h) ? h : "home");
+    const isTicket = h.startsWith("ticket-");
+    const name = isTicket ? "ticket" : h === "booth" ? "register" : (views.some(v => v.dataset.view === h) ? h : "home");
     views.forEach(v => { v.hidden = v.dataset.view !== name; });
     $$(".menu nav a").forEach(a => {
       const target = a.getAttribute("href").slice(1);
       if (target === (h || "home") || (name === "home" && target === "home")) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     });
     if (name === "register") setType(h === "booth" ? "booth" : "car");
+    if (isTicket) showTicket(h.slice(7).toUpperCase());
+    if (name === "cashia") renderTierChoices();
     scrollTop();
     onScroll();
     railUpdates.forEach(f => f());

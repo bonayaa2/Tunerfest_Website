@@ -11,6 +11,7 @@ Website for Tuner Fest 6.0: Sunday, November 29, 2026 at Galleria Mall, Karen, N
 | `assets/` | Logos, hero photo, event poster, gallery photos and the Supabase client library. |
 | `gallery.json` | List of gallery photos and captions. |
 | `supabase-setup.sql` | One-time database, photo storage and admin access setup for Supabase. |
+| `supabase-cashia.sql` | Cashia tickets table and ticket lookup (already applied). |
 | `tools/add_photos.py` | Adds a batch of photos to the gallery. |
 | `tools/build_site.sh` | Rebuilds `site/` from `index.html` and `assets/`. |
 
@@ -36,7 +37,14 @@ insert into public.admins (user_id)
 select id from auth.users where email = 'person@example.com';
 ```
 
+## Cashia tickets
+
+Sold on the Cashia page, separately from Little Africa. A buyer orders, pays with Cashia using their
+order code (`TF6-…`) as the reference, an admin marks the order paid in **Admin → Cashia tickets**,
+and the buyer's ticket page (`/#ticket-TF6-…`) shows a QR code. At the gate, search the code and click **Check in**.
+
 ## Still to add
 
-- Cashia sign-up and checkout links (`CASHIA_LINKS` in `index.html`)
+- Cashia sign-up link and payment details (`CASHIA_LINKS` in `index.html`)
+- Automatic payment confirmation from Cashia's API (replaces marking orders paid by hand)
 - Social media profile links in the footer
