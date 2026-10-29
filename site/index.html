@@ -379,6 +379,21 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
 .adm-actions .btn { min-height: 40px; padding: 0 14px; font-size: 0.6rem; }
 .adm-actions .confirm { font-size: 0.8rem; color: #ffb3ad; max-width: 160px; }
 .adm-empty { border: 1px dashed var(--line); padding: 28px; color: var(--muted); }
+/* admin home: one tile per page */
+.adm-home { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); padding-bottom: 100px; }
+.adm-tile { display: grid; gap: 10px; align-content: start; padding: 22px 22px 20px; border: 1px solid var(--line); border-top: 4px solid var(--c); background: var(--night-2); color: var(--text); text-decoration: none; transition: border-color .15s, transform .15s; }
+.adm-tile:hover { border-color: var(--c); transform: translateY(-2px); }
+.adm-tile .k { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.66rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--c); }
+.adm-tile b { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: 2.6rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.adm-tile .what { font-weight: 600; }
+.adm-tile .sub { color: var(--muted); font-size: 0.9rem; }
+.adm-tile .go { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--c); margin-top: 6px; }
+.adm-tile.solid { background: var(--c); color: var(--on-accent); }
+.adm-tile.solid .k, .adm-tile.solid .go, .adm-tile.solid .sub { color: var(--on-accent); }
+.adm-back { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.66rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--yellow); text-decoration: none; }
+.adm-back:hover { text-decoration: underline; }
+.scan-cta { display: grid; gap: 14px; justify-items: start; padding: 22px; border: 1px solid var(--line); background: var(--night-2); }
+.scan-cta .btn { min-height: 64px; padding: 0 34px; font-size: 0.8rem; }
 @media (max-width: 700px) { .adm-row, .adm-row.booth { grid-template-columns: minmax(0, 1fr); } .adm-row .ph-box { width: 100%; } .adm-actions { display: flex; flex-wrap: wrap; } }
 
 /* admin sign in */
@@ -767,8 +782,9 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
 <div class="view" data-view="admin" hidden>
   <div class="wrap">
     <div class="page-top" style="justify-items:start;text-align:left">
+      <a class="adm-back" id="adm-back" href="#admin" hidden>← Admin home</a>
       <span class="eyebrow ruled">Shift Nation team</span>
-      <h1 class="mega">Admin</h1>
+      <h1 class="mega" id="adm-title">Admin</h1>
       <p class="lede" id="adm-intro">Show car and booth applications for Tuner Fest 6.0. Review applications and export the lists.</p>
     </div>
     <div id="adm-locked" class="adm-locked" hidden>
@@ -802,13 +818,11 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
         <button class="btn" type="button" id="adm-refresh">Refresh</button>
         <button class="btn" type="button" id="adm-logout">Sign out</button>
       </div>
+      <p class="form-status" id="adm-msg" role="status" hidden></p>
+      <nav class="adm-home" id="adm-home" aria-label="Admin pages"></nav>
+      <div id="adm-page" hidden>
       <div class="adm-stats" id="adm-stats"></div>
-      <div class="adm-bar">
-        <div class="chips" id="adm-filter" role="group" aria-label="Filter applications" style="justify-content:flex-start;margin:0">
-          <button type="button" data-f="car" aria-pressed="true">Show cars</button>
-          <button type="button" data-f="booth" aria-pressed="false">Booths</button>
-          <button type="button" data-f="passes" aria-pressed="false" id="adm-passes-tab" hidden>Driver passes</button>
-        </div>
+      <div class="adm-bar" id="adm-bar">
         <div class="chips" id="adm-status" role="group" aria-label="Filter by status" style="justify-content:flex-start;margin:0">
           <button type="button" data-s="all" aria-pressed="true">All</button>
           <button type="button" data-s="pending" aria-pressed="false">Pending</button>
@@ -821,8 +835,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
           <button class="btn" type="button" id="adm-export">Export CSV</button>
         </div>
       </div>
-      <p class="form-status" id="adm-msg" role="status" hidden></p>
       <div class="adm-list" id="adm-list"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -1430,7 +1444,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   })();
 
   /* ---------- admin ---------- */
-  const adm = { entries: new Map(), photos: new Map(), passes: [], kind: "car", status: "all", q: "", confirm: null };
+  const adm = { entries: new Map(), photos: new Map(), passes: [], passesOk: false, page: "home", kind: "car", status: "all", q: "", confirm: null };
   (async () => {
     if (sb) return initSupabaseAdmin();
     const [db, user] = await Promise.all([dbP, userP]);
@@ -1600,7 +1614,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
         if (r.error) { admMsg("The pass wasn't created. Try again.", true); return; }
         adm.passes.push(r.data); admMsg(`Pass ${r.data.code} created for ${r.data.name}. Use Copy link to send it.`); renderAdmin();
       } },
-      el("button", { class: "btn fill yellow", type: "button", text: "Scan passes", onclick: openScanner }),
+      el("a", { class: "btn fill yellow", href: "#admin/scan", text: "Scan passes" }),
       el("div", { class: "field" }, el("label", { for: "np-name", text: "Driver name" }), name),
       el("div", { class: "field" }, el("label", { for: "np-car", text: "Car (optional)" }), car),
       el("button", { class: "btn", type: "submit", text: "Create pass" }));
@@ -1780,21 +1794,79 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       el("p", { class: "pass-note", text: "Save it so you have it even without signal. The pass works once, so don't share it." }));
   }
 
+  // Admin pages: #admin (home tiles), #admin/cars, #admin/booths, #admin/passes, #admin/scan
+  const ADMIN_PAGES = {
+    home: { title: "Admin", intro: "Pick what you want to work on." },
+    cars: { kind: "car", title: "Show cars", intro: "Review show car applications. Approving a car creates its driver pass and emails the owner." },
+    booths: { kind: "booth", title: "Booths", intro: "Review booth and vendor requests." },
+    passes: { kind: "passes", title: "Driver passes", intro: "Every approved show car gets a pass. Email passes, create extra ones by hand, and see who has arrived." },
+    scan: { kind: "scan", title: "Gate scanner", intro: "Scan driver passes with your phone's camera. Each pass lets one driver in, once." },
+  };
+  function setAdminPage(sub) {
+    const page = ADMIN_PAGES[sub] ? sub : "home";
+    if (page !== adm.page) {
+      adm.q = ""; $("#adm-q").value = ""; adm.status = "all"; adm.confirm = null; admMsg("");
+      $$("#adm-status button").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.s === "all")));
+    }
+    adm.page = page; adm.kind = ADMIN_PAGES[page].kind || "car";
+    $("#adm-title").textContent = ADMIN_PAGES[page].title;
+    renderAdmin();
+  }
+  const countOf = (list, st) => list.filter(e => (e.status || "pending") === st).length;
+  function renderHome() {
+    const all = [...adm.entries.values()];
+    const cars = all.filter(e => e.type === "car"), booths = all.filter(e => e.type === "booth");
+    const live = (adm.passes || []).filter(p => !p.revoked), inn = live.filter(p => p.checked_in_at).length;
+    const unmailed = live.filter(p => p.registration_id && !p.emailed_at).length;
+    const tile = (href, c, k, big, what, sub, go, solid) => el("a", { class: `adm-tile${solid ? " solid" : ""}`, href, style: `--c:${c}` },
+      el("span", { class: "k", text: k }), el("b", { text: big }), el("span", { class: "what", text: what }), sub ? el("span", { class: "sub", text: sub }) : null, el("span", { class: "go", text: go }));
+    $("#adm-home").replaceChildren(...[
+      tile("#admin/cars", "var(--red)", "Show car approvals", String(countOf(cars, "pending")), "waiting for review", `${countOf(cars, "approved")} / ${SPOTS} spots filled · ${cars.length} applications`, "Open approvals →"),
+      tile("#admin/booths", "var(--teal)", "Booths", String(countOf(booths, "pending")), "waiting for review", `${countOf(booths, "approved")} approved · ${booths.length} ${booths.length === 1 ? "request" : "requests"}`, "Open booths →"),
+      adm.passesOk ? tile("#admin/passes", "var(--yellow)", "Driver passes", `${inn} / ${live.length}`, "drivers checked in", unmailed ? `${unmailed} ${unmailed === 1 ? "pass" : "passes"} not emailed yet` : "All passes emailed", "Open passes →") : null,
+      adm.passesOk ? tile("#admin/scan", "var(--yellow)", "Gate", "Scan", "driver passes with your phone", `${live.length - inn} still to arrive`, "Open scanner →", true) : null,
+    ].filter(Boolean));
+  }
+  function renderScanPage() {
+    const live = (adm.passes || []).filter(p => !p.revoked), inn = live.filter(p => p.checked_in_at);
+    $("#adm-stats").replaceChildren(
+      el("div", {}, el("b", { text: `${inn.length} / ${live.length}` }), el("span", { text: "Checked in" })),
+      el("div", {}, el("b", { text: String(live.length - inn.length) }), el("span", { text: "Still to arrive" })));
+    const recent = inn.slice().sort((a, b) => Date.parse(b.checked_in_at) - Date.parse(a.checked_in_at)).slice(0, 10);
+    $("#adm-list").replaceChildren(
+      el("div", { class: "scan-cta" },
+        el("button", { class: "btn fill yellow", type: "button", text: "Open camera scanner", onclick: openScanner }),
+        el("p", { class: "pass-note", style: "text-align:left", text: "Allow camera access when your phone asks. If a code won't scan, type it in at the bottom of the scanner." })),
+      el("h3", { class: "eyebrow", style: "--c: var(--muted);margin-top:10px", text: recent.length ? "Latest check-ins" : "No one checked in yet" }),
+      ...recent.map(p => el("article", { class: "adm-row booth" },
+        el("div", { style: "min-width:0" }, el("h3", {}, el("span", { text: p.name }), el("span", { class: "pill in", text: fmtTime(Date.parse(p.checked_in_at)) })),
+          el("dl", {}, [["Car", p.car || "—"], ["Code", p.code]].map(([k, v]) => [el("dt", { text: k }), el("dd", { text: v })]))))));
+  }
   function renderAdmin() {
     if ($("#adm").hidden) return;
+    const home = adm.page === "home";
+    $("#adm-home").hidden = !home; $("#adm-page").hidden = home; $("#adm-back").hidden = home;
+    $("#adm-intro").textContent = ADMIN_PAGES[adm.page].intro;
+    if (home) return renderHome();
+    $("#adm-bar").hidden = adm.page === "scan";
+    if (adm.page === "scan") return renderScanPage();
     $("#adm-status").hidden = adm.kind === "passes";
-    $("#adm-q").placeholder = adm.kind === "passes" ? "Search name, car, code" : "Search name, car, email";
+    $("#adm-q").placeholder = adm.kind === "passes" ? "Search name, car, code" : adm.kind === "booth" ? "Search business, name, email" : "Search name, car, email";
     if (adm.kind === "passes") return renderPasses();
     const all = [...adm.entries.values()].sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
     const cars = all.filter(e => e.type === "car"), booths = all.filter(e => e.type === "booth");
-    const n = st => cars.filter(e => (e.status || "pending") === st).length;
+    const n = st => countOf(cars, st);
     const approved = n("approved");
-    $("#adm-stats").replaceChildren(
+    if (adm.kind === "booth") $("#adm-stats").replaceChildren(
+      el("div", {}, el("b", { text: String(booths.length) }), el("span", { text: "Booth requests" })),
+      el("div", {}, el("b", { text: String(countOf(booths, "pending")) }), el("span", { text: "Waiting for review" })),
+      el("div", {}, el("b", { text: String(countOf(booths, "approved")) }), el("span", { text: "Approved" })),
+      el("div", {}, el("b", { text: String(countOf(booths, "declined")) }), el("span", { text: "Declined" })));
+    else $("#adm-stats").replaceChildren(
       el("div", {}, el("b", { text: `${approved} / ${SPOTS}` }), el("span", { text: "Spots filled (approved)" })),
       el("div", {}, el("b", { text: String(cars.length) }), el("span", { text: "Car applications" })),
       el("div", {}, el("b", { text: String(n("pending")) }), el("span", { text: "Waiting for review" })),
       el("div", {}, el("b", { text: String(n("declined")) }), el("span", { text: "Declined" })),
-      el("div", {}, el("b", { text: String(booths.length) }), el("span", { text: "Booth requests" })),
       el("div", { class: `meter${approved > SPOTS ? " over" : ""}`, role: "img", "aria-label": `${approved} of ${SPOTS} spots filled` }, el("i", { style: `width:${Math.min(100, approved / SPOTS * 100)}%` })),
     );
     const q = adm.q.toLowerCase();
@@ -1802,7 +1874,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       .filter(e => adm.status === "all" || (e.status || "pending") === adm.status)
       .filter(e => !q || [e.name, e.car, e.business, e.email, e.phone, e.instagram].some(v => String(v || "").toLowerCase().includes(q)));
     if (!rows.length) {
-      $("#adm-list").replaceChildren(el("div", { class: "adm-empty", text: all.length ? "No applications match these filters." : "No applications yet. They appear here as soon as someone registers." }));
+      const none = adm.kind === "booth" ? !booths.length : !cars.length;
+      $("#adm-list").replaceChildren(el("div", { class: "adm-empty", text: none ? `No ${adm.kind === "booth" ? "booth requests" : "show car applications"} yet. They appear here as soon as someone registers.` : "No applications match these filters." }));
       return;
     }
     const carIndex = new Map(cars.map((e, i) => [e, i + 1]));
@@ -1840,7 +1913,6 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
         el("div", { class: "adm-actions" }, actions));
     }));
   }
-  $("#adm-filter").addEventListener("click", ev => { const b = ev.target.closest("[data-f]"); if (!b) return; adm.kind = b.dataset.f; $$("#adm-filter button").forEach(x => x.setAttribute("aria-pressed", String(x === b))); renderAdmin(); });
   $("#adm-status").addEventListener("click", ev => { const b = ev.target.closest("[data-s]"); if (!b) return; adm.status = b.dataset.s; $$("#adm-status button").forEach(x => x.setAttribute("aria-pressed", String(x === b))); renderAdmin(); });
   $("#adm-q").addEventListener("input", ev => { adm.q = ev.target.value.trim(); renderAdmin(); });
   // Email + password sign-in for the site on your own host (Supabase Auth)
@@ -1851,6 +1923,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       $("#reset-form").hidden = which !== "reset";
       $("#adm").hidden = which !== "panel";
       $("#adm-intro").hidden = which !== "panel";
+      if (which !== "panel") $("#adm-back").hidden = true;
     };
     const err = (id, msg) => { const m = $(id); m.textContent = msg || ""; m.hidden = !msg; };
     const fromRow = r => ({ key: r.id, id: r.id, type: r.type, status: r.status, createdAt: Date.parse(r.created_at), name: r.name, email: r.email, phone: r.phone,
@@ -1878,7 +1951,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       if (r.error) { admMsg("Applications couldn't load. Try Refresh.", true); return; }
       adm.entries = new Map(r.data.map(row => [row.id, fromRow(row)]));
       const t = await sb.from("driver_tickets").select("*").limit(2000);
-      if (!t.error) { adm.passes = t.data; $("#adm-passes-tab").hidden = false; }
+      if (!t.error) { adm.passes = t.data; adm.passesOk = true; }
       admMsg(""); renderAdmin();
     }
     async function enter(session) {
@@ -1958,7 +2031,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   function route() {
     const h = location.hash.slice(1);
     const isPass = h.startsWith("pass-");
-    const name = isPass ? "pass" : h === "booth" ? "register" : (views.some(v => v.dataset.view === h) ? h : "home");
+    const [base, sub] = h.split("/");
+    const name = isPass ? "pass" : base === "admin" ? "admin" : h === "booth" ? "register" : (views.some(v => v.dataset.view === h) ? h : "home");
     views.forEach(v => { v.hidden = v.dataset.view !== name; });
     $$(".menu nav a").forEach(a => {
       const target = a.getAttribute("href").slice(1);
@@ -1967,6 +2041,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     if (name === "register") setType(h === "booth" ? "booth" : "car");
     if (name === "cars") loadShowCars();
     if (isPass) showPass(h.slice(5).toUpperCase());
+    if (name === "admin") setAdminPage(sub);
     scrollTop();
     onScroll();
     railUpdates.forEach(f => f());
