@@ -1702,6 +1702,59 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   });
   document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#scan").hidden) closeScanner(); });
 
+  // Draws the pass as a PNG the driver can keep in their photos (works without signal)
+  async function passImage(t) {
+    const W = 1080, H = 1560, c = document.createElement("canvas"), x = c.getContext("2d");
+    c.width = W; c.height = H;
+    await Promise.all(["900 64px Archivo", "800 28px Archivo", "600 36px Manrope", "400 32px Manrope"].map(f => document.fonts?.load(f).catch(() => {})));
+    const font = (w, px, fam) => { x.font = `${w} ${px}px ${fam === "body" ? '"Manrope", Arial, sans-serif' : '"Archivo", "Arial Black", sans-serif'}`; };
+    const spacing = v => { if ("letterSpacing" in x) x.letterSpacing = v; };
+    const fit = (text, max) => { let s = String(text); if (x.measureText(s).width <= max) return s; while (s.length > 1 && x.measureText(s + "…").width > max) s = s.slice(0, -1); return s + "…"; };
+    const round = (X, Y, w, h, r) => { x.beginPath(); x.roundRect ? x.roundRect(X, Y, w, h, r) : x.rect(X, Y, w, h); };
+    x.fillStyle = "#07080c"; x.fillRect(0, 0, W, H);
+    const L = 60, T = 60, CW = W - 120, CH = 1380;
+    x.save(); round(L, T, CW, CH, 48); x.clip();
+    x.fillStyle = "#ffffff"; x.fillRect(L, T, CW, CH);
+    x.fillStyle = "#f5b41f"; x.fillRect(L, T, CW, 200);
+    x.fillStyle = "#07080c"; x.textBaseline = "alphabetic";
+    font(900, 66, "display"); spacing("2px"); x.textAlign = "left"; x.fillText("DRIVER", L + 56, T + 100); x.fillText("PASS", L + 56, T + 166);
+    font(800, 28, "display"); spacing("4px"); x.textAlign = "right"; x.fillText("TUNER FEST 6.0", L + CW - 56, T + 128); x.fillText("NOV 29, 2026", L + CW - 56, T + 166);
+    // QR code
+    const q = window.qrcode(0, "M"); q.addData(passLink(t.code)); q.make();
+    const n = q.getModuleCount(), cell = Math.floor(600 / (n + 4)), size = cell * (n + 4), qx = (W - size) / 2, qy = T + 250;
+    x.fillStyle = "#ffffff"; x.fillRect(qx, qy, size, size); x.fillStyle = "#111318";
+    for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) if (q.isDark(r, k)) x.fillRect(qx + (k + 2) * cell, qy + (r + 2) * cell, cell, cell);
+    font(900, 54, "display"); spacing("6px"); x.textAlign = "center"; x.fillText(t.code, W / 2, qy + size + 70);
+    // tear line + details
+    const ly = qy + size + 130;
+    x.strokeStyle = "#d9dbe3"; x.lineWidth = 3; x.setLineDash([14, 12]); x.beginPath(); x.moveTo(L + 40, ly); x.lineTo(L + CW - 40, ly); x.stroke(); x.setLineDash([]);
+    spacing("0px"); x.textAlign = "left";
+    [["Driver", t.name], ["Car", t.car || "—"], ["Where", "Galleria Mall, Karen, Nairobi"], ["Admits", "1 driver"]].forEach(([k, v], i) => {
+      const y = ly + 80 + i * 66;
+      font(400, 32, "body"); x.fillStyle = "#6b6f7c"; x.fillText(k, L + 56, y);
+      font(600, 36, "body"); x.fillStyle = "#111318"; x.fillText(fit(v, CW - 300), L + 230, y);
+    });
+    x.restore();
+    font(800, 28, "display"); spacing("5px"); x.textAlign = "center"; x.fillStyle = "#f5b41f";
+    x.fillText("SHIFTNATION.ORG", W / 2, T + CH + 70);
+    return new Promise(ok => c.toBlob(ok, "image/png"));
+  }
+  async function savePass(t, btn) {
+    const label = btn.textContent; btn.disabled = true; btn.textContent = "Preparing…";
+    try {
+      const blob = await passImage(t);
+      const file = new File([blob], `tunerfest-driver-pass-${t.code}.png`, { type: "image/png" });
+      // phones: the share sheet has "Save Image"; computers: a normal download
+      if (matchMedia("(pointer: coarse)").matches && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file], title: "Tuner Fest 6.0 driver pass" }).catch(() => {});
+      } else {
+        const url = URL.createObjectURL(blob), a = el("a", { href: url, download: file.name });
+        document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 2000);
+      }
+    } catch { alert("The pass image couldn't be made. Take a screenshot instead."); }
+    btn.disabled = false; btn.textContent = label;
+  }
+
   // The driver's own pass page: #pass-DRV-XXXXXXXXXX
   async function showPass(code) {
     const page = $("#pass-page");
@@ -1723,7 +1776,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
         el("dl", {}, [["Driver", t.name], ["Car", t.car || "—"], ["Where", "Galleria Mall, Karen, Nairobi"], ["Admits", "1 driver"]]
           .map(([k, v]) => [el("dt", { text: k }), el("dd", { text: v })])),
         t.checked_in ? el("div", { class: "stamp", text: "Checked in" }) : null),
-      el("p", { class: "pass-note", text: "Take a screenshot so you have it even without signal. The pass works once, so don't share it." }));
+      t.checked_in ? null : el("button", { class: "btn fill yellow", type: "button", text: "Save pass to phone", onclick: ev => savePass(t, ev.currentTarget) }),
+      el("p", { class: "pass-note", text: "Save it so you have it even without signal. The pass works once, so don't share it." }));
   }
 
   function renderAdmin() {
