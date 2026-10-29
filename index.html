@@ -2092,11 +2092,61 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
         : "Save it so you have it even without signal. The pass works once, so don't share it." }));
   }
 
+  // Cars the team adds itself: approved straight away, driver pass emailed to the team inbox
+  const TEAM_EMAIL = "info@shiftnation.org";
+  const isTeamCar = e => e.type === "car" && (e.email || "").toLowerCase() === TEAM_EMAIL;
+  async function addTeamCar(car) {
+    const ins = await sb.from("registrations").insert({ type: "car", name: "Shift Nation team", email: TEAM_EMAIL, phone: "Added by the team", car }).select("id").single();
+    if (ins.error) throw ins.error;
+    const up = await sb.from("registrations").update({ status: "approved", reviewed_at: new Date().toISOString() }).eq("id", ins.data.id);
+    if (up.error) throw up.error;
+    const mail = await sb.functions.invoke("notify-applicant", { body: { id: ins.data.id, kind: "pass" } });
+    let code = "";
+    if (mail.error) { try { code = (await mail.error.context.json()).error; } catch {} }
+    return { id: ins.data.id, mailed: !mail.error, code };
+  }
+  function renderAddCar() {
+    const cars = [...adm.entries.values()].filter(isTeamCar).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    $("#adm-stats").replaceChildren(
+      el("div", {}, el("b", { text: String(cars.length) }), el("span", { text: "Cars added by the team" })),
+      el("div", {}, el("b", { text: `${countOf([...adm.entries.values()].filter(e => e.type === "car"), "approved")} / ${SPOTS}` }), el("span", { text: "Show car spots filled" })));
+    const input = el("input", { id: "ac-car", type: "text", maxlength: "200", autocomplete: "off", placeholder: "BMW M3 Competition" });
+    const btn = el("button", { class: "btn fill", style: "--c: var(--red)", type: "submit", text: "Add car" });
+    const form = el("form", { class: "pass-tools", onsubmit: async ev => {
+        ev.preventDefault();
+        const car = input.value.trim();
+        if (!car) { admMsg("Type the car, like BMW M3 Competition.", true); input.focus(); return; }
+        btn.disabled = true; btn.textContent = "Adding…";
+        try {
+          const r = await addTeamCar(car);
+          adm.keepMsg = true;
+          if (r.code === "not_signed_in") { await adm.reload(); return signInAgain(); }
+          admMsg(r.mailed ? `${car} added. Its driver pass has been emailed to ${TEAM_EMAIL}.` : `${car} added, but the pass email didn't send. Use Email again below.`, !r.mailed);
+          await adm.reload();
+        } catch { admMsg("The car wasn't added. Try again.", true); btn.disabled = false; btn.textContent = "Add car"; }
+      } },
+      el("div", { class: "field" }, el("label", { for: "ac-car", text: "Car" }), input), btn);
+    const rows = cars.map(e => {
+      const p = passFor(e.id);
+      return el("article", { class: "adm-row booth" },
+        el("div", { style: "min-width:0" },
+          el("h3", {}, el("span", { text: e.car || "Car" }), el("span", { class: `pill ${p?.checked_in_at ? "in" : "approved"}`, text: p?.checked_in_at ? "Checked in" : "Added" })),
+          el("dl", {}, [["Driver pass", p ? p.code : "Being created…"], ["Emailed", p?.sending ? "Sending…" : p?.emailed_at ? `${TEAM_EMAIL}, ${fmtTime(Date.parse(p.emailed_at))}` : "Not yet"], ["Added", fmtTime(e.createdAt)]]
+            .map(([k, v]) => [el("dt", { text: k }), el("dd", { text: v })]))),
+        el("div", { class: "adm-actions" }, p ? [
+          el("button", { class: "btn", type: "button", text: p.emailed_at ? "Email again" : "Email pass", onclick: () => emailPass(p) }),
+          copyBtn("Copy link", passLink(p.code)),
+          el("a", { class: "btn", href: `#pass-${p.code}`, target: "_blank", text: "Open pass" })] : null));
+    });
+    $("#adm-list").replaceChildren(form, ...(rows.length ? rows : [el("div", { class: "adm-empty", text: "No cars added by the team yet." })]));
+    setTimeout(() => input.focus(), 0);
+  }
   // Admin pages: #admin (home tiles), #admin/cars, #admin/booths, #admin/passes, #admin/scan
   const ADMIN_PAGES = {
     home: { title: "Admin", intro: "Pick what you want to work on." },
     cars: { kind: "car", title: "Show cars", intro: "Review show car applications. Approving a car creates its driver pass and emails the owner." },
     booths: { kind: "booth", title: "Booths", intro: "Review booth and vendor requests." },
+    add: { kind: "add", title: "Add a car", intro: "Register a show car yourself. Type the car and its driver pass is emailed to info@shiftnation.org." },
     passes: { kind: "passes", title: "Driver passes", intro: "Every approved show car gets a pass. Email passes, create extra ones by hand, and see who has arrived." },
     scan: { kind: "scan", title: "Gate scanner", intro: "Scan driver passes with your phone's camera. Each pass lets one driver in, once." },
   };
@@ -2123,6 +2173,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     $("#adm-home").replaceChildren(...[
       tile("#admin/cars", "var(--red)", "Show car approvals", String(countOf(cars, "pending")), "waiting for review", `${countOf(cars, "approved")} / ${SPOTS} spots filled · ${cars.length} applications`, "Open approvals →"),
       tile("#admin/booths", "var(--teal)", "Booths", String(countOf(booths, "pending")), "waiting for review", `${countOf(booths, "approved")} approved${unpaid ? ` · ${unpaid} awaiting payment` : ""} · ${booths.length} ${booths.length === 1 ? "request" : "requests"}`, "Open booths →"),
+      adm.passesOk ? tile("#admin/add", "var(--red)", "Add a car", "+", "register a show car yourself", `${[...adm.entries.values()].filter(isTeamCar).length} added by the team · pass goes to ${TEAM_EMAIL}`, "Add a car →") : null,
       adm.passesOk ? tile("#admin/passes", "var(--yellow)", "Driver passes", `${dIn} / ${drivers.length}`, "drivers checked in", unmailed ? `${unmailed} ${unmailed === 1 ? "pass" : "passes"} not emailed yet` : "All passes emailed", "Open passes →") : null,
       adm.passesOk ? tile("#admin/scan", "var(--yellow)", "Gate", "Scan", "driver and vendor passes", `${live.length - inn} still to arrive`, "Open scanner →", true) : null,
     ].filter(Boolean));
@@ -2195,8 +2246,9 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     $("#adm-home").hidden = !home; $("#adm-page").hidden = home; $("#adm-back").hidden = home;
     $("#adm-intro").textContent = ADMIN_PAGES[adm.page].intro;
     if (home) return renderHome();
-    $("#adm-bar").hidden = adm.page === "scan";
+    $("#adm-bar").hidden = adm.page === "scan" || adm.page === "add";
     if (adm.page === "scan") return renderScanPage();
+    if (adm.page === "add") return renderAddCar();
     $("#adm-status").hidden = adm.kind === "passes";
     $("#adm-q").placeholder = adm.kind === "passes" ? "Search name, car, code" : adm.kind === "booth" ? "Search business, name, email" : "Search name, car, email";
     if (adm.kind === "passes") return renderPasses();
@@ -2304,6 +2356,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
         setTimeout(() => URL.revokeObjectURL(url), 2000);
       },
     };
+    adm.reload = () => loadAll();
     async function loadAll() {
       const r = await sb.from("registrations").select("*").order("created_at", { ascending: true }).limit(1000);
       if (r.error) { admMsg("Applications couldn't load. Try Refresh.", true); return; }
@@ -2311,7 +2364,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       const t = await sb.from("driver_tickets").select("*").limit(2000);
       if (!t.error) { adm.passes = t.data; adm.passesOk = true; }
       adm.gateKeys = null;
-      admMsg(""); renderAdmin();
+      if (!adm.keepMsg) admMsg(""); adm.keepMsg = false; renderAdmin();
     }
     async function enter(session) {
       // signed in, but only people listed in the admins table get the panel

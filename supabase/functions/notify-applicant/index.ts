@@ -54,9 +54,20 @@ const passButton = (passUrl: string, passCode: string) =>
 <p style="margin:0 0 14px;font-size:13px;line-height:1.6;color:#6b6f7c">Pass code ${esc(passCode)} · or open ${esc(passUrl)}</p>`;
 
 // Just the driver pass, for show cars approved before passes existed (or a lost email).
+// Cars the team adds from the admin panel are registered to the team inbox, so their pass comes here.
+const TEAM_EMAIL = "info@shiftnation.org";
 function composePass(r: Reg, passCode: string) {
-  const first = (r.name || "").trim().split(/\s+/)[0] || "there";
   const passUrl = `${SITE}/#pass-${passCode}`;
+  if ((r.email || "").toLowerCase() === TEAM_EMAIL) {
+    const subject = `Driver pass: ${r.car || "show car"}`;
+    const lines = [
+      `Here is the driver pass for ${r.car || "the show car"} you added from the admin panel, for Tuner Fest 6.0, ${EVENT}.`,
+      "Send it to the driver, or show the QR code at the show car entrance. The pass works once and admits the driver.",
+    ];
+    const text = ["Hi team,", "", ...lines, "", `Pass: ${passUrl}`, `Pass code: ${passCode}`, "", "Shift Nation admin"].join("\n");
+    return { subject, text, html: shell(subject, para("Hi team,") + lines.map(para).join("") + passButton(passUrl, passCode)) };
+  }
+  const first = (r.name || "").trim().split(/\s+/)[0] || "there";
   const subject = "Your Tuner Fest 6.0 driver pass";
   const lines = [
     `Here is the driver pass for ${r.car || "your show car"} at Tuner Fest 6.0, ${EVENT}.`,
