@@ -1781,6 +1781,17 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   // marshal gate links (#gate-KEY): the key lives in this phone's browser, not in the address bar
   const gate = { key: null, label: "", in: 0, total: 0 };
   const GATE_STORE = "tf6-gate-key";
+  // The organiser's WhatsApp number, shown to marshals (international format, digits only, e.g. "2547XXXXXXXX")
+  const ORGANISER_WHATSAPP = "";
+  // 0712 345 678 / +254 712 345 678 / 254712345678 → 254712345678 (Kenyan numbers by default)
+  const waNumber = v => {
+    let d = String(v || "").replace(/[^\d+]/g, "");
+    if (d.startsWith("+")) d = d.slice(1); else if (d.startsWith("00")) d = d.slice(2); else if (/^0[17]\d{8}$/.test(d)) d = "254" + d.slice(1); else if (/^[17]\d{8}$/.test(d)) d = "254" + d;
+    return /^\d{10,15}$/.test(d) ? d : null;
+  };
+  const waLink = (num, text) => `https://wa.me/${num}?text=${encodeURIComponent(text)}`;
+  const organiserButton = () => ORGANISER_WHATSAPP
+    ? el("a", { class: "btn", style: "--c:#25d366", href: waLink(ORGANISER_WHATSAPP, "Hi, it's a Tuner Fest marshal at the gate. "), target: "_blank", rel: "noopener", text: "WhatsApp the organiser" }) : null;
   const loadScript = src => new Promise((ok, fail) => { const t = el("script", { src }); t.onload = ok; t.onerror = fail; document.head.append(t); });
   async function openScanner(mode) {
     scan.mode = mode === "gate" ? "gate" : "team";
@@ -1826,10 +1837,13 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     const box = $("#scan-result");
     box.className = `scan-result ${kind}`;
     box.replaceChildren(...[el("span", { class: "big", text: big }), who ? el("span", { class: "who", text: who }) : null, sub ? el("span", { class: "sub", text: sub }) : null,
-      el("button", { class: "btn", style: "--c:#fff;margin-top:8px", type: "button", text: "Scan next", onclick: resumeScan })].filter(Boolean));
+      el("button", { class: "btn", style: "--c:#fff;margin-top:8px", type: "button", text: "Scan next", onclick: resumeScan }),
+      scan.mode === "gate" && kind !== "ok" ? organiserButton() : null].filter(Boolean));
     box.hidden = false; scan.busy = true;
     navigator.vibrate?.(kind === "ok" ? 80 : [60, 60, 60]);
-    clearTimeout(scan.timer); scan.timer = setTimeout(resumeScan, kind === "ok" ? 2500 : 4000);
+    // marshals keep problem results on screen until they tap Scan next
+    clearTimeout(scan.timer);
+    if (kind === "ok" || scan.mode !== "gate") scan.timer = setTimeout(resumeScan, kind === "ok" ? 2500 : 4000);
   }
   function resumeScan() { clearTimeout(scan.timer); $("#scan-result").hidden = true; scan.busy = false; }
   async function checkPass(code) {
@@ -1939,7 +1953,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
         el("div", {}, el("b", { text: `${gate.in} / ${gate.total}` }), el("span", { text: "Checked in" })),
         el("div", {}, el("b", { text: String(gate.total - gate.in) }), el("span", { text: "Still to arrive" }))),
       el("button", { class: "btn fill yellow gate-go", type: "button", text: "Start scanning", onclick: () => openScanner("gate") }),
-      el("p", { class: "pass-note", text: "Allow camera access when your phone asks. Green means let them in. Amber means the pass was already used. Red means don't let them in and call the organiser." }));
+      el("p", { class: "pass-note", text: "Allow camera access when your phone asks. Green means let them in. Amber means the pass was already used. Red means don't let them in and contact the organiser." }),
+      organiserButton());
   }
 
   // The driver's own pass page: #pass-DRV-XXXXXXXXXX
@@ -2024,21 +2039,29 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   }
   function marshalLinks() {
     if (!adm.gateKeysOk) return null;
-    const label = el("input", { id: "gk-label", type: "text", maxlength: "100", autocomplete: "off", placeholder: "Main gate – Brian" });
+    const label = el("input", { id: "gk-label", type: "text", maxlength: "100", autocomplete: "off", placeholder: "Brian" });
+    const phone = el("input", { id: "gk-phone", type: "tel", autocomplete: "off", placeholder: "0712 345 678" });
     const form = el("form", { class: "pass-tools", onsubmit: async ev => {
         ev.preventDefault();
-        if (!label.value.trim()) { admMsg("Give the marshal link a name, like the gate and the marshal's name.", true); label.focus(); return; }
+        if (!label.value.trim()) { admMsg("Enter the marshal's name.", true); label.focus(); return; }
+        const num = waNumber(phone.value);
+        if (!num) { admMsg("Enter the marshal's WhatsApp number, like 0712 345 678 or +254 712 345 678.", true); phone.focus(); return; }
         const r = await sb.rpc("create_gate_key", { gate_label: label.value.trim() });
         if (r.error) { admMsg("The marshal link wasn't created. Try again.", true); return; }
-        adm.newGateLink = { label: label.value.trim(), url: `${location.origin}${location.pathname}#gate-${r.data}` };
+        const name = label.value.trim(), url = `${location.origin}${location.pathname}#gate-${r.data}`;
+        const first = name.split(/\s+/)[0];
+        const msg = `Hi ${first}, here's your Tuner Fest 6.0 marshal link for checking in drivers at the gate:\n${url}\n\nOpen it on your phone, tap Start scanning and allow the camera. Please don't share this link.`;
+        adm.newGateLink = { label: name, url, wa: waLink(num, msg) };
         admMsg(""); await loadGateKeys();
       } },
-      el("div", { class: "field" }, el("label", { for: "gk-label", text: "Marshal or gate name" }), label),
-      el("button", { class: "btn fill yellow", type: "submit", text: "Create marshal link" }));
-    const fresh = adm.newGateLink && el("div", { class: "scan-cta", style: "border-color: var(--yellow)" },
-      el("p", { text: `Marshal link for ${adm.newGateLink.label}. Copy it now and send it to them. For safety it's only shown once.` }),
+      el("div", { class: "field" }, el("label", { for: "gk-label", text: "Marshal's name" }), label),
+      el("div", { class: "field" }, el("label", { for: "gk-phone", text: "Marshal's WhatsApp number" }), phone),
+      el("button", { class: "btn fill yellow", type: "submit", text: "Create link" }));
+    const fresh = adm.newGateLink && el("div", { class: "scan-cta", style: "border-color: #25d366" },
+      el("p", { text: `Link ready for ${adm.newGateLink.label}. Tap below to open WhatsApp with the message ready, then press Send. For safety the link is only shown here once.` }),
+      el("a", { class: "btn fill", style: "--c:#25d366", href: adm.newGateLink.wa, target: "_blank", rel: "noopener", text: `Send to ${adm.newGateLink.label} on WhatsApp` }),
       el("p", { class: "pass-note", style: "text-align:left;overflow-wrap:anywhere;user-select:all", text: adm.newGateLink.url }),
-      copyBtn("Copy marshal link", adm.newGateLink.url));
+      copyBtn("Copy link instead", adm.newGateLink.url));
     const rows = (adm.gateKeys || []).map(g => el("article", { class: "adm-row booth" },
       el("div", { style: "min-width:0" },
         el("h3", {}, el("span", { text: g.label }), el("span", { class: `pill ${g.revoked ? "revoked" : "approved"}`, text: g.revoked ? "Switched off" : "Active" })),
@@ -2051,7 +2074,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       } }))));
     return el("div", { style: "display:grid;gap:12px;margin-top:10px" },
       el("h3", { class: "eyebrow", style: "--c: var(--muted)", text: "Marshal links" }),
-      el("p", { class: "pass-note", style: "text-align:left", text: "Marshals open their link once on their phone and get a scanner only. They can't see applications or any contact details. Switch a link off if a phone is lost." }),
+      el("p", { class: "pass-note", style: "text-align:left", text: "Enter a marshal's name and WhatsApp number to make their link and send it to them. They open it once on their phone and get a scanner only, with no access to applications or contact details. Switch a link off if a phone is lost." }),
       form, fresh, ...rows);
   }
   function renderAdmin() {
