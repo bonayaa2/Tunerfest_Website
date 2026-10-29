@@ -447,6 +447,24 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
 .pass-tools .field { flex: 1 1 180px; margin: 0; }
 .pill.in { color: #8ab4ff; } .pill.revoked { color: var(--red); }
 
+/* booth tiers with price tags */
+.opt-group { border: 0; padding: 0; margin: 0; min-width: 0; }
+.opt-legend { padding: 0; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; }
+.opt-cards { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); }
+.opt { position: relative; display: grid; gap: 4px; padding: 16px 18px; border: 1.5px solid var(--line); background: var(--night-2); cursor: pointer; }
+.opt input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+.opt:has(input:checked) { border-color: var(--c, var(--teal)); background: color-mix(in srgb, var(--c, var(--teal)) 10%, var(--night-2)); }
+.opt:has(input:focus-visible) { outline: 2px solid var(--c, var(--teal)); outline-offset: 2px; }
+.opt-name { font-weight: 700; }
+.opt-tag { justify-self: start; font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: 1.15rem; color: var(--c, var(--teal)); font-variant-numeric: tabular-nums; }
+.opt-sub { color: var(--muted); font-size: 0.85rem; }
+.opt-inline { color: var(--c, var(--teal)); white-space: nowrap; }
+.booth-total { border: 1px solid color-mix(in srgb, var(--c, var(--teal)) 50%, var(--line)); padding: 16px 18px; display: grid; gap: 6px; }
+.booth-total .ln { display: flex; justify-content: space-between; gap: 12px; color: #c9cdd8; font-size: 0.92rem; font-variant-numeric: tabular-nums; }
+.booth-total .tot { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; border-top: 1px solid var(--line); padding-top: 8px; margin-top: 4px; }
+.booth-total .tot b { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: 1.5rem; color: var(--c, var(--teal)); font-variant-numeric: tabular-nums; }
+.booth-total .pay { color: var(--muted); font-size: 0.85rem; }
+
 /* privacy page */
 .legal { max-width: 760px; margin: 0 auto; padding-bottom: 100px; display: grid; gap: 30px; }
 .legal section { display: grid; gap: 12px; }
@@ -737,11 +755,24 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
           <legend>Your booth</legend>
           <div class="fgrid">
             <div class="field"><label for="b-biz">Business or crew name</label><input id="b-biz" name="business" type="text" required><span class="error">Enter your business or crew name.</span></div>
-            <div class="field"><label for="b-cat">What you'll show</label>
-              <select id="b-cat" name="booth_category"><option>Parts &amp; accessories</option><option>Detailing &amp; wraps</option><option>Garage or tuning shop</option><option>Apparel &amp; merch</option><option>Food &amp; drinks</option><option>Brand activation</option><option>Other</option></select></div>
-            <div class="field"><label for="b-size">Booth size</label>
-              <select id="b-size" name="booth_size"><option>3 × 3 m</option><option>6 × 3 m</option><option>6 × 6 m</option><option>Custom</option></select></div>
-            <div class="field" style="align-content:end"><label class="check"><input type="checkbox" id="b-power" name="power"> We need power at the booth</label></div>
+            <fieldset class="field full opt-group">
+              <legend class="opt-legend">Vendor tier</legend>
+              <div class="opt-cards">
+                <label class="opt"><input type="radio" name="booth_tier" value="food"><span class="opt-name">Food &amp; drinks</span><span class="opt-tag">KES 30,000</span><span class="opt-sub">Food and drink vendors, 3 × 3 m tent</span></label>
+                <label class="opt"><input type="radio" name="booth_tier" value="other" checked><span class="opt-name">Parts &amp; other vendors</span><span class="opt-tag">KES 20,000</span><span class="opt-sub">Parts, detailing, apparel, garages and brands, 3 × 3 m tent</span></label>
+              </div>
+            </fieldset>
+            <div class="field full" id="b-cat-field"><label for="b-cat">What you'll show</label>
+              <select id="b-cat" name="booth_category"><option>Parts &amp; accessories</option><option>Detailing &amp; wraps</option><option>Garage or tuning shop</option><option>Apparel &amp; merch</option><option>Brand activation</option><option>Other</option></select></div>
+            <fieldset class="field full opt-group">
+              <legend class="opt-legend">Tent size</legend>
+              <div class="opt-cards">
+                <label class="opt"><input type="radio" name="booth_size" value="3 × 3 m" checked><span class="opt-name">3 × 3 m</span><span class="opt-tag">Included</span><span class="opt-sub">The standard tent</span></label>
+                <label class="opt"><input type="radio" name="booth_size" value="6 × 3 m"><span class="opt-name">6 × 3 m</span><span class="opt-tag">+ KES 10,000</span><span class="opt-sub">Double the space</span></label>
+              </div>
+            </fieldset>
+            <div class="field full"><label class="check"><input type="checkbox" id="b-power" name="power"><span>We need power at the booth <b class="opt-inline">+ KES 2,500</b></span></label></div>
+            <div class="field full booth-total" id="b-total" aria-live="polite"></div>
             <div class="field full"><label for="b-notes">Tell us about your activation</label><textarea id="b-notes" name="booth_notes" placeholder="Product demos, giveaways, a car on display, sales"></textarea></div>
           </div>
         </fieldset>
@@ -1370,6 +1401,17 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   const sb = !window.claude && SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase
     ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
   const SPOTS = 130;
+  // Booth prices (KES): food 30,000 or parts & others 20,000 for a 3 × 3 m tent; 6 × 3 m adds 10,000; power adds 2,500
+  const BOOTH = { food: 30000, other: 20000, bigTent: 10000, power: 2500 };
+  const kes = n => "KES " + Number(n).toLocaleString("en-US");
+  const isFood = category => /food/i.test(category || "");
+  function boothPrice(category, size, power) {
+    if (size !== "3 × 3 m" && size !== "6 × 3 m") return null; // older requests (6 × 6, custom) are quoted by hand
+    const lines = [[isFood(category) ? "Food & drinks vendor, 3 × 3 m tent" : "Parts & other vendor, 3 × 3 m tent", isFood(category) ? BOOTH.food : BOOTH.other]];
+    if (size === "6 × 3 m") lines.push(["Upgrade to 6 × 3 m tent", BOOTH.bigTent]);
+    if (power) lines.push(["Power", BOOTH.power]);
+    return { lines, total: lines.reduce((a, [, v]) => a + v, 0) };
+  }
   const el = (tag, props = {}, ...kids) => {
     const n = document.createElement(tag);
     for (const [k, v] of Object.entries(props)) {
@@ -1405,6 +1447,19 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     car: { c: "var(--red)", title: `Exhibit <span class="outline">your car</span>`, lede: "Put your build on the floor at Tuner Fest, November 29 at Galleria Mall, Karen. Every application is reviewed by the Shift Nation team." },
     booth: { c: "var(--teal)", title: `Reserve <span class="outline">a booth</span>`, lede: "Floor space for brands, garages and crews. Run demos, activations and direct sales in front of 5,000+ enthusiasts." },
   };
+  function boothChoice() {
+    const tier = ($('input[name="booth_tier"]:checked', form) || {}).value || "other";
+    return { tier, category: tier === "food" ? "Food & drinks" : $("#b-cat").value,
+      size: ($('input[name="booth_size"]:checked', form) || {}).value || "3 × 3 m", power: $("#b-power").checked };
+  }
+  function updateBoothTotal() {
+    const c = boothChoice(), p = boothPrice(c.category, c.size, c.power);
+    $("#b-cat-field").hidden = c.tier === "food";
+    $("#b-total").replaceChildren(...p.lines.map(([k, v]) => el("div", { class: "ln" }, el("span", { text: k }), el("span", { text: kes(v) }))),
+      el("div", { class: "tot" }, el("span", { text: "Total" }), el("b", { text: kes(p.total) })),
+      el("p", { class: "pay", text: "You pay after your booth is approved. We'll email you the payment details." }));
+  }
+  form.addEventListener("change", e => { if (e.target.closest("#fs-booth")) updateBoothTotal(); });
   function setType(t) {
     type = t;
     const k = copy[t];
@@ -1418,6 +1473,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     $("#spots-note").hidden = t !== "car";
     $("#public-note").hidden = t !== "car";
     $("#media-subject").textContent = t === "car" ? "my car" : "my stand and products";
+    updateBoothTotal();
     $$(".seg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.type === t)));
     $$(".field.invalid", form).forEach(f => f.classList.remove("invalid"));
   }
@@ -1487,7 +1543,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       name: d.name.trim(), email: d.email.trim(), phone: d.phone.trim(), instagram: (d.instagram || "").trim(),
       ...(type === "car"
         ? { car: d.car.trim() }
-        : { business: d.business.trim(), boothCategory: d.booth_category, boothSize: d.booth_size, power: !!d.power, notes: (d.booth_notes || "").trim() }),
+        : { business: d.business.trim(), boothCategory: boothChoice().category, boothSize: boothChoice().size, power: !!d.power, notes: (d.booth_notes || "").trim() }),
     };
     const btn = $("#reg-submit");
     btn.disabled = true; showStatus("Sending your application…");
@@ -1513,7 +1569,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     $("#done-title").textContent = `You're on the list, ${first}`;
     $("#done-body").textContent = type === "car"
       ? `We've got your ${entry.car}. There are only ${SPOTS} show car spots, so the team reviews applications in order and will email ${entry.email} to confirm your spot and roll-in time.`
-      : `We've got your ${entry.boothSize} booth request for ${entry.business}. We'll email ${entry.email} with availability, pricing and setup times.`;
+      : (() => { const p = boothPrice(entry.boothCategory || entry.booth_category, entry.boothSize, entry.power);
+          return `We've got your ${entry.boothSize} booth request for ${entry.business}${p ? `, ${kes(p.total)} in total` : ""}. You pay once it's approved. We'll email ${entry.email} with the payment details and setup times.`; })();
     form.hidden = true; done.hidden = false; done.focus();
   }
   async function submitSupabase(d) {
@@ -1523,7 +1580,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       type, name: d.name.trim(), email: d.email.trim(), phone: d.phone.trim(), instagram: (d.instagram || "").trim() || null,
       ...(type === "car"
         ? { car: d.car.trim() }
-        : { business: d.business.trim(), booth_category: d.booth_category, booth_size: d.booth_size, power: !!d.power, notes: (d.booth_notes || "").trim() || null }),
+        : { business: d.business.trim(), booth_category: boothChoice().category, booth_size: boothChoice().size, power: !!d.power, notes: (d.booth_notes || "").trim() || null }),
     };
     try {
       if (type === "car") {
@@ -2096,7 +2153,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       el("div", {}, el("b", { text: String(booths.length) }), el("span", { text: "Booth requests" })),
       el("div", {}, el("b", { text: String(countOf(booths, "pending")) }), el("span", { text: "Waiting for review" })),
       el("div", {}, el("b", { text: String(countOf(booths, "approved")) }), el("span", { text: "Approved" })),
-      el("div", {}, el("b", { text: String(countOf(booths, "declined")) }), el("span", { text: "Declined" })));
+      el("div", {}, el("b", { text: String(countOf(booths, "declined")) }), el("span", { text: "Declined" })),
+      el("div", {}, el("b", { text: kes(booths.filter(e => e.status === "approved").reduce((a, e) => a + (boothPrice(e.boothCategory, e.boothSize, e.power)?.total || 0), 0)) }), el("span", { text: "Approved booth value" })));
     else $("#adm-stats").replaceChildren(
       el("div", {}, el("b", { text: `${approved} / ${SPOTS}` }), el("span", { text: "Spots filled (approved)" })),
       el("div", {}, el("b", { text: String(cars.length) }), el("span", { text: "Car applications" })),
@@ -2122,7 +2180,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       if (e.type === "car") admPhoto(e, box);
       const details = e.type === "car"
         ? [["Owner", e.name], ["Phone", e.phone], ["Email", e.email], ["Instagram", e.instagram || "—"], ["Applied", fmtTime(e.createdAt)]]
-        : [["Contact", e.name], ["Phone", e.phone], ["Email", e.email], ["Shows", e.boothCategory], ["Size", `${e.boothSize || ""}${e.power ? " · needs power" : ""}`], ["Notes", e.notes || "—"], ["Applied", fmtTime(e.createdAt)]];
+        : [["Contact", e.name], ["Phone", e.phone], ["Email", e.email], ["Tier", isFood(e.boothCategory) ? "Food & drinks (KES 30,000)" : "Parts & others (KES 20,000)"], ["Shows", e.boothCategory], ["Size", `${e.boothSize || ""}${e.power ? " · needs power" : ""}`],
+            ["Price", (p => p ? `${kes(p.total)} (${p.lines.map(([k, v]) => `${k.replace(/ vendor, 3 × 3 m tent/, "")} ${kes(v)}`).join(" + ")})` : "Quote by hand (older size option)")(boothPrice(e.boothCategory, e.boothSize, e.power))], ["Notes", e.notes || "—"], ["Applied", fmtTime(e.createdAt)]];
       const title = e.type === "car" ? `#${carIndex.get(e)} ${e.car || ""}` : String(e.business || "");
       // email status (live site only)
       const reviewed = st === "approved" || st === "declined";
@@ -2255,10 +2314,11 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       catch { admMsg("The export didn't save. Try again.", true); }
       return;
     }
-    const cols = ["type", "status", "car", "business", "name", "phone", "email", "instagram", "boothCategory", "boothSize", "power", "notes", "createdAt"];
+    const cols = ["type", "status", "car", "business", "name", "phone", "email", "instagram", "boothCategory", "boothSize", "power", "boothPrice", "notes", "createdAt"];
     const cell = v => { let t = v == null ? "" : String(v); if (/^[=+\-@]/.test(t)) t = "'" + t; return /[",\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t; };
     const rows = [...adm.entries.values()].sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0))
-      .map(e => cols.map(c => cell(c === "createdAt" && e.createdAt ? new Date(e.createdAt).toISOString() : e[c])).join(","));
+      .map(e => cols.map(c => cell(c === "createdAt" && e.createdAt ? new Date(e.createdAt).toISOString()
+        : c === "boothPrice" ? (e.type === "booth" ? boothPrice(e.boothCategory, e.boothSize, e.power)?.total ?? "" : "") : e[c])).join(","));
     try { await adm.ops.save("tunerfest-applications.csv", [cols.join(","), ...rows].join("\n")); }
     catch (err) { if (err && err.code !== "cancelled") admMsg("The export didn't save. Try again.", true); }
   });

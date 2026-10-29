@@ -21,7 +21,18 @@ const esc = (s: unknown) =>
 const EVENT = "Sunday, November 29, 2026 at Galleria Mall, Karen, Nairobi";
 const SITE = "https://www.shiftnation.org";
 
-type Reg = { id: string; type: "car" | "booth"; status: string; name: string; email: string; car: string | null; business: string | null; booth_size: string | null };
+type Reg = { id: string; type: "car" | "booth"; status: string; name: string; email: string; car: string | null; business: string | null; booth_size: string | null; booth_category: string | null; power: boolean | null };
+
+// Booth prices (KES), same as the website: food 30,000 or parts & others 20,000 for 3 × 3 m; 6 × 3 m +10,000; power +2,500
+const kes = (n: number) => "KES " + n.toLocaleString("en-US");
+function boothPrice(r: Reg) {
+  if (r.booth_size !== "3 × 3 m" && r.booth_size !== "6 × 3 m") return null;
+  const food = /food/i.test(r.booth_category || "");
+  const parts = [`${food ? "Food & drinks" : "Parts & other"} vendor, 3 × 3 m tent ${kes(food ? 30000 : 20000)}`];
+  if (r.booth_size === "6 × 3 m") parts.push(`6 × 3 m tent upgrade ${kes(10000)}`);
+  if (r.power) parts.push(`power ${kes(2500)}`);
+  return { total: (food ? 30000 : 20000) + (r.booth_size === "6 × 3 m" ? 10000 : 0) + (r.power ? 2500 : 0), parts };
+}
 
 const shell = (subject: string, inner: string) => `<!doctype html><html><body style="margin:0;background:#f4f4f6;font-family:Arial,Helvetica,sans-serif;color:#1a1a1f">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:24px 12px"><tr><td align="center">
@@ -78,7 +89,8 @@ function compose(r: Reg, passCode: string | null) {
     subject = "Your Tuner Fest 6.0 booth request is approved";
     lines = [
       `Good news. Your booth request for ${what} at Tuner Fest 6.0 (${EVENT}) has been approved.`,
-      "We'll be in touch shortly with pricing, payment and setup details.",
+      ...((p) => p ? [`Your booth: ${p.parts.join(" + ")}. Total: ${kes(p.total)}.`] : [])(boothPrice(r)),
+      "We'll be in touch shortly with payment and setup details.",
     ];
   } else {
     subject = "Your Tuner Fest 6.0 booth request";
@@ -120,7 +132,7 @@ Deno.serve(async (req) => {
   if (!id || typeof id !== "string") return json(400, { error: "missing_id" });
 
   const { data: r, error } = await admin.from("registrations")
-    .select("id,type,status,name,email,car,business,booth_size").eq("id", id).maybeSingle();
+    .select("id,type,status,name,email,car,business,booth_size,booth_category,power").eq("id", id).maybeSingle();
   if (error || !r) { if (error) console.error("load failed", error.message); return json(404, { error: "not_found" }); }
   if (r.status !== "approved" && r.status !== "declined") return json(409, { error: "not_reviewed" });
   if (!resendKey) return json(503, { error: "email_not_configured" });
