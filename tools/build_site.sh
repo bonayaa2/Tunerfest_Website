@@ -14,7 +14,7 @@ mkdir -p site/assets/icons && cp assets/icons/* site/assets/icons/ && cp assets/
 mkdir -p site/assets/vendor && cp assets/vendor/* site/assets/vendor/
 python3 - <<'PY'
 p = "site/index.html"; s = open(p).read()
-tag = '<script src="assets/vendor/supabase.js"></script>\n<script src="assets/vendor/qrcode.js"></script>\n'
+tag = '<script src="assets/vendor/supabase.js"></script>\n'
 if tag not in s:
     i = s.index("<script>\n(() => {")
     s = s[:i] + tag + s[i:]
