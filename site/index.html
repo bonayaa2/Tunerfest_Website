@@ -1474,7 +1474,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     $("#b-cat-field").hidden = c.tier !== "other";
     $("#b-total").replaceChildren(...p.lines.map(([k, v]) => el("div", { class: "ln" }, el("span", { text: k }), el("span", { text: kes(v) }))),
       el("div", { class: "tot" }, el("span", { text: "Total" }), el("b", { text: kes(p.total) })),
-      el("p", { class: "pay", text: "You pay after your booth is approved. We'll email you the payment details." }));
+      el("p", { class: "pay", text: "You pay after your booth is approved, by M-PESA Paybill. The payment details come with your approval email." }));
   }
   form.addEventListener("change", e => { if (e.target.closest("#fs-booth")) updateBoothTotal(); });
   function setType(t) {
@@ -1587,7 +1587,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     $("#done-body").textContent = type === "car"
       ? `We've got your ${entry.car}. There are only ${SPOTS} show car spots, so the team reviews applications in order and will email ${entry.email} to confirm your spot and roll-in time.`
       : (() => { const p = boothPrice(entry.boothCategory || entry.booth_category, entry.boothSize, entry.power);
-          return `We've got your ${entry.boothSize} booth request for ${entry.business}${p ? `, ${kes(p.total)} in total` : ""}. You pay once it's approved. We'll email ${entry.email} with the payment details and setup times.`; })();
+          return `We've got your ${entry.boothSize} booth request for ${entry.business}${p ? `, ${kes(p.total)} in total` : ""}. You pay by M-PESA once it's approved. We'll email ${entry.email} with the payment details and setup times.`; })();
     form.hidden = true; done.hidden = false; done.focus();
   }
   async function submitSupabase(d) {

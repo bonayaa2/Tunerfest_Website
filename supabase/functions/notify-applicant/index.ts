@@ -20,6 +20,8 @@ const esc = (s: unknown) =>
 
 const EVENT = "Sunday, November 29, 2026 at Galleria Mall, Karen, Nairobi";
 const SITE = "https://www.shiftnation.org";
+// Booth payments: M-PESA Paybill (Absa)
+const PAYBILL = { business: "303030", account: "2052084310" };
 
 type Reg = { id: string; type: "car" | "booth"; status: string; name: string; email: string; car: string | null; business: string | null; booth_size: string | null; booth_category: string | null; power: boolean | null };
 
@@ -91,8 +93,10 @@ function compose(r: Reg, passCode: string | null) {
     subject = "Your Tuner Fest 6.0 booth request is approved";
     lines = [
       `Good news. Your booth request for ${what} at Tuner Fest 6.0 (${EVENT}) has been approved.`,
-      ...((p) => p ? [`Your booth: ${p.parts.join(" + ")}. Total: ${kes(p.total)}.`] : [])(boothPrice(r)),
-      "We'll be in touch shortly with payment and setup details.",
+      ...((p) => p ? [`Your booth: ${p.parts.join(" + ")}. Total: ${kes(p.total)}.`,
+        `How to pay: on M-PESA, go to Lipa na M-PESA, then Pay Bill. Business number: ${PAYBILL.business} (Absa). Account number: ${PAYBILL.account}. Amount: ${kes(p.total)}.`,
+        "Once you've paid, reply to this email with your M-PESA confirmation code and your business name, so we can match your payment."] : [])(boothPrice(r)),
+      "We'll be in touch with setup details closer to the day.",
     ];
   } else {
     subject = "Your Tuner Fest 6.0 booth request";
