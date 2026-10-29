@@ -23,15 +23,17 @@ const SITE = "https://www.shiftnation.org";
 
 type Reg = { id: string; type: "car" | "booth"; status: string; name: string; email: string; car: string | null; business: string | null; booth_size: string | null; booth_category: string | null; power: boolean | null };
 
-// Booth prices (KES), same as the website: food 30,000 or parts & others 20,000 for 3 × 3 m; 6 × 3 m +10,000; power +2,500
+// Booth prices (KES), same as the website, for a 3 × 3 m tent: exclusive alcohol vendor 350,000, food 30,000,
+// parts & others 20,000; 6 × 3 m +10,000; power +2,500
 const kes = (n: number) => "KES " + n.toLocaleString("en-US");
 function boothPrice(r: Reg) {
   if (r.booth_size !== "3 × 3 m" && r.booth_size !== "6 × 3 m") return null;
-  const food = /food/i.test(r.booth_category || "");
-  const parts = [`${food ? "Food & drinks" : "Parts & other"} vendor, 3 × 3 m tent ${kes(food ? 30000 : 20000)}`];
+  const cat = r.booth_category || "";
+  const [label, base]: [string, number] = /alcohol/i.test(cat) ? ["Exclusive alcohol vendor", 350000] : /food/i.test(cat) ? ["Food & drinks vendor", 30000] : ["Parts & other vendor", 20000];
+  const parts = [`${label}, 3 × 3 m tent ${kes(base)}`];
   if (r.booth_size === "6 × 3 m") parts.push(`6 × 3 m tent upgrade ${kes(10000)}`);
   if (r.power) parts.push(`power ${kes(2500)}`);
-  return { total: (food ? 30000 : 20000) + (r.booth_size === "6 × 3 m" ? 10000 : 0) + (r.power ? 2500 : 0), parts };
+  return { total: base + (r.booth_size === "6 × 3 m" ? 10000 : 0) + (r.power ? 2500 : 0), parts };
 }
 
 const shell = (subject: string, inner: string) => `<!doctype html><html><body style="margin:0;background:#f4f4f6;font-family:Arial,Helvetica,sans-serif;color:#1a1a1f">

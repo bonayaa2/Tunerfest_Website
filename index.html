@@ -458,6 +458,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
 .opt-name { font-weight: 700; }
 .opt-tag { justify-self: start; font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: 1.15rem; color: var(--c, var(--teal)); font-variant-numeric: tabular-nums; }
 .opt-sub { color: var(--muted); font-size: 0.85rem; }
+.opt-badge { display: inline-block; margin-left: 6px; padding: 2px 8px; border-radius: 999px; background: var(--yellow); color: var(--on-accent); font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.55rem; letter-spacing: 0.16em; text-transform: uppercase; vertical-align: middle; }
 .opt-inline { color: var(--c, var(--teal)); white-space: nowrap; }
 .booth-total { border: 1px solid color-mix(in srgb, var(--c, var(--teal)) 50%, var(--line)); padding: 16px 18px; display: grid; gap: 6px; }
 .booth-total .ln { display: flex; justify-content: space-between; gap: 12px; color: #c9cdd8; font-size: 0.92rem; font-variant-numeric: tabular-nums; }
@@ -760,6 +761,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
               <div class="opt-cards">
                 <label class="opt"><input type="radio" name="booth_tier" value="food"><span class="opt-name">Food &amp; drinks</span><span class="opt-tag">KES 30,000</span><span class="opt-sub">Food and drink vendors, 3 × 3 m tent</span></label>
                 <label class="opt"><input type="radio" name="booth_tier" value="other" checked><span class="opt-name">Parts &amp; other vendors</span><span class="opt-tag">KES 20,000</span><span class="opt-sub">Parts, detailing, apparel, garages and brands, 3 × 3 m tent</span></label>
+                <label class="opt"><input type="radio" name="booth_tier" value="alcohol"><span class="opt-name">Alcohol vendor <span class="opt-badge">Exclusive</span></span><span class="opt-tag">KES 350,000</span><span class="opt-sub">The only alcohol seller at the event. One vendor only, 3 × 3 m tent</span></label>
               </div>
             </fieldset>
             <div class="field full" id="b-cat-field"><label for="b-cat">What you'll show</label>
@@ -847,7 +849,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       </section>
       <section>
         <h2>4. No outside alcohol</h2>
-        <p>You can't bring your own alcohol into the event. Alcohol is only available to buy from the venue.</p>
+        <p>You can't bring your own alcohol into the event. Alcohol is only available to buy at the venue, from the event's official alcohol vendor.</p>
       </section>
       <section>
         <h2>5. Damage to other people's cars</h2>
@@ -1401,13 +1403,16 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   const sb = !window.claude && SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase
     ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
   const SPOTS = 130;
-  // Booth prices (KES): food 30,000 or parts & others 20,000 for a 3 × 3 m tent; 6 × 3 m adds 10,000; power adds 2,500
-  const BOOTH = { food: 30000, other: 20000, bigTent: 10000, power: 2500 };
+  // Booth prices (KES) for a 3 × 3 m tent: exclusive alcohol vendor 350,000, food 30,000, parts & others 20,000;
+  // 6 × 3 m adds 10,000; power adds 2,500
+  const BOOTH = { alcohol: 350000, food: 30000, other: 20000, bigTent: 10000, power: 2500 };
   const kes = n => "KES " + Number(n).toLocaleString("en-US");
-  const isFood = category => /food/i.test(category || "");
+  const boothTier = category => /alcohol/i.test(category || "") ? "alcohol" : /food/i.test(category || "") ? "food" : "other";
+  const TIER_NAMES = { alcohol: "Alcohol vendor (exclusive)", food: "Food & drinks", other: "Parts & others" };
   function boothPrice(category, size, power) {
-    if (size !== "3 × 3 m" && size !== "6 × 3 m") return null; // older requests (6 × 6, custom) are quoted by hand
-    const lines = [[isFood(category) ? "Food & drinks vendor, 3 × 3 m tent" : "Parts & other vendor, 3 × 3 m tent", isFood(category) ? BOOTH.food : BOOTH.other]];
+    if (size !== "3 × 3 m" && size !== "6 × 3 m") return null; // older requests (custom sizes) are quoted by hand
+    const tier = boothTier(category);
+    const lines = [[{ alcohol: "Exclusive alcohol vendor", food: "Food & drinks vendor", other: "Parts & other vendor" }[tier] + ", 3 × 3 m tent", BOOTH[tier]]];
     if (size === "6 × 3 m") lines.push(["Upgrade to 6 × 3 m tent", BOOTH.bigTent]);
     if (power) lines.push(["Power", BOOTH.power]);
     return { lines, total: lines.reduce((a, [, v]) => a + v, 0) };
@@ -1449,12 +1454,12 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   };
   function boothChoice() {
     const tier = ($('input[name="booth_tier"]:checked', form) || {}).value || "other";
-    return { tier, category: tier === "food" ? "Food & drinks" : $("#b-cat").value,
+    return { tier, category: tier === "food" ? "Food & drinks" : tier === "alcohol" ? "Alcohol (exclusive)" : $("#b-cat").value,
       size: ($('input[name="booth_size"]:checked', form) || {}).value || "3 × 3 m", power: $("#b-power").checked };
   }
   function updateBoothTotal() {
     const c = boothChoice(), p = boothPrice(c.category, c.size, c.power);
-    $("#b-cat-field").hidden = c.tier === "food";
+    $("#b-cat-field").hidden = c.tier !== "other";
     $("#b-total").replaceChildren(...p.lines.map(([k, v]) => el("div", { class: "ln" }, el("span", { text: k }), el("span", { text: kes(v) }))),
       el("div", { class: "tot" }, el("span", { text: "Total" }), el("b", { text: kes(p.total) })),
       el("p", { class: "pay", text: "You pay after your booth is approved. We'll email you the payment details." }));
@@ -2180,8 +2185,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       if (e.type === "car") admPhoto(e, box);
       const details = e.type === "car"
         ? [["Owner", e.name], ["Phone", e.phone], ["Email", e.email], ["Instagram", e.instagram || "—"], ["Applied", fmtTime(e.createdAt)]]
-        : [["Contact", e.name], ["Phone", e.phone], ["Email", e.email], ["Tier", isFood(e.boothCategory) ? "Food & drinks (KES 30,000)" : "Parts & others (KES 20,000)"], ["Shows", e.boothCategory], ["Size", `${e.boothSize || ""}${e.power ? " · needs power" : ""}`],
-            ["Price", (p => p ? `${kes(p.total)} (${p.lines.map(([k, v]) => `${k.replace(/ vendor, 3 × 3 m tent/, "")} ${kes(v)}`).join(" + ")})` : "Quote by hand (older size option)")(boothPrice(e.boothCategory, e.boothSize, e.power))], ["Notes", e.notes || "—"], ["Applied", fmtTime(e.createdAt)]];
+        : [["Contact", e.name], ["Phone", e.phone], ["Email", e.email], ["Tier", `${TIER_NAMES[boothTier(e.boothCategory)]} (${kes(BOOTH[boothTier(e.boothCategory)])})`], ["Shows", e.boothCategory], ["Size", `${e.boothSize || ""}${e.power ? " · needs power" : ""}`],
+            ["Price", (p => p ? `${kes(p.total)} (${p.lines.map(([k, v]) => `${k.replace(/( vendor)?, 3 × 3 m tent/, "")} ${kes(v)}`).join(" + ")})` : "Quote by hand (older size option)")(boothPrice(e.boothCategory, e.boothSize, e.power))], ["Notes", e.notes || "—"], ["Applied", fmtTime(e.createdAt)]];
       const title = e.type === "car" ? `#${carIndex.get(e)} ${e.car || ""}` : String(e.business || "");
       // email status (live site only)
       const reviewed = st === "approved" || st === "declined";
