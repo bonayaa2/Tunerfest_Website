@@ -445,6 +445,10 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
 .scan-foot input { flex: 1; min-width: 0; min-height: 48px; padding: 0 12px; background: var(--night-2); border: 1px solid var(--line); color: var(--text); font: inherit; text-transform: uppercase; }
 .pass-tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; padding: 14px; border: 1px solid var(--line); background: var(--night-2); }
 .pass-tools .field { flex: 1 1 180px; margin: 0; }
+.pay-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.pay-form input { min-height: 40px; padding: 0 10px; background: var(--night); border: 1px solid var(--line); color: var(--text); font: inherit; width: 170px; max-width: 100%; }
+.pay-form input[type=number] { width: 110px; }
+.pay-cur { color: var(--muted); font-size: 0.85rem; }
 .pill.in { color: #8ab4ff; } .pill.revoked { color: var(--red); }
 
 /* booth tiers with price tags */
@@ -1057,14 +1061,14 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
 </div>
 
 <div class="scan" id="scan" hidden role="dialog" aria-modal="true" aria-label="Scan driver passes">
-  <div class="scan-head"><b>Driver pass scanner</b><span id="scan-count" class="pass-note"></span><button class="btn" type="button" id="scan-close">Done</button></div>
+  <div class="scan-head"><b>Pass scanner</b><span id="scan-count" class="pass-note"></span><button class="btn" type="button" id="scan-close">Done</button></div>
   <div class="scan-cam">
     <video id="scan-video" playsinline muted></video>
     <div class="frame" aria-hidden="true"></div>
     <p class="cam-msg" id="scan-msg">Starting the camera…</p>
     <div class="scan-result" id="scan-result" role="status" aria-live="assertive" hidden></div>
   </div>
-  <form class="scan-foot" id="scan-form"><label class="sr" for="scan-code">Pass code</label><input id="scan-code" placeholder="Or type a code: DRV-…" autocomplete="off" autocapitalize="characters"><button class="btn fill yellow" type="submit">Check</button></form>
+  <form class="scan-foot" id="scan-form"><label class="sr" for="scan-code">Pass code</label><input id="scan-code" placeholder="Or type a code: DRV-… or VND-…" autocomplete="off" autocapitalize="characters"><button class="btn fill yellow" type="submit">Check</button></form>
 </div>
 
 <footer class="site-footer">
@@ -1741,6 +1745,11 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     } catch { admMsg("That entry couldn't be removed. Try again.", true); }
   }
   /* ---------- driver passes ---------- */
+  // driver passes (DRV-…) and vendor passes (VND-…) share one table and one scanner
+  const isVendor = p => p?.kind === "vendor" || /^VND-/.test(p?.code || "");
+  const passWords = p => isVendor(p)
+    ? { title: "Vendor pass", who: "Business", what: "Booth", admits: "Vendor entry", where: "the vendor entrance" }
+    : { title: "Driver pass", who: "Driver", what: "Car", admits: "1 driver", where: "the show car entrance" };
   const passLink = code => `${location.origin}${location.pathname}#pass-${code}`;
   async function reloadPasses() {
     const t = await sb.from("driver_tickets").select("*").limit(2000);
@@ -1777,10 +1786,34 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       let code = "";
       try { code = (await res.error.context.json()).error; } catch {}
       admMsg(code === "email_not_configured" ? "No email went out: email sending isn't set up (add the Resend key in Supabase)."
-        : code === "no_pass" ? "This car has no valid pass. Approve the car first."
+        : code === "no_pass" ? (isVendor(p) ? "This booth has no valid vendor pass. Approve it and confirm payment first." : "This car has no valid pass. Approve the car first.")
         : `The pass email to ${who?.email || "the driver"} didn't send. Try again, or use Copy pass link.`, true);
-    } else { p.emailed_at = res.data.emailed_at; admMsg(`Driver pass sent to ${res.data.to}.`); }
+    } else { p.emailed_at = res.data.emailed_at; admMsg(`${passWords(p).title} sent to ${res.data.to}.`); }
     renderAdmin();
+  }
+  // Booth payment: key in the M-PESA details, which records the payment and issues + emails the vendor pass
+  function payForm(e) {
+    const due = boothPrice(e.boothCategory, e.boothSize, e.power)?.total;
+    const code = el("input", { type: "text", maxlength: "30", autocomplete: "off", placeholder: "M-PESA code, e.g. SKL4ABC123", "aria-label": "M-PESA confirmation code", value: e.mpesaCode || "", style: "text-transform:uppercase" });
+    const amount = el("input", { type: "number", min: "0", step: "1", inputmode: "numeric", "aria-label": "Amount received (KES)", value: String(e.amountPaid ?? due ?? "") });
+    return [el("form", { class: "pay-form", onsubmit: async ev => {
+        ev.preventDefault();
+        const c = code.value.trim().toUpperCase(), a = Math.round(Number(amount.value));
+        if (!/^[A-Z0-9]{6,30}$/.test(c)) { admMsg("Enter the M-PESA confirmation code from the vendor's message, like SKL4ABC123.", true); code.focus(); return; }
+        if (!(a > 0)) { admMsg("Enter the amount received in KES.", true); amount.focus(); return; }
+        if (due && a < due && !confirm(`${kes(a)} is less than the ${kes(due)} due. Confirm anyway?`)) return;
+        const r = await sb.rpc("confirm_booth_payment", { reg_id: e.id, mpesa: c, amount: a });
+        if (r.error) { admMsg("The payment wasn't saved. Try again.", true); return; }
+        const first = !e.paidAt;
+        Object.assign(e, { paidAt: e.paidAt || Date.now(), mpesaCode: c, amountPaid: a }); adm.paying = null;
+        await reloadPasses(); renderAdmin();
+        const p = passFor(e.id);
+        if (p && first) emailPass(p); else admMsg(`Payment saved for ${e.business}.`);
+      } },
+      el("label", { class: "sr", text: "M-PESA code" }), code,
+      el("span", { class: "pay-cur", text: "KES" }), amount,
+      el("button", { class: "btn fill yellow", type: "submit", text: e.paidAt ? "Save payment" : "Confirm & send vendor pass" }),
+      el("button", { class: "btn", type: "button", text: "Cancel", onclick: () => { adm.paying = null; renderAdmin(); } }))];
   }
   async function updatePass(p, patch) {
     const r = await sb.from("driver_tickets").update(patch).eq("id", p.id);
@@ -1793,7 +1826,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     adm.passes = adm.passes.filter(x => x !== p); adm.confirm = null; admMsg(""); renderAdmin();
   }
   function renderPasses() {
-    const all = (adm.passes || []).slice().sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+    const all = (adm.passes || []).filter(p => !isVendor(p)).sort((a, b) => (a.name || "").localeCompare(b.name || ""));
     const live = all.filter(p => !p.revoked), inn = live.filter(p => p.checked_in_at);
     $("#adm-stats").replaceChildren(
       el("div", {}, el("b", { text: String(live.length) }), el("span", { text: "Driver passes" })),
@@ -1884,9 +1917,9 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       scanCtx.drawImage(v, 0, 0, scanCanvas.width, scanCanvas.height);
       const img = scanCtx.getImageData(0, 0, scanCanvas.width, scanCanvas.height);
       const hit = window.jsQR(img.data, img.width, img.height, { inversionAttempts: "dontInvert" });
-      const code = hit && (hit.data.toUpperCase().match(/DRV-[A-Z2-9]{10}/) || [])[0];
+      const code = hit && (hit.data.toUpperCase().match(/(DRV|VND)-[A-Z2-9]{10}/) || [])[0];
       if (code && !(code === scan.last && Date.now() - scan.lastAt < 5000)) checkPass(code);
-      else if (hit && !code) showScan("bad", "Not a driver pass", "", "This QR code isn't a Tuner Fest driver pass.");
+      else if (hit && !code) showScan("bad", "Not a Tuner Fest pass", "", "This QR code isn't a Tuner Fest driver or vendor pass.");
     }
     scan.raf = requestAnimationFrame(scanFrame);
   }
@@ -1914,22 +1947,22 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       ? await sb.rpc("gate_check_in", { gate_key: gate.key, ticket_code: code })
       : await sb.rpc("check_in_driver", { ticket_code: code });
     if (r.error) { showScan("bad", "Didn't check", "", scan.mode === "gate" ? "No connection. Try again." : "No connection, or you're signed out. Try again."); return; }
-    const d = r.data || {}, who = [d.name, d.car].filter(Boolean).join(" · ");
+    const d = r.data || {}, who = [d.kind === "vendor" ? "Vendor" : null, d.name, d.car].filter(Boolean).join(" · ");
     if (d.result === "bad_key") { showScan("bad", "Link switched off", "", "This marshal link no longer works. Ask the organiser for a new one."); return; }
     if (scan.mode === "gate" && d.total != null) { gate.in = d.in; gate.total = d.total; }
     const p = (adm.passes || []).find(x => x.code === code);
     if (d.result === "ok") { if (p) p.checked_in_at = new Date().toISOString(); showScan("ok", "Let in", who, code); }
     else if (d.result === "already") showScan("already", "Already used", who, `Checked in ${fmtTime(Date.parse(d.at))}${d.by ? ` by ${d.by}` : ""}`);
-    else if (d.result === "revoked") showScan("bad", "Not valid", who, "This car is no longer approved.");
+    else if (d.result === "revoked") showScan("bad", "Not valid", who, d.kind === "vendor" ? "This booth is no longer approved." : "This car is no longer approved.");
     else showScan("bad", "Not found", "", `No pass with code ${code}.`);
     updateScanCount();
   }
   $("#scan-close").addEventListener("click", closeScanner);
   $("#scan-form").addEventListener("submit", ev => {
     ev.preventDefault();
-    const code = ($("#scan-code").value.toUpperCase().replace(/\s/g, "").match(/DRV-?[A-Z2-9]{10}/) || [])[0];
-    if (!code) { showScan("bad", "Check the code", "", "Pass codes look like DRV-7KQ2M9XHTP."); return; }
-    $("#scan-code").value = ""; checkPass(code.includes("-") ? code : "DRV-" + code.slice(3));
+    const code = ($("#scan-code").value.toUpperCase().replace(/\s/g, "").match(/(DRV|VND)-?[A-Z2-9]{10}/) || [])[0];
+    if (!code) { showScan("bad", "Check the code", "", "Pass codes look like DRV-7KQ2M9XHTP or VND-7KQ2M9XHTP."); return; }
+    $("#scan-code").value = ""; checkPass(code.includes("-") ? code : code.slice(0, 3) + "-" + code.slice(3));
   });
   document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#scan").hidden) closeScanner(); });
 
@@ -1948,7 +1981,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     x.fillStyle = "#ffffff"; x.fillRect(L, T, CW, CH);
     x.fillStyle = "#f5b41f"; x.fillRect(L, T, CW, 200);
     x.fillStyle = "#07080c"; x.textBaseline = "alphabetic";
-    font(900, 66, "display"); spacing("2px"); x.textAlign = "left"; x.fillText("DRIVER", L + 56, T + 100); x.fillText("PASS", L + 56, T + 166);
+    const w = passWords(t);
+    font(900, 66, "display"); spacing("2px"); x.textAlign = "left"; x.fillText(w.title.split(" ")[0].toUpperCase(), L + 56, T + 100); x.fillText("PASS", L + 56, T + 166);
     font(800, 28, "display"); spacing("4px"); x.textAlign = "right"; x.fillText("TUNER FEST 6.0", L + CW - 56, T + 128); x.fillText("NOV 29, 2026", L + CW - 56, T + 166);
     // QR code
     const q = window.qrcode(0, "M"); q.addData(passLink(t.code)); q.make();
@@ -1960,7 +1994,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     const ly = qy + size + 130;
     x.strokeStyle = "#d9dbe3"; x.lineWidth = 3; x.setLineDash([14, 12]); x.beginPath(); x.moveTo(L + 40, ly); x.lineTo(L + CW - 40, ly); x.stroke(); x.setLineDash([]);
     spacing("0px"); x.textAlign = "left";
-    [["Driver", t.name], ["Car", t.car || "—"], ["Where", "Galleria Mall, Karen, Nairobi"], ["Admits", "1 driver"]].forEach(([k, v], i) => {
+    [[w.who, t.name], [w.what, t.car || "—"], ["Where", "Galleria Mall, Karen, Nairobi"], ["Admits", w.admits]].forEach(([k, v], i) => {
       const y = ly + 80 + i * 66;
       font(400, 32, "body"); x.fillStyle = "#6b6f7c"; x.fillText(k, L + 56, y);
       font(600, 36, "body"); x.fillStyle = "#111318"; x.fillText(fit(v, CW - 300), L + 230, y);
@@ -1974,7 +2008,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     const label = btn.textContent; btn.disabled = true; btn.textContent = "Preparing…";
     try {
       const blob = await passImage(t);
-      const file = new File([blob], `tunerfest-driver-pass-${t.code}.png`, { type: "image/png" });
+      const file = new File([blob], `tunerfest-${isVendor(t) ? "vendor" : "driver"}-pass-${t.code}.png`, { type: "image/png" });
       // phones: the share sheet has "Save Image"; computers: a normal download
       if (matchMedia("(pointer: coarse)").matches && navigator.canShare?.({ files: [file] })) {
         await navigator.share({ files: [file], title: "Tuner Fest 6.0 driver pass" }).catch(() => {});
@@ -2023,7 +2057,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   async function showPass(code) {
     const page = $("#pass-page");
     const put = (...kids) => page.replaceChildren(...kids.filter(Boolean));
-    const head = (title, text) => [el("span", { class: "eyebrow ruled both", text: "Tuner Fest 6.0 · Driver pass" }), el("h1", { text: title }), text ? el("p", { class: "lede", text }) : null];
+    const head = (title, text, kind = /^VND-/.test(code) ? "Vendor pass" : "Driver pass") => [el("span", { class: "eyebrow ruled both", text: `Tuner Fest 6.0 · ${kind}` }), el("h1", { text: title }), text ? el("p", { class: "lede", text }) : null];
     put(el("p", { class: "lede", text: "Loading your pass…" }));
     if (!sb) { put(...head("Open this on shiftnation.org", "Driver passes only work on the live website.")); return; }
     const r = await sb.rpc("get_driver_ticket", { ticket_code: code });
@@ -2031,13 +2065,13 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     const t = (r.data || [])[0];
     if (!t) { put(...head("Pass not found", "Check the link in your email, or contact the Shift Nation team at info@shiftnation.org.")); return; }
     if (t.revoked) { put(...head("This pass is no longer valid", "Contact the Shift Nation team at info@shiftnation.org if you think this is a mistake.")); return; }
-    const qr = qrSvg(passLink(t.code));
-    put(...head(t.checked_in ? "You're checked in" : "Your driver pass", t.checked_in ? "Welcome to Tuner Fest 6.0." : "Show this QR code at the show car entrance."),
+    const qr = qrSvg(passLink(t.code)), w = passWords(t);
+    put(...head(t.checked_in ? "You're checked in" : `Your ${w.title.toLowerCase()}`, t.checked_in ? "Welcome to Tuner Fest 6.0." : `Show this QR code at ${w.where}.`, w.title),
       el("div", { class: "pass" },
-        el("div", { class: "top" }, el("b", { text: "Driver pass" }), el("span", { text: "Tuner Fest 6.0 · Nov 29, 2026" })),
+        el("div", { class: "top" }, el("b", { text: w.title }), el("span", { text: "Tuner Fest 6.0 · Nov 29, 2026" })),
         qr ? el("div", { class: "qr" }, qr) : null,
         el("div", { class: "code", text: t.code }),
-        el("dl", {}, [["Driver", t.name], ["Car", t.car || "—"], ["Where", "Galleria Mall, Karen, Nairobi"], ["Admits", "1 driver"]]
+        el("dl", {}, [[w.who, t.name], [w.what, t.car || "—"], ["Where", "Galleria Mall, Karen, Nairobi"], ["Admits", w.admits]]
           .map(([k, v]) => [el("dt", { text: k }), el("dd", { text: v })])),
         t.checked_in ? el("div", { class: "stamp", text: "Checked in" }) : null),
       t.checked_in ? null : el("button", { class: "btn fill yellow", type: "button", text: "Save pass to phone", onclick: ev => savePass(t, ev.currentTarget) }),
@@ -2067,14 +2101,16 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     const all = [...adm.entries.values()];
     const cars = all.filter(e => e.type === "car"), booths = all.filter(e => e.type === "booth");
     const live = (adm.passes || []).filter(p => !p.revoked), inn = live.filter(p => p.checked_in_at).length;
-    const unmailed = live.filter(p => p.registration_id && !p.emailed_at).length;
+    const drivers = live.filter(p => !isVendor(p)), dIn = drivers.filter(p => p.checked_in_at).length;
+    const unmailed = drivers.filter(p => p.registration_id && !p.emailed_at).length;
+    const unpaid = booths.filter(e => e.status === "approved" && !e.paidAt).length;
     const tile = (href, c, k, big, what, sub, go, solid) => el("a", { class: `adm-tile${solid ? " solid" : ""}`, href, style: `--c:${c}` },
       el("span", { class: "k", text: k }), el("b", { text: big }), el("span", { class: "what", text: what }), sub ? el("span", { class: "sub", text: sub }) : null, el("span", { class: "go", text: go }));
     $("#adm-home").replaceChildren(...[
       tile("#admin/cars", "var(--red)", "Show car approvals", String(countOf(cars, "pending")), "waiting for review", `${countOf(cars, "approved")} / ${SPOTS} spots filled · ${cars.length} applications`, "Open approvals →"),
-      tile("#admin/booths", "var(--teal)", "Booths", String(countOf(booths, "pending")), "waiting for review", `${countOf(booths, "approved")} approved · ${booths.length} ${booths.length === 1 ? "request" : "requests"}`, "Open booths →"),
-      adm.passesOk ? tile("#admin/passes", "var(--yellow)", "Driver passes", `${inn} / ${live.length}`, "drivers checked in", unmailed ? `${unmailed} ${unmailed === 1 ? "pass" : "passes"} not emailed yet` : "All passes emailed", "Open passes →") : null,
-      adm.passesOk ? tile("#admin/scan", "var(--yellow)", "Gate", "Scan", "driver passes with your phone", `${live.length - inn} still to arrive`, "Open scanner →", true) : null,
+      tile("#admin/booths", "var(--teal)", "Booths", String(countOf(booths, "pending")), "waiting for review", `${countOf(booths, "approved")} approved${unpaid ? ` · ${unpaid} awaiting payment` : ""} · ${booths.length} ${booths.length === 1 ? "request" : "requests"}`, "Open booths →"),
+      adm.passesOk ? tile("#admin/passes", "var(--yellow)", "Driver passes", `${dIn} / ${drivers.length}`, "drivers checked in", unmailed ? `${unmailed} ${unmailed === 1 ? "pass" : "passes"} not emailed yet` : "All passes emailed", "Open passes →") : null,
+      adm.passesOk ? tile("#admin/scan", "var(--yellow)", "Gate", "Scan", "driver and vendor passes", `${live.length - inn} still to arrive`, "Open scanner →", true) : null,
     ].filter(Boolean));
   }
   function renderScanPage() {
@@ -2191,20 +2227,27 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       // email status (live site only)
       const reviewed = st === "approved" || st === "declined";
       const emailed = reviewed && e.emailedStatus === st;
-      const pass = e.type === "car" && st === "approved" ? passFor(e.id) : null;
-      if (pass) details.push(["Driver pass", `${pass.code} · ${pass.checked_in_at ? "checked in " + fmtTime(Date.parse(pass.checked_in_at)) : "not checked in yet"} · ${pass.sending ? "emailing…" : pass.emailed_at ? "emailed " + fmtTime(Date.parse(pass.emailed_at)) : "not emailed yet"}`]);
+      const pass = st === "approved" ? passFor(e.id) : null;
+      if (e.type === "booth" && st === "approved") {
+        details.push(["Payment", e.paidAt ? `Paid ${e.amountPaid != null ? kes(e.amountPaid) : ""} · M-PESA ${e.mpesaCode || "—"} · ${fmtTime(e.paidAt)}` : "Not paid yet"]);
+        if (pass) details.push(["Vendor pass", `${pass.code} · ${pass.checked_in_at ? "checked in " + fmtTime(Date.parse(pass.checked_in_at)) : "not checked in yet"} · ${pass.sending ? "emailing…" : pass.emailed_at ? "emailed " + fmtTime(Date.parse(pass.emailed_at)) : "not emailed yet"}`]);
+      }
+      if (pass && e.type === "car") details.push(["Driver pass", `${pass.code} · ${pass.checked_in_at ? "checked in " + fmtTime(Date.parse(pass.checked_in_at)) : "not checked in yet"} · ${pass.sending ? "emailing…" : pass.emailed_at ? "emailed " + fmtTime(Date.parse(pass.emailed_at)) : "not emailed yet"}`]);
       if (sb) details.push(["Email", e.emailing ? "Sending…" : emailed ? `Sent (${st}) ${fmtTime(e.emailedAt)}` : reviewed ? (e.emailError || "Not sent") : "Sent when approved or declined"]);
       const actions = adm.confirm === key
         ? [el("span", { class: "confirm", text: "Remove this application for good?" }),
            el("button", { class: "btn red", type: "button", text: "Remove", onclick: () => removeEntry(e) }),
            el("button", { class: "btn", type: "button", text: "Keep", onclick: () => { adm.confirm = null; renderAdmin(); } })]
+        : adm.paying === key ? payForm(e)
         : [st !== "approved" ? el("button", { class: "btn fill", style: "--c:#5fd38a", type: "button", text: "Approve", onclick: () => setStatus(e, "approved") }) : null,
+           e.type === "booth" && st === "approved" ? el("button", { class: `btn${e.paidAt ? "" : " fill yellow"}`, type: "button", text: e.paidAt ? "Edit payment" : "Confirm payment", onclick: () => { adm.paying = key; renderAdmin(); } }) : null,
            st !== "declined" ? el("button", { class: "btn red", type: "button", text: "Decline", onclick: () => setStatus(e, "declined") }) : null,
            st !== "pending" ? el("button", { class: "btn", type: "button", text: "Back to review", onclick: () => setStatus(e, "pending") }) : null,
            sb && reviewed && !e.emailing ? el("button", { class: "btn", type: "button", text: emailed ? "Resend email" : "Send email", onclick: () => notifyApplicant(e) }) : null,
            pass ? passMailBtn(pass) : null,
            pass ? copyBtn("Copy pass link", passLink(pass.code)) : null,
            el("button", { class: "btn", type: "button", text: "Remove", onclick: () => { adm.confirm = key; renderAdmin(); } })];
+      if (e.type === "booth" && st === "approved" && !e.paidAt && !pass) details.push(["Vendor pass", "Issued when you confirm payment"]);
       return el("article", { class: `adm-row${e.type === "booth" ? " booth" : ""}` },
         e.type === "car" ? box : null,
         el("div", { style: "min-width:0" },
@@ -2228,7 +2271,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     const err = (id, msg) => { const m = $(id); m.textContent = msg || ""; m.hidden = !msg; };
     const fromRow = r => ({ key: r.id, id: r.id, type: r.type, status: r.status, createdAt: Date.parse(r.created_at), name: r.name, email: r.email, phone: r.phone,
       instagram: r.instagram, car: r.car, photoPath: r.photo_path, business: r.business, boothCategory: r.booth_category, boothSize: r.booth_size, power: r.power, notes: r.notes,
-      emailedStatus: r.emailed_status, emailedAt: r.emailed_at ? Date.parse(r.emailed_at) : null, emailError: r.email_error ? "Email didn't send" : null });
+      emailedStatus: r.emailed_status, emailedAt: r.emailed_at ? Date.parse(r.emailed_at) : null, emailError: r.email_error ? "Email didn't send" : null,
+      paidAt: r.paid_at ? Date.parse(r.paid_at) : null, mpesaCode: r.mpesa_code, amountPaid: r.amount_paid });
     adm.ops = {
       status: async (e, status) => { const r = await sb.from("registrations").update({ status, reviewed_at: new Date().toISOString() }).eq("id", e.id); if (r.error) throw r.error; },
       remove: async e => {

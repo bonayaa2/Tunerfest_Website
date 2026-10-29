@@ -1,6 +1,7 @@
 // Emails a show car or booth applicant when an admin approves or declines them.
 // Called from the admin panel with { id }. Only signed-in admins may call it.
-// With { id, kind: "pass" } it sends only the driver pass of an approved show car.
+// With { id, kind: "pass" } it sends only the pass: the driver pass of an approved show car,
+// or the vendor pass of an approved booth whose payment has been confirmed.
 // Secrets (Supabase → Edge Functions → Secrets):
 //   RESEND_API_KEY  – from resend.com, after verifying shiftnation.org there
 //   FROM_EMAIL      – optional, defaults to "Shift Nation <info@shiftnation.org>"
@@ -64,6 +65,22 @@ function composePass(r: Reg, passCode: string) {
   ];
   const text = [`Hi ${first},`, "", ...lines, "", `Your pass: ${passUrl}`, `Pass code: ${passCode}`, "", "Shift Nation", "info@shiftnation.org · shiftnation.org"].join("\n");
   const html = shell(subject, para(`Hi ${first},`) + lines.map(para).join("") + passButton(passUrl, passCode));
+  return { subject, text, html };
+}
+
+// The vendor pass, sent once the booth's M-PESA payment has been confirmed.
+function composeVendorPass(r: Reg, passCode: string) {
+  const first = (r.name || "").trim().split(/\s+/)[0] || "there";
+  const passUrl = `${SITE}/#pass-${passCode}`;
+  const subject = "Payment received: your Tuner Fest 6.0 vendor pass";
+  const lines = [
+    `Thank you. We've received your payment for ${r.business ? `the ${r.business} booth` : "your booth"} at Tuner Fest 6.0, ${EVENT}.`,
+    "Here is your vendor pass. Show its QR code at the vendor entrance. The pass works once.",
+    "Take a screenshot or save it to your phone so you have it even without signal, and don't share it.",
+    "We'll be in touch with setup times closer to the day.",
+  ];
+  const text = [`Hi ${first},`, "", ...lines, "", `Your vendor pass: ${passUrl}`, `Pass code: ${passCode}`, "", "Shift Nation", "info@shiftnation.org · shiftnation.org"].join("\n");
+  const html = shell(subject, para(`Hi ${first},`) + lines.map(para).join("") + passButton(passUrl, passCode).replace("Open your driver pass", "Open your vendor pass"));
   return { subject, text, html };
 }
 
@@ -143,14 +160,17 @@ Deno.serve(async (req) => {
   if (r.status !== "approved" && r.status !== "declined") return json(409, { error: "not_reviewed" });
   if (!resendKey) return json(503, { error: "email_not_configured" });
 
-  // approved show cars get their driver pass link (the pass is created by the database when the car is approved)
+  // approved show cars get their driver pass link (the pass is created by the database when the car is approved);
+  // approved booths get a vendor pass once their payment is confirmed
   let passCode: string | null = null;
-  if (r.type === "car" && r.status === "approved") {
+  if (r.status === "approved") {
     const { data: t } = await admin.from("driver_tickets").select("code").eq("registration_id", id).eq("revoked", false).maybeSingle();
     passCode = t?.code ?? null;
   }
   if (kind === "pass" && !passCode) return json(409, { error: "no_pass" });
-  const msg = kind === "pass" ? composePass(r as Reg, passCode!) : compose(r as Reg, passCode);
+  const msg = kind === "pass"
+    ? (r.type === "booth" ? composeVendorPass(r as Reg, passCode!) : composePass(r as Reg, passCode!))
+    : compose(r as Reg, r.type === "car" ? passCode : null);
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
@@ -162,7 +182,7 @@ Deno.serve(async (req) => {
     return json(502, { error: "send_failed", detail });
   }
   const now = new Date().toISOString();
-  if (passCode) await admin.from("driver_tickets").update({ emailed_at: now }).eq("registration_id", id);
+  if (passCode && (kind === "pass" || r.type === "car")) await admin.from("driver_tickets").update({ emailed_at: now }).eq("registration_id", id);
   if (kind === "pass") return json(200, { ok: true, to: r.email, pass: passCode, emailed_at: now });
   await admin.from("registrations").update({ emailed_status: r.status, emailed_at: now, email_error: null }).eq("id", id);
   return json(200, { ok: true, to: r.email, status: r.status });
