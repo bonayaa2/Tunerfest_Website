@@ -757,8 +757,12 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
         <fieldset>
           <legend>Agreement</legend>
           <div class="field" style="margin-top:10px">
-            <label class="check"><input type="checkbox" id="r-terms" name="terms" required> I agree to the Shift Nation event rules and the <a href="#privacy" target="_blank" rel="noopener">Privacy policy</a>, and confirm my vehicle or stand is insured.</label>
+            <label class="check"><input type="checkbox" id="r-terms" name="terms" required><span>I agree to the Shift Nation event rules and the <a href="#privacy" target="_blank" rel="noopener">Privacy policy</a>, and confirm my vehicle or stand is insured.</span></label>
             <span class="error">Agree to the event rules to send your application.</span>
+          </div>
+          <div class="field" style="margin-top:14px">
+            <label class="check"><input type="checkbox" id="r-media" name="media" required><span>By registering, I accept the terms and conditions of the event, and I consent to <span id="media-subject">my car</span> being photographed, filmed and posted online by Shift Nation and by other people attending the event.</span></label>
+            <span class="error">Accept the terms and give photo and video consent to send your application.</span>
           </div>
         </fieldset>
 
@@ -845,6 +849,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       </section>
       <section>
         <h2>Event photos</h2>
+        <p>Tuner Fest is a public event. When you register, you agree that your car or stand may be photographed and filmed, and posted online by Shift Nation and by other people attending.</p>
         <p>Our gallery shows photos from past Shift Nation events, which may include people and cars. If you're in a photo and want it removed, email <a href="mailto:info@shiftnation.org">info@shiftnation.org</a> and we'll take it down.</p>
       </section>
       <section>
@@ -1365,6 +1370,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     $("#fs-booth").hidden = t !== "booth";
     $("#spots-note").hidden = t !== "car";
     $("#public-note").hidden = t !== "car";
+    $("#media-subject").textContent = t === "car" ? "my car" : "my stand and products";
     $$(".seg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.type === t)));
     $$(".field.invalid", form).forEach(f => f.classList.remove("invalid"));
   }
