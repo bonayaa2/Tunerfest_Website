@@ -2107,6 +2107,15 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     if (e.photoPath) await sb.storage.from("car-photos").remove([e.photoPath]);
     e.photoPath = path; adm.photos.delete(e.key);
   }
+  // Change the driver on a team-added car; the database updates the pass to match
+  async function editDriver(e) {
+    const name = (prompt(`Driver's name for ${e.car || "this car"}:`, e.name === "Shift Nation team" ? "" : e.name) || "").trim();
+    if (!name || name === e.name) return;
+    const r = await sb.from("registrations").update({ name: name.slice(0, 200) }).eq("id", e.id);
+    if (r.error) { admMsg("The driver's name didn't save. Try again.", true); return; }
+    e.name = name; await reloadPasses();
+    admMsg(`Driver set to ${name}. The pass now shows their name. Use Email again to send the updated pass.`); renderAdmin();
+  }
   const photoBtn = e => {
     const input = el("input", { type: "file", accept: "image/*", hidden: "", onchange: async ev => {
       const f = ev.target.files[0]; if (!f) return;
@@ -2117,8 +2126,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     } });
     return el("label", { class: "btn", style: "cursor:pointer" }, e.photoPath ? "Change photo" : "Add photo", input);
   };
-  async function addTeamCar(car) {
-    const ins = await sb.from("registrations").insert({ type: "car", name: "Shift Nation team", email: TEAM_EMAIL, phone: "Added by the team", car }).select("id").single();
+  async function addTeamCar(car, driver) {
+    const ins = await sb.from("registrations").insert({ type: "car", name: driver, email: TEAM_EMAIL, phone: "Added by the team", car }).select("id").single();
     if (ins.error) throw ins.error;
     const up = await sb.from("registrations").update({ status: "approved", reviewed_at: new Date().toISOString() }).eq("id", ins.data.id);
     if (up.error) throw up.error;
@@ -2133,15 +2142,18 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       el("div", {}, el("b", { text: String(cars.length) }), el("span", { text: "Cars added by the team" })),
       el("div", {}, el("b", { text: `${countOf([...adm.entries.values()].filter(e => e.type === "car"), "approved")} / ${SPOTS}` }), el("span", { text: "Show car spots filled" })));
     const input = el("input", { id: "ac-car", type: "text", maxlength: "200", autocomplete: "off", placeholder: "BMW M3 Competition" });
+    const driverIn = el("input", { id: "ac-driver", type: "text", maxlength: "200", autocomplete: "off", placeholder: "Brian Otieno" });
     const btn = el("button", { class: "btn fill", style: "--c: var(--red)", type: "submit", text: "Add car" });
     const photo = el("input", { id: "ac-photo", type: "file", accept: "image/*" });
     const form = el("form", { class: "pass-tools", onsubmit: async ev => {
         ev.preventDefault();
         const car = input.value.trim();
+        const driver = driverIn.value.trim();
         if (!car) { admMsg("Type the car, like BMW M3 Competition.", true); input.focus(); return; }
+        if (!driver) { admMsg("Type the driver's name. It goes on the driver pass.", true); driverIn.focus(); return; }
         btn.disabled = true; btn.textContent = "Adding…";
         try {
-          const r = await addTeamCar(car);
+          const r = await addTeamCar(car, driver);
           let photoNote = "";
           if (photo.files[0]) {
             try { await setCarPhoto({ id: r.id, key: r.id, car }, photo.files[0]); } catch { photoNote = " The photo didn't upload, so use Add photo below."; }
@@ -2153,6 +2165,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
         } catch { admMsg("The car wasn't added. Try again.", true); btn.disabled = false; btn.textContent = "Add car"; }
       } },
       el("div", { class: "field" }, el("label", { for: "ac-car", text: "Car" }), input),
+      el("div", { class: "field" }, el("label", { for: "ac-driver", text: "Driver's name" }), driverIn),
       el("div", { class: "field" }, el("label", { for: "ac-photo", text: "Photo (optional)" }), photo), btn);
     const rows = cars.map(e => {
       const p = passFor(e.id), box = el("div", { class: "ph-box" });
@@ -2160,9 +2173,10 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       return el("article", { class: "adm-row" }, box,
         el("div", { style: "min-width:0" },
           el("h3", {}, el("span", { text: e.car || "Car" }), el("span", { class: `pill ${p?.checked_in_at ? "in" : "approved"}`, text: p?.checked_in_at ? "Checked in" : "Added" })),
-          el("dl", {}, [["Driver pass", p ? p.code : "Being created…"], ["Emailed", p?.sending ? "Sending…" : p?.emailed_at ? `${TEAM_EMAIL}, ${fmtTime(Date.parse(p.emailed_at))}` : "Not yet"], ["Added", fmtTime(e.createdAt)]]
+          el("dl", {}, [["Driver", e.name], ["Driver pass", p ? p.code : "Being created…"], ["Emailed", p?.sending ? "Sending…" : p?.emailed_at ? `${TEAM_EMAIL}, ${fmtTime(Date.parse(p.emailed_at))}` : "Not yet"], ["Added", fmtTime(e.createdAt)]]
             .map(([k, v]) => [el("dt", { text: k }), el("dd", { text: v })]))),
-        el("div", { class: "adm-actions" }, photoBtn(e), p ? [
+        el("div", { class: "adm-actions" }, photoBtn(e),
+          el("button", { class: "btn", type: "button", text: "Edit driver", onclick: () => editDriver(e) }), p ? [
           el("button", { class: "btn", type: "button", text: p.emailed_at ? "Email again" : "Email pass", onclick: () => emailPass(p) }),
           copyBtn("Copy link", passLink(p.code)),
           el("a", { class: "btn", href: `#pass-${p.code}`, target: "_blank", text: "Open pass" })] : null));

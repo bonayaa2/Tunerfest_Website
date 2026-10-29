@@ -61,7 +61,7 @@ function composePass(r: Reg, passCode: string) {
   if ((r.email || "").toLowerCase() === TEAM_EMAIL) {
     const subject = `Driver pass: ${r.car || "show car"}`;
     const lines = [
-      `Here is the driver pass for ${r.car || "the show car"} you added from the admin panel, for Tuner Fest 6.0, ${EVENT}.`,
+      `Here is the driver pass for ${r.car || "the show car"}${r.name ? `, driven by ${r.name}` : ""}, which you added from the admin panel, for Tuner Fest 6.0, ${EVENT}.`,
       "Send it to the driver, or show the QR code at the show car entrance. The pass works once and admits the driver.",
     ];
     const text = ["Hi team,", "", ...lines, "", `Pass: ${passUrl}`, `Pass code: ${passCode}`, "", "Shift Nation admin"].join("\n");
