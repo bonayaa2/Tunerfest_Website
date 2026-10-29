@@ -18,19 +18,23 @@ const esc = (s: unknown) =>
   String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
 
 const EVENT = "Sunday, November 29, 2026 at Galleria Mall, Karen, Nairobi";
+const SITE = "https://www.shiftnation.org";
 
 type Reg = { id: string; type: "car" | "booth"; status: string; name: string; email: string; car: string | null; business: string | null; booth_size: string | null };
 
-function compose(r: Reg) {
+function compose(r: Reg, passCode: string | null) {
   const first = (r.name || "").trim().split(/\s+/)[0] || "there";
   const what = r.type === "car" ? (r.car || "your car") : (r.business || "your business");
   const approved = r.status === "approved";
   let subject: string, lines: string[];
+  const passUrl = passCode ? `${SITE}/#pass-${passCode}` : null;
   if (r.type === "car" && approved) {
     subject = "You're in: your car is on the floor at Tuner Fest 6.0";
     lines = [
       `Great news. ${what} has been approved as a show car at Tuner Fest 6.0, ${EVENT}.`,
       "There are only 130 show car spots, and yours is confirmed.",
+      ...(passUrl ? [`Your driver pass is ready. Open it here and show the QR code at the show car entrance: ${passUrl}`,
+        "The pass works once and admits the driver. Take a screenshot so you have it even without signal."] : []),
       "We'll send your roll-in time and entry details closer to the day. Keep your car insured and show-ready.",
     ];
   } else if (r.type === "car") {
@@ -62,7 +66,11 @@ function compose(r: Reg) {
 <tr><td style="padding:28px">
 <h1 style="margin:0 0 18px;font-size:22px;line-height:1.3">${esc(subject)}</h1>
 <p style="margin:0 0 14px;font-size:15px;line-height:1.6">Hi ${esc(first)},</p>
-${lines.map((l) => `<p style="margin:0 0 14px;font-size:15px;line-height:1.6">${esc(l)}</p>`).join("")}
+${lines.map((l) => passUrl && l.includes(passUrl)
+  ? `<p style="margin:0 0 14px;font-size:15px;line-height:1.6">Your driver pass is ready. Show its QR code at the show car entrance.</p>
+<p style="margin:0 0 18px"><a href="${esc(passUrl)}" style="display:inline-block;background:#f5b41f;color:#07080c;font-weight:bold;text-decoration:none;padding:12px 22px;border-radius:8px;letter-spacing:1px;text-transform:uppercase;font-size:13px">Open your driver pass</a></p>
+<p style="margin:0 0 14px;font-size:13px;line-height:1.6;color:#6b6f7c">Pass code ${esc(passCode)} · or open ${esc(passUrl)}</p>`
+  : `<p style="margin:0 0 14px;font-size:15px;line-height:1.6">${esc(l)}</p>`).join("")}
 <p style="margin:22px 0 0;font-size:15px;line-height:1.6">Shift Nation<br><a href="mailto:info@shiftnation.org" style="color:#1a1a1f">info@shiftnation.org</a> · <a href="https://shiftnation.org" style="color:#1a1a1f">shiftnation.org</a></p>
 </td></tr></table></td></tr></table></body></html>`;
   return { subject, text, html };
@@ -98,7 +106,13 @@ Deno.serve(async (req) => {
   if (r.status !== "approved" && r.status !== "declined") return json(409, { error: "not_reviewed" });
   if (!resendKey) return json(503, { error: "email_not_configured" });
 
-  const msg = compose(r as Reg);
+  // approved show cars get their driver pass link (the pass is created by the database when the car is approved)
+  let passCode: string | null = null;
+  if (r.type === "car" && r.status === "approved") {
+    const { data: t } = await admin.from("driver_tickets").select("code").eq("registration_id", id).eq("revoked", false).maybeSingle();
+    passCode = t?.code ?? null;
+  }
+  const msg = compose(r as Reg, passCode);
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
