@@ -1760,7 +1760,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   // driver passes (DRV-…) and vendor passes (VND-…) share one table and one scanner
   const isVendor = p => p?.kind === "vendor" || /^VND-/.test(p?.code || "");
   const passWords = p => isVendor(p)
-    ? { title: "Vendor pass", who: "Business", what: "Booth", admits: "Vendor entry", where: "the vendor entrance" }
+    ? { title: "Vendor pass", who: "Business", what: "Booth", admits: `${p?.admits || 5} booth staff`, where: "the vendor entrance" }
     : { title: "Driver pass", who: "Driver", what: "Car", admits: "1 driver", where: "the show car entrance" };
   const passLink = code => `${location.origin}${location.pathname}#pass-${code}`;
   async function reloadPasses() {
@@ -1869,8 +1869,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
            copyBtn("Copy link", passLink(p.code)),
            el("a", { class: "btn", href: `#pass-${p.code}`, target: "_blank", text: "Open" }),
            p.revoked ? null : p.checked_in_at
-             ? el("button", { class: "btn", type: "button", text: "Undo check-in", onclick: () => updatePass(p, { checked_in_at: null }) })
-             : el("button", { class: "btn fill yellow", type: "button", text: "Check in", onclick: () => updatePass(p, { checked_in_at: new Date().toISOString() }) }),
+             ? el("button", { class: "btn", type: "button", text: "Undo check-in", onclick: () => updatePass(p, { checked_in_at: null, checked_in_by: null, used: 0 }) })
+             : el("button", { class: "btn fill yellow", type: "button", text: "Check in", onclick: () => updatePass(p, { checked_in_at: new Date().toISOString(), checked_in_by: "Team", used: 1 }) }),
            p.registration_id ? null : el("button", { class: "btn red", type: "button", text: "Delete", onclick: () => { adm.confirm = p.id; renderAdmin(); } })];
       return el("article", { class: "adm-row booth" },
         el("div", { style: "min-width:0" },
@@ -1944,7 +1944,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     const box = $("#scan-result");
     box.className = `scan-result ${kind}`;
     box.replaceChildren(...[el("span", { class: "big", text: big }), who ? el("span", { class: "who", text: who }) : null, sub ? el("span", { class: "sub", text: sub }) : null,
-      el("button", { class: "btn", style: "--c:#fff;margin-top:8px", type: "button", text: "Scan next", onclick: resumeScan }),
+      el("button", { class: "btn", style: "--c:#fff;margin-top:8px", type: "button", text: "Scan next", onclick: () => { scan.last = ""; resumeScan(); } }),
       scan.mode === "gate" && kind !== "ok" ? organiserButton() : null].filter(Boolean));
     box.hidden = false; scan.busy = true;
     navigator.vibrate?.(kind === "ok" ? 80 : [60, 60, 60]);
@@ -1963,8 +1963,12 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     if (d.result === "bad_key") { showScan("bad", "Link switched off", "", "This marshal link no longer works. Ask the organiser for a new one."); return; }
     if (scan.mode === "gate" && d.total != null) { gate.in = d.in; gate.total = d.total; }
     const p = (adm.passes || []).find(x => x.code === code);
-    if (d.result === "ok") { if (p) p.checked_in_at = new Date().toISOString(); showScan("ok", "Let in", who, code); }
-    else if (d.result === "already") showScan("already", "Already used", who, `Checked in ${fmtTime(Date.parse(d.at))}${d.by ? ` by ${d.by}` : ""}`);
+    const multi = d.admits > 1;
+    if (d.result === "ok") {
+      if (p) { p.checked_in_at = p.checked_in_at || new Date().toISOString(); p.used = d.used; }
+      showScan("ok", "Let in", who, multi ? `Entry ${d.used} of ${d.admits} · ${code}` : code);
+    }
+    else if (d.result === "already") showScan("already", multi ? `All ${d.admits} entries used` : "Already used", who, `${multi ? "First" : "Checked in"} ${fmtTime(Date.parse(d.at))}${d.by ? ` by ${d.by}` : ""}`);
     else if (d.result === "revoked") showScan("bad", "Not valid", who, d.kind === "vendor" ? "This booth is no longer approved." : "This car is no longer approved.");
     else showScan("bad", "Not found", "", `No pass with code ${code}.`);
     updateScanCount();
@@ -2083,11 +2087,14 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
         el("div", { class: "top" }, el("b", { text: w.title }), el("span", { text: "Tuner Fest 6.0 · Nov 29, 2026" })),
         qr ? el("div", { class: "qr" }, qr) : null,
         el("div", { class: "code", text: t.code }),
-        el("dl", {}, [[w.who, t.name], [w.what, t.car || "—"], ["Where", "Galleria Mall, Karen, Nairobi"], ["Admits", w.admits]]
+        el("dl", {}, [[w.who, t.name], [w.what, t.car || "—"], ["Where", "Galleria Mall, Karen, Nairobi"],
+          ["Admits", t.admits > 1 && t.used && !t.checked_in ? `${w.admits} (${t.admits - t.used} entries left)` : w.admits]]
           .map(([k, v]) => [el("dt", { text: k }), el("dd", { text: v })])),
         t.checked_in ? el("div", { class: "stamp", text: "Checked in" }) : null),
       t.checked_in ? null : el("button", { class: "btn fill yellow", type: "button", text: "Save pass to phone", onclick: ev => savePass(t, ev.currentTarget) }),
-      el("p", { class: "pass-note", text: "Save it so you have it even without signal. The pass works once, so don't share it." }));
+      el("p", { class: "pass-note", text: t.admits > 1
+        ? `Save it so you have it even without signal. The same pass lets in up to ${t.admits} of your staff, one scan each.`
+        : "Save it so you have it even without signal. The pass works once, so don't share it." }));
   }
 
   // Admin pages: #admin (home tiles), #admin/cars, #admin/booths, #admin/passes, #admin/scan
@@ -2242,7 +2249,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       const pass = st === "approved" ? passFor(e.id) : null;
       if (e.type === "booth" && st === "approved") {
         details.push(["Payment", e.paidAt ? `Paid ${e.amountPaid != null ? kes(e.amountPaid) : ""} · M-PESA ${e.mpesaCode || "—"} · ${fmtTime(e.paidAt)}` : "Not paid yet"]);
-        if (pass) details.push(["Vendor pass", `${pass.code} · ${pass.checked_in_at ? "checked in " + fmtTime(Date.parse(pass.checked_in_at)) : "not checked in yet"} · ${pass.sending ? "emailing…" : pass.emailed_at ? "emailed " + fmtTime(Date.parse(pass.emailed_at)) : "not emailed yet"}`]);
+        if (pass) details.push(["Vendor pass", `${pass.code} · ${pass.used ? `${pass.used} of ${pass.admits || 5} staff in` : `admits ${pass.admits || 5}, no one in yet`} · ${pass.sending ? "emailing…" : pass.emailed_at ? "emailed " + fmtTime(Date.parse(pass.emailed_at)) : "not emailed yet"}`]);
       }
       if (pass && e.type === "car") details.push(["Driver pass", `${pass.code} · ${pass.checked_in_at ? "checked in " + fmtTime(Date.parse(pass.checked_in_at)) : "not checked in yet"} · ${pass.sending ? "emailing…" : pass.emailed_at ? "emailed " + fmtTime(Date.parse(pass.emailed_at)) : "not emailed yet"}`]);
       if (sb) details.push(["Email", e.emailing ? "Sending…" : emailed ? `Sent (${st}) ${fmtTime(e.emailedAt)}` : reviewed ? (e.emailError || "Not sent") : "Sent when approved or declined"]);

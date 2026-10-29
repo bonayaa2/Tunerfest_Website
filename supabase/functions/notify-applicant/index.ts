@@ -75,7 +75,7 @@ function composeVendorPass(r: Reg, passCode: string) {
   const subject = "Payment received: your Tuner Fest 6.0 vendor pass";
   const lines = [
     `Thank you. We've received your payment for ${r.business ? `the ${r.business} booth` : "your booth"} at Tuner Fest 6.0, ${EVENT}.`,
-    "Here is your vendor pass. Show its QR code at the vendor entrance. The pass works once.",
+    "Here is your vendor pass. Show its QR code at the vendor entrance. The same pass lets in up to 5 of your booth staff, one scan each.",
     "Take a screenshot or save it to your phone so you have it even without signal, and don't share it.",
     "We'll be in touch with setup times closer to the day.",
   ];
