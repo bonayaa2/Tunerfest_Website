@@ -1,5 +1,6 @@
 // Emails a show car or booth applicant when an admin approves or declines them.
 // Called from the admin panel with { id }. Only signed-in admins may call it.
+// With { id, kind: "pass" } it sends only the driver pass of an approved show car.
 // Secrets (Supabase → Edge Functions → Secrets):
 //   RESEND_API_KEY  – from resend.com, after verifying shiftnation.org there
 //   FROM_EMAIL      – optional, defaults to "Shift Nation <info@shiftnation.org>"
@@ -21,6 +22,35 @@ const EVENT = "Sunday, November 29, 2026 at Galleria Mall, Karen, Nairobi";
 const SITE = "https://www.shiftnation.org";
 
 type Reg = { id: string; type: "car" | "booth"; status: string; name: string; email: string; car: string | null; business: string | null; booth_size: string | null };
+
+const shell = (subject: string, inner: string) => `<!doctype html><html><body style="margin:0;background:#f4f4f6;font-family:Arial,Helvetica,sans-serif;color:#1a1a1f">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:24px 12px"><tr><td align="center">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:12px;overflow:hidden">
+<tr><td style="background:#07080c;padding:22px 28px;color:#f5b41f;font-weight:bold;letter-spacing:2px;font-size:13px;text-transform:uppercase">Shift Nation · Tuner Fest 6.0</td></tr>
+<tr><td style="padding:28px">
+<h1 style="margin:0 0 18px;font-size:22px;line-height:1.3">${esc(subject)}</h1>
+${inner}
+<p style="margin:22px 0 0;font-size:15px;line-height:1.6">Shift Nation<br><a href="mailto:info@shiftnation.org" style="color:#1a1a1f">info@shiftnation.org</a> · <a href="https://shiftnation.org" style="color:#1a1a1f">shiftnation.org</a></p>
+</td></tr></table></td></tr></table></body></html>`;
+const para = (t: string) => `<p style="margin:0 0 14px;font-size:15px;line-height:1.6">${esc(t)}</p>`;
+const passButton = (passUrl: string, passCode: string) =>
+  `<p style="margin:0 0 18px"><a href="${esc(passUrl)}" style="display:inline-block;background:#f5b41f;color:#07080c;font-weight:bold;text-decoration:none;padding:12px 22px;border-radius:8px;letter-spacing:1px;text-transform:uppercase;font-size:13px">Open your driver pass</a></p>
+<p style="margin:0 0 14px;font-size:13px;line-height:1.6;color:#6b6f7c">Pass code ${esc(passCode)} · or open ${esc(passUrl)}</p>`;
+
+// Just the driver pass, for show cars approved before passes existed (or a lost email).
+function composePass(r: Reg, passCode: string) {
+  const first = (r.name || "").trim().split(/\s+/)[0] || "there";
+  const passUrl = `${SITE}/#pass-${passCode}`;
+  const subject = "Your Tuner Fest 6.0 driver pass";
+  const lines = [
+    `Here is the driver pass for ${r.car || "your show car"} at Tuner Fest 6.0, ${EVENT}.`,
+    "Show its QR code at the show car entrance. The pass works once and admits the driver.",
+    "Take a screenshot so you have it even without signal, and don't share it.",
+  ];
+  const text = [`Hi ${first},`, "", ...lines, "", `Your pass: ${passUrl}`, `Pass code: ${passCode}`, "", "Shift Nation", "info@shiftnation.org · shiftnation.org"].join("\n");
+  const html = shell(subject, para(`Hi ${first},`) + lines.map(para).join("") + passButton(passUrl, passCode));
+  return { subject, text, html };
+}
 
 function compose(r: Reg, passCode: string | null) {
   const first = (r.name || "").trim().split(/\s+/)[0] || "there";
@@ -59,20 +89,9 @@ function compose(r: Reg, passCode: string | null) {
     ];
   }
   const text = [`Hi ${first},`, "", ...lines, "", "Shift Nation", "info@shiftnation.org · shiftnation.org"].join("\n");
-  const html = `<!doctype html><html><body style="margin:0;background:#f4f4f6;font-family:Arial,Helvetica,sans-serif;color:#1a1a1f">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:24px 12px"><tr><td align="center">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:12px;overflow:hidden">
-<tr><td style="background:#07080c;padding:22px 28px;color:#f5b41f;font-weight:bold;letter-spacing:2px;font-size:13px;text-transform:uppercase">Shift Nation · Tuner Fest 6.0</td></tr>
-<tr><td style="padding:28px">
-<h1 style="margin:0 0 18px;font-size:22px;line-height:1.3">${esc(subject)}</h1>
-<p style="margin:0 0 14px;font-size:15px;line-height:1.6">Hi ${esc(first)},</p>
-${lines.map((l) => passUrl && l.includes(passUrl)
-  ? `<p style="margin:0 0 14px;font-size:15px;line-height:1.6">Your driver pass is ready. Show its QR code at the show car entrance.</p>
-<p style="margin:0 0 18px"><a href="${esc(passUrl)}" style="display:inline-block;background:#f5b41f;color:#07080c;font-weight:bold;text-decoration:none;padding:12px 22px;border-radius:8px;letter-spacing:1px;text-transform:uppercase;font-size:13px">Open your driver pass</a></p>
-<p style="margin:0 0 14px;font-size:13px;line-height:1.6;color:#6b6f7c">Pass code ${esc(passCode)} · or open ${esc(passUrl)}</p>`
-  : `<p style="margin:0 0 14px;font-size:15px;line-height:1.6">${esc(l)}</p>`).join("")}
-<p style="margin:22px 0 0;font-size:15px;line-height:1.6">Shift Nation<br><a href="mailto:info@shiftnation.org" style="color:#1a1a1f">info@shiftnation.org</a> · <a href="https://shiftnation.org" style="color:#1a1a1f">shiftnation.org</a></p>
-</td></tr></table></td></tr></table></body></html>`;
+  const html = shell(subject, para(`Hi ${first},`) + lines.map((l) => passUrl && passCode && l.includes(passUrl)
+    ? para("Your driver pass is ready. Show its QR code at the show car entrance.") + passButton(passUrl, passCode)
+    : para(l)).join(""));
   return { subject, text, html };
 }
 
@@ -96,8 +115,8 @@ Deno.serve(async (req) => {
   if (adminErr) console.error("admin check failed", adminErr.message);
   if (!isAdmin) return json(403, { error: "not_admin" });
 
-  let id: string | undefined;
-  try { id = (await req.json()).id; } catch { /* handled below */ }
+  let id: string | undefined, kind: string | undefined;
+  try { ({ id, kind } = await req.json()); } catch { /* handled below */ }
   if (!id || typeof id !== "string") return json(400, { error: "missing_id" });
 
   const { data: r, error } = await admin.from("registrations")
@@ -112,7 +131,8 @@ Deno.serve(async (req) => {
     const { data: t } = await admin.from("driver_tickets").select("code").eq("registration_id", id).eq("revoked", false).maybeSingle();
     passCode = t?.code ?? null;
   }
-  const msg = compose(r as Reg, passCode);
+  if (kind === "pass" && !passCode) return json(409, { error: "no_pass" });
+  const msg = kind === "pass" ? composePass(r as Reg, passCode!) : compose(r as Reg, passCode);
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
@@ -120,9 +140,12 @@ Deno.serve(async (req) => {
   });
   if (!res.ok) {
     const detail = (await res.text()).slice(0, 400);
-    await admin.from("registrations").update({ email_error: `${res.status}: ${detail}` }).eq("id", id);
+    if (kind !== "pass") await admin.from("registrations").update({ email_error: `${res.status}: ${detail}` }).eq("id", id);
     return json(502, { error: "send_failed", detail });
   }
-  await admin.from("registrations").update({ emailed_status: r.status, emailed_at: new Date().toISOString(), email_error: null }).eq("id", id);
+  const now = new Date().toISOString();
+  if (passCode) await admin.from("driver_tickets").update({ emailed_at: now }).eq("registration_id", id);
+  if (kind === "pass") return json(200, { ok: true, to: r.email, pass: passCode, emailed_at: now });
+  await admin.from("registrations").update({ emailed_status: r.status, emailed_at: now, email_error: null }).eq("id", id);
   return json(200, { ok: true, to: r.email, status: r.status });
 });

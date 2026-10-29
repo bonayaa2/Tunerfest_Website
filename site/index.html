@@ -1502,7 +1502,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     lbReturn = document.activeElement; lb.hidden = false; lockScroll(true); $("#lb-close").focus();
   }
   async function setStatus(e, status) {
-    try { await adm.ops.status(e, status); e.status = status; admMsg(""); renderAdmin(); }
+    try { await adm.ops.status(e, status); e.status = status; admMsg(""); if (sb && e.type === "car") await reloadPasses(); renderAdmin(); }
     catch { admMsg("That change didn't save. Try again.", true); return; }
     if (sb && (status === "approved" || status === "declined")) notifyApplicant(e);
   }
@@ -1514,6 +1514,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     e.emailing = false;
     if (!res.error) {
       e.emailedStatus = e.status; e.emailedAt = Date.now(); e.emailError = null;
+      const pass = passFor(e.id);
+      if (pass && e.status === "approved") pass.emailed_at = new Date().toISOString();
       admMsg(`Email sent to ${e.email}.`);
     } else {
       let code = "";
@@ -1533,6 +1535,10 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   }
   /* ---------- driver passes ---------- */
   const passLink = code => `${location.origin}${location.pathname}#pass-${code}`;
+  async function reloadPasses() {
+    const t = await sb.from("driver_tickets").select("*").limit(2000);
+    if (!t.error) adm.passes = t.data;
+  }
   const passFor = regId => (adm.passes || []).find(p => p.registration_id === regId);
   const copyBtn = (label, text) => el("button", { class: "btn", type: "button", text: label, onclick: async ev => {
     const b = ev.currentTarget;
@@ -1550,6 +1556,24 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     const bg = document.createElementNS(svg.namespaceURI, "rect"); bg.setAttribute("width", size); bg.setAttribute("height", size); bg.setAttribute("fill", "#fff");
     const path = document.createElementNS(svg.namespaceURI, "path"); path.setAttribute("d", d); path.setAttribute("fill", "#111318");
     svg.append(bg, path); return svg;
+  }
+  // Emails just the pass to the show car's owner (through the notify-applicant server function)
+  const passMailBtn = p => el("button", { class: `btn${p.emailed_at ? "" : " fill yellow"}`, type: "button", text: p.sending ? "Sending…" : p.emailed_at ? "Resend pass" : "Email pass",
+    onclick: () => emailPass(p) });
+  async function emailPass(p) {
+    if (p.sending) return;
+    const who = adm.entries.get(p.registration_id);
+    p.sending = true; renderAdmin();
+    const res = await sb.functions.invoke("notify-applicant", { body: { id: p.registration_id, kind: "pass" } });
+    p.sending = false;
+    if (res.error) {
+      let code = "";
+      try { code = (await res.error.context.json()).error; } catch {}
+      admMsg(code === "email_not_configured" ? "No email went out: email sending isn't set up (add the Resend key in Supabase)."
+        : code === "no_pass" ? "This car has no valid pass. Approve the car first."
+        : `The pass email to ${who?.email || "the driver"} didn't send. Try again, or use Copy pass link.`, true);
+    } else { p.emailed_at = res.data.emailed_at; admMsg(`Driver pass sent to ${res.data.to}.`); }
+    renderAdmin();
   }
   async function updatePass(p, patch) {
     const r = await sb.from("driver_tickets").update(patch).eq("id", p.id);
@@ -1589,7 +1613,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
         ? [el("span", { class: "confirm", text: "Delete this pass?" }),
            el("button", { class: "btn red", type: "button", text: "Delete", onclick: () => deletePass(p) }),
            el("button", { class: "btn", type: "button", text: "Keep", onclick: () => { adm.confirm = null; renderAdmin(); } })]
-        : [copyBtn("Copy link", passLink(p.code)),
+        : [p.registration_id && !p.revoked ? passMailBtn(p) : null,
+           copyBtn("Copy link", passLink(p.code)),
            el("a", { class: "btn", href: `#pass-${p.code}`, target: "_blank", text: "Open" }),
            p.revoked ? null : p.checked_in_at
              ? el("button", { class: "btn", type: "button", text: "Undo check-in", onclick: () => updatePass(p, { checked_in_at: null }) })
@@ -1599,6 +1624,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
         el("div", { style: "min-width:0" },
           el("h3", {}, el("span", { text: p.name }), el("span", { class: `pill ${st}`, text: { revoked: "Not valid", in: "Checked in", pending: "Not arrived" }[st] })),
           el("dl", {}, [["Car", p.car || "—"], ["Code", p.code], ["Type", p.registration_id ? "Approved show car" : "Created by hand"],
+            ...(p.registration_id ? [["Email", p.sending ? "Sending…" : p.emailed_at ? `Pass emailed ${fmtTime(Date.parse(p.emailed_at))}` : "Pass not emailed yet"]] : []),
             ...(p.checked_in_at ? [["Checked in", fmtTime(Date.parse(p.checked_in_at))]] : []), ...(p.revoked ? [["Note", "The car is no longer approved, so this pass won't scan."]] : [])]
             .map(([k, v]) => [el("dt", { text: k }), el("dd", { text: String(v) })]))),
         el("div", { class: "adm-actions" }, actions));
@@ -1739,7 +1765,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       const reviewed = st === "approved" || st === "declined";
       const emailed = reviewed && e.emailedStatus === st;
       const pass = e.type === "car" && st === "approved" ? passFor(e.id) : null;
-      if (pass) details.push(["Driver pass", `${pass.code} · ${pass.checked_in_at ? "checked in " + fmtTime(Date.parse(pass.checked_in_at)) : "not checked in yet"}`]);
+      if (pass) details.push(["Driver pass", `${pass.code} · ${pass.checked_in_at ? "checked in " + fmtTime(Date.parse(pass.checked_in_at)) : "not checked in yet"} · ${pass.sending ? "emailing…" : pass.emailed_at ? "emailed " + fmtTime(Date.parse(pass.emailed_at)) : "not emailed yet"}`]);
       if (sb) details.push(["Email", e.emailing ? "Sending…" : emailed ? `Sent (${st}) ${fmtTime(e.emailedAt)}` : reviewed ? (e.emailError || "Not sent") : "Sent when approved or declined"]);
       const actions = adm.confirm === key
         ? [el("span", { class: "confirm", text: "Remove this application for good?" }),
@@ -1749,6 +1775,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
            st !== "declined" ? el("button", { class: "btn red", type: "button", text: "Decline", onclick: () => setStatus(e, "declined") }) : null,
            st !== "pending" ? el("button", { class: "btn", type: "button", text: "Back to review", onclick: () => setStatus(e, "pending") }) : null,
            sb && reviewed && !e.emailing ? el("button", { class: "btn", type: "button", text: emailed ? "Resend email" : "Send email", onclick: () => notifyApplicant(e) }) : null,
+           pass ? passMailBtn(pass) : null,
            pass ? copyBtn("Copy pass link", passLink(pass.code)) : null,
            el("button", { class: "btn", type: "button", text: "Remove", onclick: () => { adm.confirm = key; renderAdmin(); } })];
       return el("article", { class: `adm-row${e.type === "booth" ? " booth" : ""}` },

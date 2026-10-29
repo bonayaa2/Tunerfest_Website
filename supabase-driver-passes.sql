@@ -9,8 +9,10 @@ create table if not exists public.driver_tickets (
   name            text not null check (char_length(name) between 1 and 200),
   car             text check (char_length(car) <= 200),
   revoked         boolean not null default false,
-  checked_in_at   timestamptz
+  checked_in_at   timestamptz,
+  emailed_at      timestamptz
 );
+alter table public.driver_tickets add column if not exists emailed_at timestamptz;
 alter table public.driver_tickets enable row level security;
 
 -- Random, unguessable pass codes like DRV-7KQ2M9XHTP
