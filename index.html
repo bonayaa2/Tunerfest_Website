@@ -248,6 +248,7 @@ h1, h2, h3, p { margin: 0; }
 .foot-cols .mail { overflow-wrap: anywhere; }
 .foot-brand p { color: var(--muted); font-size: 0.9rem; max-width: 40ch; margin-top: 18px; }
 .foot-base { grid-column: 1 / -1; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; padding-top: 24px; border-top: 1px solid var(--line); font-family: var(--f-display); font-stretch: 125%; font-weight: 700; font-size: 0.58rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+.foot-base a { color: inherit; margin-right: 14px; }
 .foot-base .open::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--teal); margin-right: 8px; }
 
 /* ---------- inner pages ---------- */
@@ -443,6 +444,16 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
 .pass-tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; padding: 14px; border: 1px solid var(--line); background: var(--night-2); }
 .pass-tools .field { flex: 1 1 180px; margin: 0; }
 .pill.in { color: #8ab4ff; } .pill.revoked { color: var(--red); }
+
+/* privacy page */
+.legal { max-width: 760px; margin: 0 auto; padding-bottom: 100px; display: grid; gap: 30px; }
+.legal section { display: grid; gap: 12px; }
+.legal h2 { font-family: var(--f-title); font-weight: 700; font-size: 1.25rem; }
+.legal p, .legal li { color: #c9cdd8; line-height: 1.7; }
+.legal ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.legal b { color: var(--text); }
+.legal a { color: var(--yellow); }
+.legal .updated { color: var(--muted); font-size: 0.9rem; }
 
 /* gallery page */
 .chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 28px; }
@@ -736,14 +747,14 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
         <fieldset>
           <legend>Agreement</legend>
           <div class="field" style="margin-top:10px">
-            <label class="check"><input type="checkbox" id="r-terms" name="terms" required> I agree to the Shift Nation event rules and confirm my vehicle or stand is insured.</label>
+            <label class="check"><input type="checkbox" id="r-terms" name="terms" required> I agree to the Shift Nation event rules and the <a href="#privacy" target="_blank" rel="noopener">Privacy policy</a>, and confirm my vehicle or stand is insured.</label>
             <span class="error">Agree to the event rules to send your application.</span>
           </div>
         </fieldset>
 
         <div class="form-actions">
           <button class="btn fill" type="submit" id="reg-submit" style="--c: var(--red)">Send application <span class="arr">→</span></button>
-          <span class="hint">We review every application and reply by email.</span>
+          <span class="hint">We review every application and reply by email.<span id="public-note"> If your car is approved, its photo and name appear on the Show cars page.</span></span>
         </div>
         <p class="form-status" id="reg-status" role="status" hidden></p>
       </form>
@@ -765,6 +776,72 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
 <div class="view" data-view="pass" hidden>
   <div class="wrap">
     <div class="pass-page" id="pass-page"><p class="lede">Loading your pass…</p></div>
+  </div>
+</div>
+
+<!-- =========================== PRIVACY =========================== -->
+<div class="view" data-view="privacy" hidden>
+  <div class="wrap">
+    <div class="page-top">
+      <span class="eyebrow ruled both">Your data</span>
+      <h1 class="mega">Privacy</h1>
+      <p class="lede">What we collect when you register a car or a booth, why, who can see it, and when we delete it.</p>
+    </div>
+    <div class="legal">
+      <p class="updated">Last updated October 29, 2026</p>
+      <section>
+        <h2>Who we are</h2>
+        <p>Tuner Fest is organised by <b>Shift Nation</b>, under <b>Al-Husnain Motors</b>. Together we decide how your data is used, so we are responsible for it under Kenya's Data Protection Act, 2019. For anything about your data, email <a href="mailto:info@shiftnation.org">info@shiftnation.org</a>.</p>
+      </section>
+      <section>
+        <h2>What we collect</h2>
+        <ul>
+          <li><b>Show car registration:</b> your name, email, phone number, Instagram handle (optional), the name of your car, and a photo of it.</li>
+          <li><b>Booth request:</b> your name, email, phone number, business name, what you'll show or sell, booth size, whether you need power, and any notes.</li>
+          <li><b>Driver passes:</b> the pass code, the driver's name and car, and the time the pass is scanned at the gate.</li>
+        </ul>
+        <p>Tickets are sold by our ticketing partner Little Africa, not on this website, so their own privacy terms apply to ticket purchases.</p>
+      </section>
+      <section>
+        <h2>Why we use it</h2>
+        <ul>
+          <li>To review your application and tell you by email whether it's approved.</li>
+          <li>To send your driver pass and check you in at the show car entrance.</li>
+          <li>To contact you about the event, such as roll-in times and setup details.</li>
+        </ul>
+        <p>We don't sell your data, and we don't use it for advertising.</p>
+      </section>
+      <section>
+        <h2>What's public</h2>
+        <p>If your car is approved, its <b>photo and name</b> appear on our <a href="#cars">Show cars</a> page. Your name, email, phone number and Instagram handle are never shown. Photos of pending or declined cars stay private. Everything else is seen only by the Shift Nation team.</p>
+      </section>
+      <section>
+        <h2>Who helps us run the site</h2>
+        <p>These services store or send data for us, only to run the website and the event. Some of them keep data on servers outside Kenya.</p>
+        <ul>
+          <li><b>Supabase:</b> our database and photo storage.</li>
+          <li><b>Vercel:</b> hosts the website.</li>
+          <li><b>Resend</b> and <b>Zoho Mail:</b> send and receive our emails.</li>
+          <li><b>Google Fonts:</b> provides the website's fonts, so Google sees your device's IP address when the page loads.</li>
+        </ul>
+      </section>
+      <section>
+        <h2>How long we keep it</h2>
+        <p>We keep your data only until the event is over. After Tuner Fest 6.0 on November 29, 2026, we delete applications, car photos and driver passes.</p>
+      </section>
+      <section>
+        <h2>Cookies</h2>
+        <p>We don't use advertising or tracking cookies, and we don't run analytics. The only thing this site stores in a browser is the sign-in for Shift Nation team members, so they stay logged in to the admin pages.</p>
+      </section>
+      <section>
+        <h2>Event photos</h2>
+        <p>Our gallery shows photos from past Shift Nation events, which may include people and cars. If you're in a photo and want it removed, email <a href="mailto:info@shiftnation.org">info@shiftnation.org</a> and we'll take it down.</p>
+      </section>
+      <section>
+        <h2>Your rights</h2>
+        <p>You can ask us to show you the data we hold about you, correct it, or delete it at any time, including withdrawing your application. Email <a href="mailto:info@shiftnation.org">info@shiftnation.org</a>. If you're unhappy with how we handle your data, you can also complain to the Office of the Data Protection Commissioner (ODPC) in Kenya.</p>
+      </section>
+    </div>
   </div>
 </div>
 
@@ -918,7 +995,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
         <li>Galleria Mall, Karen<br>Nairobi, Kenya</li>
         <li><a href="https://www.google.com/maps/search/?api=1&amp;query=Galleria+Mall+Karen+Nairobi" target="_blank" rel="noopener">Get directions</a></li></ul></div>
     </div>
-    <div class="foot-base"><span>© 2026 Shift Nation. All machines reserved. <a href="#admin" id="admin-link" hidden>Team admin</a></span><span class="open">Applications for 2026 are open</span></div>
+    <div class="foot-base"><span>© 2026 Shift Nation. All machines reserved. <a href="#privacy">Privacy</a> <a href="#admin" id="admin-link" hidden>Team admin</a></span><span class="open">Applications for 2026 are open</span></div>
   </div>
 </footer>
 
@@ -1275,6 +1352,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     $("#fs-car").hidden = t !== "car";
     $("#fs-booth").hidden = t !== "booth";
     $("#spots-note").hidden = t !== "car";
+    $("#public-note").hidden = t !== "car";
     $$(".seg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.type === t)));
     $$(".field.invalid", form).forEach(f => f.classList.remove("invalid"));
   }
