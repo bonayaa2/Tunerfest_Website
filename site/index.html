@@ -1743,12 +1743,18 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     } else {
       let code = "";
       try { code = (await res.error.context.json()).error; } catch {}
+      if (code === "not_signed_in") { e.emailError = "Email didn't send"; return signInAgain(); }
       e.emailError = code === "email_not_configured" ? "Email sending isn't set up yet" : "Email didn't send";
       admMsg(code === "email_not_configured"
         ? "Saved, but no email went out: email sending isn't set up yet (add the Resend key in Supabase)."
         : `Saved, but the email to ${e.email} didn't send. Use Send email to try again.`, true);
     }
     renderAdmin();
+  }
+  // This page's sign-in was ended elsewhere (for example by signing out on another device): sign in again
+  function signInAgain() {
+    adm.expired = true;
+    sb.auth.signOut({ scope: "local" });
   }
   async function removeEntry(e) {
     try {
@@ -1797,6 +1803,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     if (res.error) {
       let code = "";
       try { code = (await res.error.context.json()).error; } catch {}
+      if (code === "not_signed_in") return signInAgain();
       admMsg(code === "email_not_configured" ? "No email went out: email sending isn't set up (add the Resend key in Supabase)."
         : code === "no_pass" ? (isVendor(p) ? "This booth has no valid vendor pass. Approve it and confirm payment first." : "This car has no valid pass. Approve the car first.")
         : `The pass email to ${who?.email || "the driver"} didn't send. Try again, or use Copy pass link.`, true);
@@ -2322,7 +2329,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       // signed in, but only people listed in the admins table get the panel
       const a = await sb.from("admins").select("user_id").eq("user_id", session.user.id).maybeSingle();
       if (a.error || !a.data) {
-        await sb.auth.signOut();
+        await sb.auth.signOut({ scope: "local" });
         show("login"); err("#login-err", "This account isn't on the Shift Nation team list. Ask the site owner to add you.");
         return;
       }
@@ -2335,7 +2342,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     let recovering = false;
     sb.auth.onAuthStateChange((event, session) => {
       if (event === "PASSWORD_RECOVERY") { recovering = true; show("reset"); }
-      else if (event === "SIGNED_OUT") { adm.entries = new Map(); adm.photos.clear(); $("#adm-list").replaceChildren(); $("#adm-stats").replaceChildren(); $("#adm-who").hidden = true; show("login"); }
+      else if (event === "SIGNED_OUT") { adm.entries = new Map(); adm.photos.clear(); $("#adm-list").replaceChildren(); $("#adm-stats").replaceChildren(); $("#adm-who").hidden = true; show("login");
+        if (adm.expired) { adm.expired = false; err("#login-err", "Your sign-in had ended, so nothing was sent. Sign in again, then press Send email or Email pass."); } }
     });
     sb.auth.getSession().then(({ data }) => { if (data.session && !recovering) enter(data.session); });
 
@@ -2370,7 +2378,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       recovering = false; $("#reset-pass").value = "";
       const { data } = await sb.auth.getSession(); if (data.session) enter(data.session);
     });
-    $("#adm-logout").addEventListener("click", () => sb.auth.signOut());
+    $("#adm-logout").addEventListener("click", () => sb.auth.signOut({ scope: "local" }));
     $("#adm-refresh").addEventListener("click", loadAll);
   }
 
