@@ -424,6 +424,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
 .pass dt { color: #6b6f7c; } .pass dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
 .pass .stamp { position: absolute; top: 46%; left: 50%; transform: translate(-50%, -50%) rotate(-12deg); border: 4px solid #1f9d55; color: #1f9d55; background: #ffffffe6; padding: 8px 16px; font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: 1.3rem; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 8px; }
 .pass-note { color: var(--muted); font-size: 0.9rem; max-width: 44ch; }
+/* marshal gate page */
+.gate-go { min-height: 72px; width: min(520px, 100%); font-size: 0.85rem; }
 /* gate scanner */
 .scan { position: fixed; inset: 0; z-index: 80; background: #000; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; color: var(--text);
   padding: calc(env(safe-area-inset-top, 0px) + 10px) 12px calc(env(safe-area-inset-bottom, 0px) + 12px); gap: 10px; }
@@ -776,6 +778,13 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   </div>
 </div>
 
+<!-- =========================== MARSHAL GATE (#gate) =========================== -->
+<div class="view" data-view="gate" hidden>
+  <div class="wrap">
+    <div class="pass-page" id="gate-page"></div>
+  </div>
+</div>
+
 <!-- =========================== DRIVER PASS (#pass-CODE) =========================== -->
 <div class="view" data-view="pass" hidden>
   <div class="wrap">
@@ -885,7 +894,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       </section>
       <section>
         <h2>Cookies</h2>
-        <p>We don't use advertising or tracking cookies, and we don't run analytics. The only thing this site stores in a browser is the sign-in for Shift Nation team members, so they stay logged in to the admin pages.</p>
+        <p>We don't use advertising or tracking cookies, and we don't run analytics. The only things this site stores in a browser are the sign-in for Shift Nation team members, so they stay logged in to the admin pages, and the gate link on marshals' phones.</p>
       </section>
       <section>
         <h2>Event photos</h2>
@@ -1768,9 +1777,13 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   }
 
   // Gate scanner: phone camera → QR → check_in_driver (each pass works once)
-  const scan = { stream: null, raf: 0, busy: false, last: "", lastAt: 0, timer: 0 };
+  const scan = { stream: null, raf: 0, busy: false, last: "", lastAt: 0, timer: 0, mode: "team" };
+  // marshal gate links (#gate-KEY): the key lives in this phone's browser, not in the address bar
+  const gate = { key: null, label: "", in: 0, total: 0 };
+  const GATE_STORE = "tf6-gate-key";
   const loadScript = src => new Promise((ok, fail) => { const t = el("script", { src }); t.onload = ok; t.onerror = fail; document.head.append(t); });
-  async function openScanner() {
+  async function openScanner(mode) {
+    scan.mode = mode === "gate" ? "gate" : "team";
     $("#scan").hidden = false; lockScroll(true); $("#scan-result").hidden = true; $("#scan-msg").textContent = "Starting the camera…";
     updateScanCount();
     try {
@@ -1786,7 +1799,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   function closeScanner() {
     cancelAnimationFrame(scan.raf); clearTimeout(scan.timer);
     scan.stream?.getTracks().forEach(t => t.stop()); scan.stream = null;
-    $("#scan").hidden = true; lockScroll(false); renderAdmin();
+    $("#scan").hidden = true; lockScroll(false);
+    if (scan.mode === "gate") renderGate(); else renderAdmin();
   }
   const scanCanvas = document.createElement("canvas"), scanCtx = scanCanvas.getContext("2d", { willReadFrequently: true });
   function scanFrame() {
@@ -1804,6 +1818,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     scan.raf = requestAnimationFrame(scanFrame);
   }
   function updateScanCount() {
+    if (scan.mode === "gate") { $("#scan-count").textContent = `${gate.in} / ${gate.total} in`; return; }
     const live = (adm.passes || []).filter(p => !p.revoked);
     $("#scan-count").textContent = `${live.filter(p => p.checked_in_at).length} / ${live.length} in`;
   }
@@ -1819,12 +1834,16 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   function resumeScan() { clearTimeout(scan.timer); $("#scan-result").hidden = true; scan.busy = false; }
   async function checkPass(code) {
     scan.busy = true; scan.last = code; scan.lastAt = Date.now();
-    const r = await sb.rpc("check_in_driver", { ticket_code: code });
-    if (r.error) { showScan("bad", "Didn't check", "", "No connection, or you're signed out. Try again."); return; }
+    const r = scan.mode === "gate"
+      ? await sb.rpc("gate_check_in", { gate_key: gate.key, ticket_code: code })
+      : await sb.rpc("check_in_driver", { ticket_code: code });
+    if (r.error) { showScan("bad", "Didn't check", "", scan.mode === "gate" ? "No connection. Try again." : "No connection, or you're signed out. Try again."); return; }
     const d = r.data || {}, who = [d.name, d.car].filter(Boolean).join(" · ");
+    if (d.result === "bad_key") { showScan("bad", "Link switched off", "", "This marshal link no longer works. Ask the organiser for a new one."); return; }
+    if (scan.mode === "gate" && d.total != null) { gate.in = d.in; gate.total = d.total; }
     const p = (adm.passes || []).find(x => x.code === code);
     if (d.result === "ok") { if (p) p.checked_in_at = new Date().toISOString(); showScan("ok", "Let in", who, code); }
-    else if (d.result === "already") showScan("already", "Already used", who, `Checked in ${fmtTime(Date.parse(d.at))}`);
+    else if (d.result === "already") showScan("already", "Already used", who, `Checked in ${fmtTime(Date.parse(d.at))}${d.by ? ` by ${d.by}` : ""}`);
     else if (d.result === "revoked") showScan("bad", "Not valid", who, "This car is no longer approved.");
     else showScan("bad", "Not found", "", `No pass with code ${code}.`);
     updateScanCount();
@@ -1889,6 +1908,38 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       }
     } catch { alert("The pass image couldn't be made. Take a screenshot instead."); }
     btn.disabled = false; btn.textContent = label;
+  }
+
+  // Marshal gate page: #gate (after opening the #gate-KEY link once on this phone)
+  async function showGate(keyFromLink) {
+    if (keyFromLink) {
+      try { localStorage.setItem(GATE_STORE, keyFromLink); } catch {}
+      gate.key = keyFromLink;
+      history.replaceState(null, "", location.pathname + "#gate");
+    } else if (!gate.key) { try { gate.key = localStorage.getItem(GATE_STORE); } catch {} }
+    gate.checked = false; renderGate();
+    if (!sb || !gate.key) { gate.checked = true; gate.ok = false; renderGate(); return; }
+    const r = await sb.rpc("gate_status", { gate_key: gate.key });
+    gate.checked = true; gate.ok = !r.error && r.data?.ok;
+    gate.offline = !!r.error;
+    if (gate.ok) Object.assign(gate, { label: r.data.label, in: r.data.in, total: r.data.total });
+    renderGate();
+  }
+  function renderGate() {
+    const box = $("#gate-page");
+    const put = (...kids) => box.replaceChildren(...kids.filter(Boolean));
+    const head = (title, text) => [el("span", { class: "eyebrow ruled both", text: "Tuner Fest 6.0 · Marshals" }), el("h1", { class: "mega", text: title }), text ? el("p", { class: "lede", text }) : null];
+    if (!gate.checked) return put(el("p", { class: "lede", text: "Checking your marshal link…" }));
+    if (gate.offline) return put(...head("No connection", "Check your internet connection and refresh this page."));
+    if (!gate.ok) return put(...head("Marshal link needed", gate.key
+      ? "This marshal link has been switched off. Ask the organiser for a new link."
+      : "Open the marshal link the organiser sent you on this phone. You only need to do it once."));
+    put(...head("Gate check-in", `Signed in as ${gate.label}. Scan each driver's pass. A pass works once.`),
+      el("div", { class: "adm-stats", style: "width:min(520px,100%)" },
+        el("div", {}, el("b", { text: `${gate.in} / ${gate.total}` }), el("span", { text: "Checked in" })),
+        el("div", {}, el("b", { text: String(gate.total - gate.in) }), el("span", { text: "Still to arrive" }))),
+      el("button", { class: "btn fill yellow gate-go", type: "button", text: "Start scanning", onclick: () => openScanner("gate") }),
+      el("p", { class: "pass-note", text: "Allow camera access when your phone asks. Green means let them in. Amber means the pass was already used. Red means don't let them in and call the organiser." }));
   }
 
   // The driver's own pass page: #pass-DRV-XXXXXXXXXX
@@ -1959,10 +2010,49 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       el("div", { class: "scan-cta" },
         el("button", { class: "btn fill yellow", type: "button", text: "Open camera scanner", onclick: openScanner }),
         el("p", { class: "pass-note", style: "text-align:left", text: "Allow camera access when your phone asks. If a code won't scan, type it in at the bottom of the scanner." })),
+      marshalLinks(),
       el("h3", { class: "eyebrow", style: "--c: var(--muted);margin-top:10px", text: recent.length ? "Latest check-ins" : "No one checked in yet" }),
       ...recent.map(p => el("article", { class: "adm-row booth" },
         el("div", { style: "min-width:0" }, el("h3", {}, el("span", { text: p.name }), el("span", { class: "pill in", text: fmtTime(Date.parse(p.checked_in_at)) })),
-          el("dl", {}, [["Car", p.car || "—"], ["Code", p.code]].map(([k, v]) => [el("dt", { text: k }), el("dd", { text: v })]))))));
+          el("dl", {}, [["Car", p.car || "—"], ["Code", p.code], ["Scanned by", p.checked_in_by || "—"]].map(([k, v]) => [el("dt", { text: k }), el("dd", { text: v })]))))));
+    if (!adm.gateKeys) loadGateKeys();
+  }
+  async function loadGateKeys() {
+    const r = await sb.from("gate_keys").select("id,label,created_at,revoked,last_used_at").order("created_at", { ascending: false });
+    adm.gateKeys = r.error ? [] : r.data; adm.gateKeysOk = !r.error;
+    if (adm.page === "scan") renderAdmin();
+  }
+  function marshalLinks() {
+    if (!adm.gateKeysOk) return null;
+    const label = el("input", { id: "gk-label", type: "text", maxlength: "100", autocomplete: "off", placeholder: "Main gate – Brian" });
+    const form = el("form", { class: "pass-tools", onsubmit: async ev => {
+        ev.preventDefault();
+        if (!label.value.trim()) { admMsg("Give the marshal link a name, like the gate and the marshal's name.", true); label.focus(); return; }
+        const r = await sb.rpc("create_gate_key", { gate_label: label.value.trim() });
+        if (r.error) { admMsg("The marshal link wasn't created. Try again.", true); return; }
+        adm.newGateLink = { label: label.value.trim(), url: `${location.origin}${location.pathname}#gate-${r.data}` };
+        admMsg(""); await loadGateKeys();
+      } },
+      el("div", { class: "field" }, el("label", { for: "gk-label", text: "Marshal or gate name" }), label),
+      el("button", { class: "btn fill yellow", type: "submit", text: "Create marshal link" }));
+    const fresh = adm.newGateLink && el("div", { class: "scan-cta", style: "border-color: var(--yellow)" },
+      el("p", { text: `Marshal link for ${adm.newGateLink.label}. Copy it now and send it to them. For safety it's only shown once.` }),
+      el("p", { class: "pass-note", style: "text-align:left;overflow-wrap:anywhere;user-select:all", text: adm.newGateLink.url }),
+      copyBtn("Copy marshal link", adm.newGateLink.url));
+    const rows = (adm.gateKeys || []).map(g => el("article", { class: "adm-row booth" },
+      el("div", { style: "min-width:0" },
+        el("h3", {}, el("span", { text: g.label }), el("span", { class: `pill ${g.revoked ? "revoked" : "approved"}`, text: g.revoked ? "Switched off" : "Active" })),
+        el("dl", {}, [["Created", fmtTime(Date.parse(g.created_at))], ["Last scan", g.last_used_at ? fmtTime(Date.parse(g.last_used_at)) : "Not used yet"]]
+          .map(([k, v]) => [el("dt", { text: k }), el("dd", { text: v })]))),
+      el("div", { class: "adm-actions" }, g.revoked ? null : el("button", { class: "btn red", type: "button", text: "Switch off", onclick: async () => {
+        const r = await sb.from("gate_keys").update({ revoked: true }).eq("id", g.id);
+        if (r.error) { admMsg("That change didn't save. Try again.", true); return; }
+        g.revoked = true; if (adm.newGateLink?.label === g.label) adm.newGateLink = null; renderAdmin();
+      } }))));
+    return el("div", { style: "display:grid;gap:12px;margin-top:10px" },
+      el("h3", { class: "eyebrow", style: "--c: var(--muted)", text: "Marshal links" }),
+      el("p", { class: "pass-note", style: "text-align:left", text: "Marshals open their link once on their phone and get a scanner only. They can't see applications or any contact details. Switch a link off if a phone is lost." }),
+      form, fresh, ...rows);
   }
   function renderAdmin() {
     if ($("#adm").hidden) return;
@@ -2075,6 +2165,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       adm.entries = new Map(r.data.map(row => [row.id, fromRow(row)]));
       const t = await sb.from("driver_tickets").select("*").limit(2000);
       if (!t.error) { adm.passes = t.data; adm.passesOk = true; }
+      adm.gateKeys = null;
       admMsg(""); renderAdmin();
     }
     async function enter(session) {
@@ -2153,9 +2244,9 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   const views = $$(".view");
   function route() {
     const h = location.hash.slice(1);
-    const isPass = h.startsWith("pass-");
+    const isPass = h.startsWith("pass-"), isGate = h === "gate" || h.startsWith("gate-");
     const [base, sub] = h.split("/");
-    const name = isPass ? "pass" : base === "admin" ? "admin" : h === "booth" ? "register" : (views.some(v => v.dataset.view === h) ? h : "home");
+    const name = isPass ? "pass" : isGate ? "gate" : base === "admin" ? "admin" : h === "booth" ? "register" : (views.some(v => v.dataset.view === h) ? h : "home");
     views.forEach(v => { v.hidden = v.dataset.view !== name; });
     $$(".menu nav a").forEach(a => {
       const target = a.getAttribute("href").slice(1);
@@ -2165,6 +2256,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     if (name === "cars") loadShowCars();
     if (isPass) showPass(h.slice(5).toUpperCase());
     if (name === "admin") setAdminPage(sub);
+    if (isGate) showGate(h.startsWith("gate-") ? h.slice(5) : null);
     scrollTop();
     onScroll();
     railUpdates.forEach(f => f());
