@@ -1858,7 +1858,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       el("div", { class: `meter${approved > SPOTS ? " over" : ""}`, role: "img", "aria-label": `${approved} of ${SPOTS} spots filled` }, el("i", { style: `width:${Math.min(100, approved / SPOTS * 100)}%` })),
     );
     const q = adm.q.toLowerCase();
-    const rows = (adm.kind === "car" ? cars : booths)
+    // newest first; the #number stays the order they applied in
+    const rows = (adm.kind === "car" ? cars : booths).slice().reverse()
       .filter(e => adm.status === "all" || (e.status || "pending") === adm.status)
       .filter(e => !q || [e.name, e.car, e.business, e.email, e.phone, e.instagram].some(v => String(v || "").toLowerCase().includes(q)));
     if (!rows.length) {
