@@ -39,19 +39,15 @@ function boothPrice(r: Reg) {
   return { total: base + (r.booth_size === "6 × 3 m" ? 10000 : 0) + (r.power ? 2500 : 0), parts };
 }
 
-const shell = (subject: string, inner: string) => `<!doctype html><html><body style="margin:0;background:#f4f4f6;font-family:Arial,Helvetica,sans-serif;color:#1a1a1f">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:24px 12px"><tr><td align="center">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:12px;overflow:hidden">
-<tr><td style="background:#07080c;padding:22px 28px;color:#f5b41f;font-weight:bold;letter-spacing:2px;font-size:13px;text-transform:uppercase">Shift Nation · Tuner Fest 6.0</td></tr>
-<tr><td style="padding:28px">
-<h1 style="margin:0 0 18px;font-size:22px;line-height:1.3">${esc(subject)}</h1>
+// Plain, personal-looking emails: no banner, no coloured buttons. Heavily designed emails are what
+// Gmail files under Promotions (or Spam); simple ones from a real address land in Primary.
+const shell = (_subject: string, inner: string) => `<!doctype html><html><body style="margin:0;padding:16px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#1a1a1f">
 ${inner}
-<p style="margin:22px 0 0;font-size:15px;line-height:1.6">Shift Nation<br><a href="mailto:info@shiftnation.org" style="color:#1a1a1f">info@shiftnation.org</a> · <a href="https://shiftnation.org" style="color:#1a1a1f">shiftnation.org</a></p>
-</td></tr></table></td></tr></table></body></html>`;
-const para = (t: string) => `<p style="margin:0 0 14px;font-size:15px;line-height:1.6">${esc(t)}</p>`;
+<p style="margin:22px 0 0">Shift Nation<br>info@shiftnation.org</p>
+</body></html>`;
+const para = (t: string) => `<p style="margin:0 0 14px">${esc(t)}</p>`;
 const passButton = (passUrl: string, passCode: string) =>
-  `<p style="margin:0 0 18px"><a href="${esc(passUrl)}" style="display:inline-block;background:#f5b41f;color:#07080c;font-weight:bold;text-decoration:none;padding:12px 22px;border-radius:8px;letter-spacing:1px;text-transform:uppercase;font-size:13px">Open your driver pass</a></p>
-<p style="margin:0 0 14px;font-size:13px;line-height:1.6;color:#6b6f7c">Pass code ${esc(passCode)} · or open ${esc(passUrl)}</p>`;
+  `<p style="margin:0 0 14px">Open your driver pass: <a href="${esc(passUrl)}">${esc(passUrl)}</a><br>Pass code: <b>${esc(passCode)}</b></p>`;
 
 // Just the driver pass, for show cars approved before passes existed (or a lost email).
 // Cars the team adds from the admin panel are registered to the team inbox, so their pass comes here.
@@ -74,7 +70,7 @@ function composePass(r: Reg, passCode: string) {
     "Show its QR code at the show car entrance. The pass works once and admits the driver.",
     "Take a screenshot so you have it even without signal, and don't share it.",
   ];
-  const text = [`Hi ${first},`, "", ...lines, "", `Your pass: ${passUrl}`, `Pass code: ${passCode}`, "", "Shift Nation", "info@shiftnation.org · shiftnation.org"].join("\n");
+  const text = [`Hi ${first},`, "", ...lines, "", `Your pass: ${passUrl}`, `Pass code: ${passCode}`, "", "Shift Nation", "info@shiftnation.org"].join("\n");
   const html = shell(subject, para(`Hi ${first},`) + lines.map(para).join("") + passButton(passUrl, passCode));
   return { subject, text, html };
 }
@@ -90,8 +86,8 @@ function composeVendorPass(r: Reg, passCode: string) {
     "Take a screenshot or save it to your phone so you have it even without signal, and don't share it.",
     "We'll be in touch with setup times closer to the day.",
   ];
-  const text = [`Hi ${first},`, "", ...lines, "", `Your vendor pass: ${passUrl}`, `Pass code: ${passCode}`, "", "Shift Nation", "info@shiftnation.org · shiftnation.org"].join("\n");
-  const html = shell(subject, para(`Hi ${first},`) + lines.map(para).join("") + passButton(passUrl, passCode).replace("Open your driver pass", "Open your vendor pass"));
+  const text = [`Hi ${first},`, "", ...lines, "", `Your vendor pass: ${passUrl}`, `Pass code: ${passCode}`, "", "Shift Nation", "info@shiftnation.org"].join("\n");
+  const html = shell(subject, para(`Hi ${first},`) + lines.map(para).join("") + passButton(passUrl, passCode).replace("Open your driver pass:", "Open your vendor pass:"));
   return { subject, text, html };
 }
 
@@ -134,7 +130,7 @@ function compose(r: Reg, passCode: string | null) {
       "We'd still love to see you at the show. Tickets are on sale at shiftnation.org.",
     ];
   }
-  const text = [`Hi ${first},`, "", ...lines, "", "Shift Nation", "info@shiftnation.org · shiftnation.org"].join("\n");
+  const text = [`Hi ${first},`, "", ...lines, "", "Shift Nation", "info@shiftnation.org"].join("\n");
   const html = shell(subject, para(`Hi ${first},`) + lines.map((l) => passUrl && passCode && l.includes(passUrl)
     ? para("Your driver pass is ready. Show its QR code at the show car entrance.") + passButton(passUrl, passCode)
     : para(l)).join(""));
