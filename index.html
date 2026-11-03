@@ -1916,6 +1916,25 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       : `Hi ${first}, it's Shift Nation. ${e.car || "Your car"} is approved for Tuner Fest 6.0 on Sunday, November 29 at Galleria Mall, Karen. Here is your driver pass. Show the QR code at the show car entrance. It works once:\n${passLink(p.code)}`;
     return waLink(num, text);
   }
+  const PAYBILL = { business: "303030", account: "2052084310" };
+  function boothPayWhatsApp(e) {
+    const num = waNumber(e.phone), price = boothPrice(e.boothCategory, e.boothSize, e.power);
+    if (!num || e.status !== "approved" || e.paidAt) return null;
+    const first = (e.name || "").trim().split(/\s+/)[0] || "there";
+    return waLink(num, `Hi ${first}, it's Shift Nation. Your booth request for ${e.business || "your business"} at Tuner Fest 6.0 (Sunday, November 29, Galleria Mall, Karen) is approved.`
+      + (price ? `\n\nTotal: ${kes(price.total)} (${price.lines.map(([k, v]) => `${k} ${kes(v)}`).join(" + ")}).` : "")
+      + `\n\nPay by M-PESA: Lipa na M-PESA, Pay Bill. Business number ${PAYBILL.business}, account number ${PAYBILL.account}${price ? `, amount ${kes(price.total)}` : ""}.`
+      + `\n\nReply here with your M-PESA confirmation code once you've paid, and we'll send your vendor pass.`);
+  }
+  // Next vendor message: payment details for approved booths that haven't paid, the vendor pass for paid ones
+  function vendorQueue() {
+    const sent = waSent.get();
+    return [...adm.entries.values()].filter(e => e.type === "booth" && e.status === "approved").flatMap(e => {
+      if (!e.paidAt) { const href = boothPayWhatsApp(e); return href && !sent.has("pay-" + e.id) ? [{ e, key: "pay-" + e.id, href, what: "payment details" }] : []; }
+      const p = passFor(e.id), href = p && passWhatsApp(p);
+      return href && !sent.has(p.code) ? [{ e, key: p.code, href, what: "vendor pass" }] : [];
+    });
+  }
   const waBtn = p => {
     const href = passWhatsApp(p);
     if (!href) return null;
@@ -2354,7 +2373,13 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       return;
     }
     const carIndex = new Map(cars.map((e, i) => [e, i + 1]));
-    $("#adm-list").replaceChildren(...rows.map(e => {
+    const vq = adm.kind === "booth" && sb ? vendorQueue() : [];
+    const vendorBar = adm.kind === "booth" && sb ? el("div", { class: "pass-tools" },
+      el("button", { class: "btn fill", style: "--c:#25d366", type: "button", ...(vq.length ? {} : { disabled: "" }),
+        text: vq.length ? `Send next on WhatsApp (${vq.length} left)` : "All vendors messaged on WhatsApp",
+        onclick: () => { const n = vq[0]; if (!n) return; window.open(n.href, "_blank", "noopener"); waSent.add(n.key); admMsg(`WhatsApp opened for ${n.e.business || n.e.name} (${n.what}). Press Send there, then come back for the next one.`); renderAdmin(); } }),
+      el("p", { class: "pass-note", style: "text-align:left;margin:0", text: "Approved booths that haven't paid get the price and paybill. Paid booths get their vendor pass." })) : null;
+    $("#adm-list").replaceChildren(...(vendorBar ? [vendorBar] : []), ...rows.map(e => {
       const st = ["pending", "approved", "declined"].includes(e.status) ? e.status : "pending";
       const key = e.key;
       const box = el("div", { class: "ph-box" });
@@ -2370,6 +2395,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       const pass = st === "approved" ? passFor(e.id) : null;
       if (e.type === "booth" && st === "approved") {
         details.push(["Payment", e.paidAt ? `Paid ${e.amountPaid != null ? kes(e.amountPaid) : ""} · M-PESA ${e.mpesaCode || "—"} · ${fmtTime(e.paidAt)}` : "Not paid yet"]);
+        if (!e.paidAt && boothPayWhatsApp(e)) details.push(["WhatsApp", waSent.get().has("pay-" + e.id) ? "Payment details sent ✓" : "Payment details not sent yet"]);
+        if (pass && passWhatsApp(pass)) details.push(["WhatsApp", waSent.get().has(pass.code) ? "Vendor pass sent ✓" : "Vendor pass not sent yet"]);
         if (pass) details.push(["Vendor pass", `${pass.code} · ${pass.used ? `${pass.used} of ${pass.admits || 5} staff in` : `admits ${pass.admits || 5}, no one in yet`} · ${pass.sending ? "emailing…" : pass.emailed_at ? "emailed " + fmtTime(Date.parse(pass.emailed_at)) : "not emailed yet"}`]);
       }
       if (pass && e.type === "car") details.push(["Driver pass", `${pass.code} · ${pass.checked_in_at ? "checked in " + fmtTime(Date.parse(pass.checked_in_at)) : "not checked in yet"} · ${pass.sending ? "emailing…" : pass.emailed_at ? "emailed " + fmtTime(Date.parse(pass.emailed_at)) : "not emailed yet"}`]);
@@ -2386,6 +2413,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
            sb && reviewed && !e.emailing ? el("button", { class: "btn", type: "button", text: emailed ? "Resend email" : "Send email", onclick: () => notifyApplicant(e) }) : null,
            pass ? passMailBtn(pass) : null,
            pass ? waBtn(pass) : null,
+           e.type === "booth" && boothPayWhatsApp(e) ? el("a", { class: `btn${waSent.get().has("pay-" + e.id) ? "" : " fill"}`, style: "--c:#25d366", href: boothPayWhatsApp(e), target: "_blank", rel: "noopener",
+             text: waSent.get().has("pay-" + e.id) ? "WhatsApp payment again" : "WhatsApp payment details", onclick: () => { waSent.add("pay-" + e.id); setTimeout(renderAdmin, 300); } }) : null,
            pass ? copyBtn("Copy pass link", passLink(pass.code)) : null,
            e.type === "car" && sb ? photoBtn(e) : null,
            el("button", { class: "btn", type: "button", text: "Remove", onclick: () => { adm.confirm = key; renderAdmin(); } })];
