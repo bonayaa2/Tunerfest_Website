@@ -1849,6 +1849,13 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
         adm.passes.push(r.data); admMsg(`Pass ${r.data.code} created for ${r.data.name}. Use Copy link to send it.`); renderAdmin();
       } },
       el("a", { class: "btn fill yellow", href: "#admin/scan", text: "Scan passes" }),
+      (() => {
+        const sent = waSent.get();
+        const queue = all.filter(p => !p.revoked && !sent.has(p.code) && passWhatsApp(p));
+        return el("button", { class: "btn fill", style: "--c:#25d366", type: "button", ...(queue.length ? {} : { disabled: "" }),
+          text: queue.length ? `Send next on WhatsApp (${queue.length} left)` : "All passes sent on WhatsApp",
+          onclick: () => { const p = queue[0]; if (!p) return; window.open(passWhatsApp(p), "_blank", "noopener"); waSent.add(p.code); admMsg(`WhatsApp opened for ${p.name}. Press Send there, then come back for the next one.`); renderAdmin(); } });
+      })(),
       el("div", { class: "field" }, el("label", { for: "np-name", text: "Driver name" }), name),
       el("div", { class: "field" }, el("label", { for: "np-car", text: "Car (optional)" }), car),
       el("button", { class: "btn", type: "submit", text: "Create pass" }));
@@ -1862,6 +1869,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
            el("button", { class: "btn red", type: "button", text: "Delete", onclick: () => deletePass(p) }),
            el("button", { class: "btn", type: "button", text: "Keep", onclick: () => { adm.confirm = null; renderAdmin(); } })]
         : [p.registration_id && !p.revoked ? passMailBtn(p) : null,
+           waBtn(p),
            copyBtn("Copy link", passLink(p.code)),
            el("a", { class: "btn", href: `#pass-${p.code}`, target: "_blank", text: "Open" }),
            p.revoked ? null : p.checked_in_at
@@ -1873,6 +1881,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
           el("h3", {}, el("span", { text: p.name }), el("span", { class: `pill ${st}`, text: { revoked: "Not valid", in: "Checked in", pending: "Not arrived" }[st] })),
           el("dl", {}, [["Car", p.car || "—"], ["Code", p.code], ["Type", p.registration_id ? "Approved show car" : "Created by hand"],
             ...(p.registration_id ? [["Email", p.sending ? "Sending…" : p.emailed_at ? `Pass emailed ${fmtTime(Date.parse(p.emailed_at))}` : "Pass not emailed yet"]] : []),
+            ...(passWhatsApp(p) ? [["WhatsApp", waSent.get().has(p.code) ? "Sent ✓" : "Not sent yet"]] : []),
             ...(p.checked_in_at ? [["Checked in", fmtTime(Date.parse(p.checked_in_at))]] : []), ...(p.revoked ? [["Note", "The car is no longer approved, so this pass won't scan."]] : [])]
             .map(([k, v]) => [el("dt", { text: k }), el("dd", { text: String(v) })]))),
         el("div", { class: "adm-actions" }, actions));
@@ -1893,6 +1902,27 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     return /^\d{10,15}$/.test(d) ? d : null;
   };
   const waLink = (num, text) => `https://wa.me/${num}?text=${encodeURIComponent(text)}`;
+  // WhatsApp backup for passes: one tap opens WhatsApp with the driver's number and message ready.
+  // What's been sent is remembered on this device, so nobody gets messaged twice.
+  const WA_STORE = "tf6-wa-sent";
+  const waSent = { get() { try { return new Set(JSON.parse(localStorage.getItem(WA_STORE) || "[]")); } catch { return new Set(); } },
+    add(code) { try { const s = waSent.get(); s.add(code); localStorage.setItem(WA_STORE, JSON.stringify([...s])); } catch {} } };
+  function passWhatsApp(p) {
+    const e = adm.entries.get(p.registration_id), num = e && waNumber(e.phone);
+    if (!num || p.revoked) return null;
+    const first = (e.name || "").trim().split(/\s+/)[0] || "there";
+    const text = isVendor(p)
+      ? `Hi ${first}, it's Shift Nation. Thanks for your payment for the ${e.business || "your"} booth at Tuner Fest 6.0 on Sunday, November 29 at Galleria Mall, Karen. Here is your vendor pass. Show the QR code at the vendor entrance. It lets in up to ${p.admits || 5} of your staff, one scan each:\n${passLink(p.code)}`
+      : `Hi ${first}, it's Shift Nation. ${e.car || "Your car"} is approved for Tuner Fest 6.0 on Sunday, November 29 at Galleria Mall, Karen. Here is your driver pass. Show the QR code at the show car entrance. It works once:\n${passLink(p.code)}`;
+    return waLink(num, text);
+  }
+  const waBtn = p => {
+    const href = passWhatsApp(p);
+    if (!href) return null;
+    const sent = waSent.get().has(p.code);
+    return el("a", { class: `btn${sent ? "" : " fill"}`, style: "--c:#25d366", href, target: "_blank", rel: "noopener", text: sent ? "WhatsApp again" : "WhatsApp pass",
+      onclick: () => { waSent.add(p.code); setTimeout(renderAdmin, 300); } });
+  };
   const organiserButton = () => ORGANISER_WHATSAPP
     ? el("a", { class: "btn", style: "--c:#25d366", href: waLink(ORGANISER_WHATSAPP, "Hi, it's a Tuner Fest marshal at the gate. "), target: "_blank", rel: "noopener", text: "WhatsApp the organiser" }) : null;
   const loadScript = src => new Promise((ok, fail) => { const t = el("script", { src }); t.onload = ok; t.onerror = fail; document.head.append(t); });
@@ -2355,6 +2385,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
            st !== "pending" ? el("button", { class: "btn", type: "button", text: "Back to review", onclick: () => setStatus(e, "pending") }) : null,
            sb && reviewed && !e.emailing ? el("button", { class: "btn", type: "button", text: emailed ? "Resend email" : "Send email", onclick: () => notifyApplicant(e) }) : null,
            pass ? passMailBtn(pass) : null,
+           pass ? waBtn(pass) : null,
            pass ? copyBtn("Copy pass link", passLink(pass.code)) : null,
            e.type === "car" && sb ? photoBtn(e) : null,
            el("button", { class: "btn", type: "button", text: "Remove", onclick: () => { adm.confirm = key; renderAdmin(); } })];
