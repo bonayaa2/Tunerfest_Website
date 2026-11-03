@@ -60,7 +60,7 @@ function composePass(r: Reg, passCode: string) {
       `Here is the driver pass for ${r.car || "the show car"}${r.name ? `, driven by ${r.name}` : ""}, which you added from the admin panel, for Tuner Fest 6.0, ${EVENT}.`,
       "Send it to the driver, or show the QR code at the show car entrance. The pass works once and admits the driver.",
     ];
-    const text = ["Hi team,", "", ...lines, "", `Pass: ${passUrl}`, `Pass code: ${passCode}`, "", "Shift Nation admin"].join("\n");
+    const text = ["Hi team,", "", lines.join("\n\n"), "", `Pass: ${passUrl}`, `Pass code: ${passCode}`, "", "Shift Nation admin"].join("\n");
     return { subject, text, html: shell(subject, para("Hi team,") + lines.map(para).join("") + passButton(passUrl, passCode)) };
   }
   const first = (r.name || "").trim().split(/\s+/)[0] || "there";
@@ -70,7 +70,7 @@ function composePass(r: Reg, passCode: string) {
     "Show its QR code at the show car entrance. The pass works once and admits the driver.",
     "Take a screenshot so you have it even without signal, and don't share it.",
   ];
-  const text = [`Hi ${first},`, "", ...lines, "", `Your pass: ${passUrl}`, `Pass code: ${passCode}`, "", "Shift Nation", "info@shiftnation.org"].join("\n");
+  const text = [`Hi ${first},`, "", lines.join("\n\n"), "", `Your pass: ${passUrl}`, `Pass code: ${passCode}`, "", "Shift Nation", "info@shiftnation.org"].join("\n");
   const html = shell(subject, para(`Hi ${first},`) + lines.map(para).join("") + passButton(passUrl, passCode));
   return { subject, text, html };
 }
@@ -86,7 +86,7 @@ function composeVendorPass(r: Reg, passCode: string) {
     "Take a screenshot or save it to your phone so you have it even without signal, and don't share it.",
     "We'll be in touch with setup times closer to the day.",
   ];
-  const text = [`Hi ${first},`, "", ...lines, "", `Your vendor pass: ${passUrl}`, `Pass code: ${passCode}`, "", "Shift Nation", "info@shiftnation.org"].join("\n");
+  const text = [`Hi ${first},`, "", lines.join("\n\n"), "", `Your vendor pass: ${passUrl}`, `Pass code: ${passCode}`, "", "Shift Nation", "info@shiftnation.org"].join("\n");
   const html = shell(subject, para(`Hi ${first},`) + lines.map(para).join("") + passButton(passUrl, passCode).replace("Open your driver pass:", "Open your vendor pass:"));
   return { subject, text, html };
 }
@@ -130,7 +130,7 @@ function compose(r: Reg, passCode: string | null) {
       "We'd still love to see you at the show. Tickets are on sale at shiftnation.org.",
     ];
   }
-  const text = [`Hi ${first},`, "", ...lines, "", "Shift Nation", "info@shiftnation.org"].join("\n");
+  const text = [`Hi ${first},`, "", lines.join("\n\n"), "", "Shift Nation", "info@shiftnation.org"].join("\n");
   const html = shell(subject, para(`Hi ${first},`) + lines.map((l) => passUrl && passCode && l.includes(passUrl)
     ? para("Your driver pass is ready. Show its QR code at the show car entrance.") + passButton(passUrl, passCode)
     : para(l)).join(""));
@@ -181,7 +181,9 @@ Deno.serve(async (req) => {
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from, to: [r.email], reply_to: "info@shiftnation.org", subject: msg.subject, html: msg.html, text: msg.text }),
+    // Plain text only: Gmail puts HTML emails, even simple ones, under Promotions; plain text like a
+    // person writes lands in Primary. Links in plain text are still clickable.
+    body: JSON.stringify({ from, to: [r.email], reply_to: "info@shiftnation.org", subject: msg.subject, text: msg.text }),
   });
   if (!res.ok) {
     const detail = (await res.text()).slice(0, 400);
