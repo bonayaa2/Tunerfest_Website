@@ -774,9 +774,9 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
             <fieldset class="field full opt-group">
               <legend class="opt-legend">Vendor tier</legend>
               <div class="opt-cards">
-                <label class="opt"><input type="radio" name="booth_tier" value="food"><span class="opt-name">Food &amp; drinks</span><span class="opt-tag">KES 30,000</span><span class="opt-sub">Food and drink vendors, 3 × 3 m tent</span></label>
-                <label class="opt"><input type="radio" name="booth_tier" value="other" checked><span class="opt-name">Parts &amp; other vendors</span><span class="opt-tag">KES 20,000</span><span class="opt-sub">Parts, detailing, apparel, garages and brands, 3 × 3 m tent</span></label>
-                <label class="opt"><input type="radio" name="booth_tier" value="alcohol"><span class="opt-name">Alcohol vendor <span class="opt-badge">Exclusive</span></span><span class="opt-tag">KES 350,000</span><span class="opt-sub">The only alcohol seller at the event. One vendor only, 3 × 3 m tent</span></label>
+                <label class="opt"><input type="radio" name="booth_tier" value="food"><span class="opt-name">Food &amp; drinks</span><span class="opt-sub">Food and drink vendors, 3 × 3 m tent</span></label>
+                <label class="opt"><input type="radio" name="booth_tier" value="other" checked><span class="opt-name">Parts &amp; other vendors</span><span class="opt-sub">Parts, detailing, apparel, garages and brands, 3 × 3 m tent</span></label>
+                <label class="opt"><input type="radio" name="booth_tier" value="alcohol"><span class="opt-name">Alcohol vendor <span class="opt-badge">Exclusive</span></span><span class="opt-sub">The only alcohol seller at the event. One vendor only, 3 × 3 m tent</span></label>
               </div>
             </fieldset>
             <div class="field full" id="b-cat-field"><label for="b-cat">What you'll show</label>
@@ -1477,9 +1477,10 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   function updateBoothTotal() {
     const c = boothChoice(), p = boothPrice(c.category, c.size, c.power);
     $("#b-cat-field").hidden = c.tier !== "other";
-    $("#b-total").replaceChildren(...p.lines.map(([k, v]) => el("div", { class: "ln" }, el("span", { text: k }), el("span", { text: kes(v) }))),
-      el("div", { class: "tot" }, el("span", { text: "Total" }), el("b", { text: kes(p.total) })),
-      el("p", { class: "pay", text: "You pay after your booth is approved, by M-PESA Paybill. The payment details come with your approval email." }));
+    // the base booth price isn't shown publicly; only the extras they picked
+    const extras = p.lines.slice(1);
+    $("#b-total").replaceChildren(...extras.map(([k, v]) => el("div", { class: "ln" }, el("span", { text: k }), el("span", { text: `+ ${kes(v)}` }))),
+      el("p", { class: "pay", text: "We'll send your booth price and M-PESA payment details once your booth is approved." }));
   }
   form.addEventListener("change", e => { if (e.target.closest("#fs-booth")) updateBoothTotal(); });
   function setType(t) {
@@ -1591,8 +1592,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     $("#done-title").textContent = `You're on the list, ${first}`;
     $("#done-body").textContent = type === "car"
       ? `We've got your ${entry.car}. There are only ${SPOTS} show car spots, so the team reviews applications in order and will email ${entry.email} to confirm your spot and roll-in time.`
-      : (() => { const p = boothPrice(entry.boothCategory || entry.booth_category, entry.boothSize, entry.power);
-          return `We've got your ${entry.boothSize} booth request for ${entry.business}${p ? `, ${kes(p.total)} in total` : ""}. You pay by M-PESA once it's approved. We'll email ${entry.email} with the payment details and setup times.`; })();
+      : (() => {
+          return `We've got your ${entry.boothSize} booth request for ${entry.business}. Once it's approved, we'll send your booth price and M-PESA payment details to ${entry.email}, with setup times.`; })();
     form.hidden = true; done.hidden = false; done.focus();
   }
   async function submitSupabase(d) {
