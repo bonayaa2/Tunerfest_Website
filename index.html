@@ -972,7 +972,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
         <button class="btn" type="button" id="sf-copy">Copy code</button>
         <a class="btn fill yellow" href="https://apps.little.africa/events/tunerfest-2026" target="_blank" rel="noopener">Get my ticket <span class="arr">→</span></a>
       </div>
-      <p class="hint">Choose the <b>Advanced</b> ticket on Little Africa and enter the code at checkout to make it free. It works on one Advanced ticket only, not group tickets. Take a screenshot so you don't lose it. It works once.</p>
+      <p class="hint">The code takes <b>KES 1,000 off</b> at checkout on Little Africa, which makes one <b>Advanced</b> ticket free. Choose the Advanced ticket and enter the code. Take a screenshot so you don't lose it. It works once.</p>
     </div>
 
     <section class="lc-board" aria-labelledby="sf-win-h">
@@ -985,7 +985,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       <ul>
         <li>Each drop's secret is a 5-letter car word: a car part, or a tuning or racing term (like <b>VALVE</b> or <b>DRIFT</b>, but not those exactly).</li>
         <li>After each guess, every letter gets a colour: <b style="color:#2bff6a">green</b> = right letter in the right spot, <b style="color:#ffb21e">orange</b> = the letter is in the word but somewhere else, <b>grey</b> = not in the word. The keyboard keeps the colours too.</li>
-        <li>You get 6 guesses per drop. The first person to open the safe wins a single-use code for one free <b>Advanced ticket</b> (not valid on group tickets), and the safe closes until the next drop.</li>
+        <li>You get 6 guesses per drop. The first person to open the safe wins a single-use code worth <b>KES 1,000 off</b>, enough for one free Advanced ticket, and the safe closes until the next drop.</li>
         <li>New drops at 12 PM and 7 PM, Nairobi time. Each phone number can win once.</li>
         <li>Winners are checked before codes are honoured. Entries that look automated are disqualified. See our <a href="#terms">event rules</a> and <a href="#privacy">privacy policy</a>.</li>
       </ul>
@@ -2462,7 +2462,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
         el("div", { class: "adm-actions" },
           el("a", { class: "btn", href: `tel:+${pl.phone}`, text: "Call" }),
           el("a", { class: "btn fill", style: "--c:#25d366", target: "_blank", rel: "noopener", text: "WhatsApp code",
-            href: waLink(pl.phone, `Hi ${first}, it's Shift Nation. Congratulations on cracking the TunerFest safe! Your code for one free Advanced ticket is ${code}. Choose the Advanced ticket and enter the code at checkout here: https://apps.little.africa/events/tunerfest-2026`) })));
+            href: waLink(pl.phone, `Hi ${first}, it's Shift Nation. Congratulations on cracking the TunerFest safe! Your code is ${code}. It takes KES 1,000 off, so your Advanced ticket is free. Choose the Advanced ticket and enter the code at checkout here: https://apps.little.africa/events/tunerfest-2026`) })));
     });
     const recent = S.drops.filter(d => !d.cracked_by).slice(0, 6).map(d => el("li", { text: `${d.id}: not cracked (the word was ${d.combo})` }));
     $("#adm-list").replaceChildren(
