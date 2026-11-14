@@ -702,7 +702,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
 
   <a class="lc-strip wrap safe-strip" href="#safe">
     <span class="safe-dial" aria-hidden="true">🔒</span>
-    <span class="lc-strip-msg"><b>Crack the Safe:</b> guess the secret car word. New safe at 12 PM and 7 PM daily, first to crack it wins a free ticket.</span>
+    <span class="lc-strip-msg"><b>Crack the Safe:</b> guess the secret car word. New safe at 12 PM and 7 PM daily, first to crack it wins a free Advanced ticket.</span>
     <span class="lc-strip-go">Play <span aria-hidden="true">→</span></span>
   </a>
 
@@ -949,7 +949,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     <div class="lc-head">
       <img src="assets/tunerfest-logo.webp" alt="Tuner Fest 6.0, Tuner Motorshow Event, presented by Al-Husnain Motors" width="1200" height="385">
       <h1 class="mega">Crack the <span class="outline">Safe</span></h1>
-      <p class="lede">At <b>12 PM and 7 PM</b> every day, a new safe drops, locked with a secret <b>5-letter car word</b>: a part, or a tuning or racing term. The <b>first person to guess it</b> wins a free ticket to Tuner Fest 6.0.</p>
+      <p class="lede">At <b>12 PM and 7 PM</b> every day, a new safe drops, locked with a secret <b>5-letter car word</b>: a part, or a tuning or racing term. The <b>first person to guess it</b> wins a free <b>Advanced ticket</b> to Tuner Fest 6.0.</p>
     </div>
 
     <div class="lc-card safe-status" id="sf-status"><p class="lede">Checking the safe…</p></div>
@@ -975,14 +975,14 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
 
     <div class="lc-card safe-win" id="sf-win" hidden>
       <span class="eyebrow" style="--c:#2bff6a">Safe cracked</span>
-      <h2 class="mega">You won a free ticket!</h2>
+      <h2 class="mega">You won a free Advanced ticket!</h2>
       <p class="lede">Your single-use code:</p>
       <p class="safe-code" id="sf-code"></p>
       <div class="row" style="gap:10px;flex-wrap:wrap">
         <button class="btn" type="button" id="sf-copy">Copy code</button>
         <a class="btn fill yellow" href="https://apps.little.africa/events/tunerfest-2026" target="_blank" rel="noopener">Get my ticket <span class="arr">→</span></a>
       </div>
-      <p class="hint">Enter the code at checkout on Little Africa and your ticket is free. Take a screenshot so you don't lose it. It works once.</p>
+      <p class="hint">Choose the <b>Advanced</b> ticket on Little Africa and enter the code at checkout to make it free. It works on one Advanced ticket only, not group tickets. Take a screenshot so you don't lose it. It works once.</p>
     </div>
 
     <section class="lc-board" aria-labelledby="sf-win-h">
@@ -995,7 +995,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       <ul>
         <li>Each drop's secret is a 5-letter car word: a car part, or a tuning or racing term (like <b>VALVE</b> or <b>DRIFT</b>, but not those exactly).</li>
         <li>After each guess, every letter gets a colour: <b style="color:#2bff6a">green</b> = right letter in the right spot, <b style="color:#ffb21e">orange</b> = the letter is in the word but somewhere else, <b>grey</b> = not in the word. The keyboard keeps the colours too.</li>
-        <li>You get 6 guesses per drop. The first person to open the safe wins a single-use free-ticket code, and the safe closes until the next drop.</li>
+        <li>You get 6 guesses per drop. The first person to open the safe wins a single-use code for one free <b>Advanced ticket</b> (not valid on group tickets), and the safe closes until the next drop.</li>
         <li>New drops at 12 PM and 7 PM, Nairobi time. Each phone number can win once.</li>
         <li>Winners are checked before codes are honoured. Entries that look automated are disqualified. See our <a href="#terms">event rules</a> and <a href="#privacy">privacy policy</a>.</li>
       </ul>
@@ -2474,7 +2474,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
         el("div", { class: "adm-actions" },
           el("a", { class: "btn", href: `tel:+${pl.phone}`, text: "Call" }),
           el("a", { class: "btn fill", style: "--c:#25d366", target: "_blank", rel: "noopener", text: "WhatsApp code",
-            href: waLink(pl.phone, `Hi ${first}, it's Shift Nation. Congratulations on cracking the TunerFest safe! Your free-ticket code is ${code}. Enter it at checkout here: https://apps.little.africa/events/tunerfest-2026`) })));
+            href: waLink(pl.phone, `Hi ${first}, it's Shift Nation. Congratulations on cracking the TunerFest safe! Your code for one free Advanced ticket is ${code}. Choose the Advanced ticket and enter the code at checkout here: https://apps.little.africa/events/tunerfest-2026`) })));
     });
     const recent = S.drops.filter(d => !d.cracked_by).slice(0, 6).map(d => el("li", { text: `${d.id}: not cracked (the word was ${d.combo})` }));
     $("#adm-list").replaceChildren(
@@ -2873,7 +2873,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     if (st.already_won) { sfShow(""); return $("#sf-status").replaceChildren(el("span", { class: "k", text: "Already a winner" }), el("p", { class: "lede", text: "This number has already cracked a safe and won a ticket. Leave the next one for someone else!" })); }
     if (st.phase === "ended") { sfShow(""); return $("#sf-status").replaceChildren(el("span", { class: "k", text: "Giveaway over" }), el("p", { class: "lede", text: "The safe giveaway has ended. Thanks for playing, and see you at Tuner Fest 6.0!" })); }
     if (st.phase === "open") {
-      $("#sf-status").replaceChildren(el("span", { class: "k", text: "The safe is open" }), el("p", { class: "lede", text: "Crack it before anyone else to win a free ticket." }));
+      $("#sf-status").replaceChildren(el("span", { class: "k", text: "The safe is open" }), el("p", { class: "lede", text: "Crack it before anyone else to win a free Advanced ticket." }));
       if (!LC.me) { sfShow("sf-entry"); if (LC.me === null) { $("#sf-name").value = ""; } return; }
       sfShow("sf-play"); sfPlay();
       SF.poll = setInterval(sfCheckCracked, 15000);
