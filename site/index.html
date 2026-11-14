@@ -530,7 +530,15 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
 .safe-play { display: grid; gap: 12px; }
 .safe-door { display: grid; gap: 14px; justify-items: center; padding: 20px 14px; border-radius: 22px; border: 2px solid #3a3a44; background: radial-gradient(90% 70% at 50% 25%, #2a2a33, #0d0d12); box-shadow: inset 0 0 0 6px #15151b, 0 20px 40px -20px #000; }
 .safe-slots { display: flex; gap: 10px; }
-.safe-slots span { width: clamp(52px, 17vw, 66px); aspect-ratio: 3 / 4; display: grid; place-items: center; border-radius: 12px; background: #050507; border: 2px solid #44444f; font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: clamp(1.8rem, 9vw, 2.4rem); color: #ffb21e; text-shadow: 0 0 12px #ffb21e88; }
+.safe-slots span { width: clamp(46px, 14vw, 58px); aspect-ratio: 1; display: grid; place-items: center; border-radius: 12px; background: #050507; border: 2px solid #44444f; font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: clamp(1.8rem, 9vw, 2.4rem); color: #ffb21e; text-shadow: 0 0 12px #ffb21e88; }
+.safe-kb { display: grid; gap: 6px; width: 100%; max-width: 480px; }
+.safe-kb .r { display: flex; justify-content: center; gap: 5px; }
+.safe-kb button { touch-action: manipulation; flex: 1 1 0; min-width: 0; max-width: 44px; height: 52px; border-radius: 8px; border: 0; background: #2a2a33; color: #fff; font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.95rem; cursor: pointer; padding: 0; }
+.safe-kb button.wide { max-width: 68px; flex-grow: 1.5; font-size: 0.6rem; letter-spacing: 0.08em; }
+.safe-kb button.enter { background: var(--red); }
+.safe-kb button:active { filter: brightness(1.3); }
+.safe-kb button:disabled { opacity: .4; cursor: default; }
+.safe-kb button.k-g { background: #1fa64a; } .safe-kb button.k-a { background: #d98a00; } .safe-kb button.k-x { background: #101014; color: #55555f; }
 .safe-keys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: min(320px, 100%); }
 .safe-keys button { touch-action: manipulation; min-height: 58px; border-radius: 14px; border: 1px solid #ffffff22; background: #1a1a22; color: #fff; font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: 1.4rem; cursor: pointer; }
 .safe-keys button:active { transform: translateY(1px); background: #24242e; }
@@ -694,7 +702,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
 
   <a class="lc-strip wrap safe-strip" href="#safe">
     <span class="safe-dial" aria-hidden="true">🔒</span>
-    <span class="lc-strip-msg"><b>Crack the Safe:</b> a new safe drops at 12 PM and 7 PM every day. First to crack it wins a free ticket.</span>
+    <span class="lc-strip-msg"><b>Crack the Safe:</b> guess the secret car word. New safe at 12 PM and 7 PM daily, first to crack it wins a free ticket.</span>
     <span class="lc-strip-go">Play <span aria-hidden="true">→</span></span>
   </a>
 
@@ -941,7 +949,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     <div class="lc-head">
       <img src="assets/tunerfest-logo.webp" alt="Tuner Fest 6.0, Tuner Motorshow Event, presented by Al-Husnain Motors" width="1200" height="385">
       <h1 class="mega">Crack the <span class="outline">Safe</span></h1>
-      <p class="lede">A new safe drops at <b>12 PM and 7 PM</b> every day with a secret 4-digit code. The <b>first person to crack it</b> wins a free ticket to Tuner Fest 6.0.</p>
+      <p class="lede">At <b>12 PM and 7 PM</b> every day, a new safe drops, locked with a secret <b>5-letter car word</b>: a part, or a tuning or racing term. The <b>first person to guess it</b> wins a free ticket to Tuner Fest 6.0.</p>
     </div>
 
     <div class="lc-card safe-status" id="sf-status"><p class="lede">Checking the safe…</p></div>
@@ -956,15 +964,10 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     <div class="safe-play" id="sf-play" hidden>
       <div class="lc-top"><span id="sf-who"></span><span id="sf-left"></span></div>
       <div class="safe-door">
-        <div class="safe-slots" id="sf-slots" aria-live="polite"><span></span><span></span><span></span><span></span></div>
-        <div class="safe-keys" role="group" aria-label="Safe keypad">
-          <button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button>
-          <button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button>
-          <button type="button" data-k="del" aria-label="Delete">⌫</button>
-          <button type="button" data-k="go" class="go" id="sf-go">Open</button>
-        </div>
-        <p class="lc-msg" id="sf-msg" role="status">Enter 4 digits from 1 to 6, then press Open.</p>
-        <p class="safe-key"><span class="tile g">2</span> right place <span class="tile a">4</span> wrong place <span class="tile x">1</span> not in code</p>
+        <div class="safe-slots" id="sf-slots" aria-live="polite"></div>
+        <div class="safe-kb" id="sf-kb" role="group" aria-label="Keyboard"></div>
+        <p class="lc-msg" id="sf-msg" role="status">Type a 5-letter car word, then press Enter.</p>
+        <p class="safe-key"><span class="tile g">V</span> right spot <span class="tile a">A</span> in the word, wrong spot <span class="tile x">X</span> not in the word</p>
       </div>
       <ol class="safe-log" id="sf-log"></ol>
       <button class="link-btn" type="button" id="sf-change">Not you? Change name or number</button>
@@ -990,9 +993,9 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     <details class="lc-rules">
       <summary>How to play</summary>
       <ul>
-        <li>Each drop's code is 4 digits, each from 1 to 6. Digits can repeat.</li>
-        <li>After each guess, every digit gets a colour: <b style="color:#2bff6a">green</b> = right digit in the right place, <b style="color:#ffb21e">orange</b> = the digit is in the code but somewhere else, <b>grey</b> = not in the code. The keypad keeps the colours too.</li>
-        <li>You get 7 guesses per drop. The first person to open the safe wins a single-use free-ticket code, and the safe closes until the next drop.</li>
+        <li>Each drop's secret is a 5-letter car word: a car part, or a tuning or racing term (like <b>VALVE</b> or <b>DRIFT</b>, but not those exactly).</li>
+        <li>After each guess, every letter gets a colour: <b style="color:#2bff6a">green</b> = right letter in the right spot, <b style="color:#ffb21e">orange</b> = the letter is in the word but somewhere else, <b>grey</b> = not in the word. The keyboard keeps the colours too.</li>
+        <li>You get 6 guesses per drop. The first person to open the safe wins a single-use free-ticket code, and the safe closes until the next drop.</li>
         <li>New drops at 12 PM and 7 PM, Nairobi time. Each phone number can win once.</li>
         <li>Winners are checked before codes are honoured. Entries that look automated are disqualified. See our <a href="#terms">event rules</a> and <a href="#privacy">privacy policy</a>.</li>
       </ul>
@@ -2414,7 +2417,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     const [st, codes, drops, players] = await Promise.all([
       sb.from("safe_settings").select("*").eq("id", 1).maybeSingle(),
       sb.from("safe_codes").select("*").order("id"),
-      sb.from("safe_drops").select("id,opens_at,closes_at,cracked_by,cracked_at,code_id").order("opens_at", { ascending: false }).limit(60),
+      sb.from("safe_drops").select("id,opens_at,closes_at,cracked_by,cracked_at,code_id,combo").order("opens_at", { ascending: false }).limit(60),
       sb.from("safe_players").select("phone,name,won_drop")]);
     adm.safe = [st, codes, drops, players].some(r => r.error) ? { error: true, codes: [] }
       : { settings: st.data, codes: codes.data, drops: drops.data, players: new Map(players.data.map(x => [x.phone, x])) };
@@ -2466,14 +2469,14 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       return el("article", { class: "adm-row booth", style: "border-color:#2bff6a" },
         el("div", { style: "min-width:0" },
           el("h3", {}, el("span", { text: pl.name }), el("span", { class: "pill approved", text: "Winner" })),
-          el("dl", {}, [["Drop", d.id], ["Cracked", fmtTime(Date.parse(d.cracked_at))], ["Phone", "0" + pl.phone.slice(3)], ["Code", code]]
+          el("dl", {}, [["Drop", d.id], ["Word", d.combo], ["Cracked", fmtTime(Date.parse(d.cracked_at))], ["Phone", "0" + pl.phone.slice(3)], ["Code", code]]
             .map(([k, v]) => [el("dt", { text: k }), el("dd", { text: v })]))),
         el("div", { class: "adm-actions" },
           el("a", { class: "btn", href: `tel:+${pl.phone}`, text: "Call" }),
           el("a", { class: "btn fill", style: "--c:#25d366", target: "_blank", rel: "noopener", text: "WhatsApp code",
             href: waLink(pl.phone, `Hi ${first}, it's Shift Nation. Congratulations on cracking the TunerFest safe! Your free-ticket code is ${code}. Enter it at checkout here: https://apps.little.africa/events/tunerfest-2026`) })));
     });
-    const recent = S.drops.filter(d => !d.cracked_by).slice(0, 6).map(d => el("li", { text: `${d.id}: not cracked` }));
+    const recent = S.drops.filter(d => !d.cracked_by).slice(0, 6).map(d => el("li", { text: `${d.id}: not cracked (the word was ${d.combo})` }));
     $("#adm-list").replaceChildren(
       ...(left.length ? [] : [el("div", { class: "adm-empty", style: "border-color:var(--red);color:#ffb3ad", text: "No codes left, so the safe stays locked. Paste more codes below." })]),
       add, set,
@@ -2828,9 +2831,14 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     $(".safe").classList.toggle("playing", which === "sf-play");
   };
   const sfWhen = iso => new Date(iso).toLocaleString("en-GB", { timeZone: "Africa/Nairobi", weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit", hour12: true });
+  const SF_ROWS = ["QWERTYUIOP", "ASDFGHJKL", "+ZXCVBNM-"];   // + = Enter, - = delete
+  $("#sf-kb").replaceChildren(...SF_ROWS.map(r => el("div", { class: "r" }, ...[...r].map(k =>
+    k === "+" ? el("button", { type: "button", class: "wide enter", "data-k": "go", text: "Enter" })
+    : k === "-" ? el("button", { type: "button", class: "wide", "data-k": "del", "aria-label": "Delete", text: "⌫" })
+    : el("button", { type: "button", "data-k": k, text: k })))));
   const SF_ERRORS = {
-    bad_phone: "Enter a Kenyan number, like 0712 345 678.", bad_name: "Enter your name.", bad_guess: "Use 4 digits, each from 1 to 6.",
-    out_of_guesses: "You've used all 7 guesses for this drop. Come back for the next one.", already_won: "You've already won a ticket. Leave the next safe for someone else!",
+    bad_phone: "Enter a Kenyan number, like 0712 345 678.", bad_name: "Enter your name.", bad_guess: "Type a 5-letter word, letters only.",
+    out_of_guesses: "You've used all your guesses for this drop. Come back for the next one.", already_won: "You've already won a ticket. Leave the next safe for someone else!",
     limit_ip: "Too many guesses from this network for this drop.", waiting: "The safe isn't open right now.", ended: "The giveaway has ended.",
     no_codes: "All the free tickets have been given out.",
   };
@@ -2887,26 +2895,36 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     if (left <= 0) { sfKeys(false); $("#sf-msg").textContent = SF_ERRORS.out_of_guesses; }
     else sfKeys(true);
   }
-  const sfKeys = on => $$(".safe-keys button").forEach(b => { b.disabled = !on; });
+  const sfKeys = on => $$("#sf-kb button").forEach(b => { b.disabled = !on; });
+  const sfLen = () => SF.st?.length || 5;
   function sfDraw() {
+    if ($("#sf-slots").children.length !== sfLen()) $("#sf-slots").replaceChildren(...Array.from({ length: sfLen() }, () => el("span")));
     [...$("#sf-slots").children].forEach((c, i) => { c.textContent = SF.entry[i] || ""; });
-    const SAY = { g: "right place", a: "in the code, wrong place", x: "not in the code" };
+    const SAY = { g: "right spot", a: "in the word, wrong spot", x: "not in the word" };
     $("#sf-log").replaceChildren(...SF.log.map(g => el("li", { class: "row4" },
       ...[...g.guess].map((dg, i) => el("span", { class: `tile ${g.marks?.[i] || "x"}`, "aria-label": `${dg}: ${SAY[g.marks?.[i] || "x"]}`, text: dg })))));
     // keypad remembers what each digit has shown: green beats orange beats grey
     const best = {};
     for (const g of SF.log) [...g.guess].forEach((dg, i) => { const m = g.marks?.[i] || "x"; if (m === "g" || (m === "a" && best[dg] !== "g") || !best[dg]) best[dg] = m; });
-    $$(".safe-keys [data-k]").forEach(b => { b.classList.remove("k-g", "k-a", "k-x"); if (best[b.dataset.k]) b.classList.add("k-" + best[b.dataset.k]); });
+    $$("#sf-kb [data-k]").forEach(b => { b.classList.remove("k-g", "k-a", "k-x"); if (best[b.dataset.k]) b.classList.add("k-" + best[b.dataset.k]); });
   }
-  $(".safe-keys").addEventListener("click", ev => {
-    const k = ev.target.closest("button")?.dataset.k; if (!k || SF.busy) return;
+  function sfKey(k) {
+    if (SF.busy || $("#sf-play").hidden || $("#sf-kb button")?.disabled) return;
     if (k === "del") SF.entry = SF.entry.slice(0, -1);
     else if (k === "go") return sfGuess();
-    else if (SF.entry.length < 4) SF.entry += k;
+    else if (SF.entry.length < sfLen()) SF.entry += k;
     sfDraw();
+  }
+  $("#sf-kb").addEventListener("click", ev => { const k = ev.target.closest("button")?.dataset.k; if (k) sfKey(k); });
+  // typing on a computer keyboard works too
+  document.addEventListener("keydown", ev => {
+    if ($(".safe")?.hidden || ev.ctrlKey || ev.metaKey || ev.altKey || ev.target.closest("input, textarea")) return;
+    if (ev.key === "Enter") { ev.preventDefault(); sfKey("go"); }
+    else if (ev.key === "Backspace") { ev.preventDefault(); sfKey("del"); }
+    else if (/^[a-z]$/i.test(ev.key)) sfKey(ev.key.toUpperCase());
   });
   async function sfGuess() {
-    if (SF.entry.length < 4) { $("#sf-msg").textContent = "Enter all 4 digits first."; return; }
+    if (SF.entry.length < sfLen()) { $("#sf-msg").textContent = `Type all ${sfLen()} letters first.`; return; }
     SF.busy = true; sfKeys(false); $("#sf-msg").textContent = "Trying the handle…";
     const guess = SF.entry;
     const r = await sb.rpc("safe_guess", { p_name: LC.me.name, p_phone: LC.me.phone, p_guess: guess });
@@ -2918,7 +2936,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     SF.log.unshift({ guess, marks: d.marks }); SF.entry = "";
     SF.st.guesses_used = SF.st.max_guesses - d.left;
     const greens = ((d.marks || "").match(/g/g) || []).length;
-    $("#sf-msg").textContent = greens === 3 ? "So close! 3 in the right place." : d.left ? "Locked. Keep the green ones, move the orange ones." : "That was your last guess for this drop.";
+    $("#sf-msg").textContent = greens === sfLen() - 1 ? "So close! One letter to go." : d.left ? "Locked. Keep the green letters, move the orange ones." : "That was your last guess for this drop.";
     sfPlay(); if (d.left <= 0) $("#sf-msg").textContent = SF_ERRORS.out_of_guesses;
   }
   function sfWon(code, again) {
