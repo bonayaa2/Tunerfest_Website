@@ -14,7 +14,8 @@ mkdir -p site/assets/icons && cp assets/icons/* site/assets/icons/ && cp assets/
 mkdir -p site/assets/vendor && cp assets/vendor/* site/assets/vendor/
 python3 - <<'PY'
 p = "site/index.html"; s = open(p).read()
-tag = '<script src="assets/vendor/supabase.js"></script>\n<script src="assets/vendor/qrcode.js"></script>\n'
+# Vercel Web Analytics (visitor counts, no cookies); switch it on in Vercel → the project → Analytics
+tag = '<script src="assets/vendor/supabase.js"></script>\n<script src="assets/vendor/qrcode.js"></script>\n<script defer src="/_vercel/insights/script.js"></script>\n'
 if tag not in s:
     i = s.index("<script>\n(() => {")
     s = s[:i] + tag + s[i:]

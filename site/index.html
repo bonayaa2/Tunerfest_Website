@@ -1106,7 +1106,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       </section>
       <section>
         <h2>Cookies</h2>
-        <p>We don't use advertising or tracking cookies, and we don't run analytics. The only things this site stores in a browser are the sign-in for Shift Nation team members, so they stay logged in to the admin pages, and the gate link on marshals' phones.</p>
+        <p>We don't use advertising or tracking cookies. We count visits with Vercel Web Analytics, which doesn't use cookies, doesn't track you across other websites, and only gives us totals like how many people visited. The only things this site stores in a browser are the sign-in for Shift Nation team members, so they stay logged in to the admin pages, and the gate link on marshals' phones.</p>
       </section>
       <section>
         <h2>Event photos</h2>
@@ -1277,6 +1277,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
 
 <script src="assets/vendor/supabase.js"></script>
 <script src="assets/vendor/qrcode.js"></script>
+<script defer src="/_vercel/insights/script.js"></script>
 <script>
 (() => {
   const TICKETS_URL = "https://apps.little.africa/events/tunerfest-2026";
