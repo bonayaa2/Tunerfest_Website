@@ -479,6 +479,53 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
 .booth-total .tot b { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: 1.5rem; color: var(--c, var(--teal)); font-variant-numeric: tabular-nums; }
 .booth-total .pay { color: var(--muted); font-size: 0.85rem; }
 
+/* Launch Control game */
+.lc-strip { display: flex; align-items: center; gap: 12px 16px; flex-wrap: wrap; margin: 18px auto 0; padding: 14px 18px; border: 1px solid #ffffff24; border-radius: 14px; background: linear-gradient(90deg, #12060a, #1a1206 60%, #06140c); color: var(--text); text-decoration: none; }
+.lc-strip:hover { border-color: var(--yellow); }
+.lc-dots { display: flex; gap: 5px; }
+.lc-dots i { width: 12px; height: 12px; border-radius: 50%; background: #ffb21e; box-shadow: 0 0 10px #ffb21e88; }
+.lc-dots i.g { background: #2bff6a; box-shadow: 0 0 12px #2bff6a; }
+.lc-strip-msg { flex: 1 1 220px; font-size: 0.95rem; }
+.lc-strip-go { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.66rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--yellow); }
+.lc { background: radial-gradient(120% 60% at 20% 0%, #2a2a33 0%, transparent 55%), radial-gradient(90% 50% at 90% 30%, #1d1d24 0%, transparent 60%), #050507; }
+.lc .wrap { display: grid; gap: 22px; padding-block: 24px 100px; max-width: 640px; }
+.lc-head { display: grid; gap: 12px; justify-items: center; text-align: center; }
+.lc-head img { width: min(340px, 86%); height: auto; }
+.lc-head h1 { font-size: clamp(2.4rem, 12vw, 4.6rem); color: #fff; }
+.lc-deadline { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--yellow); }
+.lc-card { display: grid; gap: 14px; padding: 20px; border: 1px solid #ffffff1f; border-radius: 16px; background: #0c0c11e6; }
+.lc-go { --c: var(--red); justify-self: stretch; min-height: 58px; font-size: 0.8rem; }
+.lc-game { display: grid; gap: 12px; }
+.lc-top { display: flex; justify-content: space-between; gap: 10px; font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+.lc-pad { touch-action: manipulation; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; display: grid; justify-items: center; align-content: center; gap: 18px; min-height: min(62vh, 520px); width: 100%; padding: 22px 14px; border: 2px solid #ffffff22; border-radius: 20px; background: radial-gradient(80% 60% at 50% 30%, #1b1b22, #08080b); color: #fff; cursor: pointer; font: inherit; }
+.lc-pad:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
+/* drag-race tree: two lanes, rows of amber, amber, amber, green, red */
+.lc-tree { display: grid; grid-template-columns: repeat(2, auto); gap: 8px 22px; padding: 14px 20px; border-radius: 18px; background: linear-gradient(#111, #000); box-shadow: inset 0 0 0 2px #2a2a2a, 0 10px 30px #000; }
+.lc-l { width: clamp(34px, 10vw, 48px); aspect-ratio: 1; border-radius: 50%; background: #1b1b1f; box-shadow: inset 0 -5px 10px #0009; transition: background .05s; }
+.lc.playing .lc-head { display: none; }
+.lc.playing .wrap { padding-top: 10px; }
+.lc-a.on { background: radial-gradient(circle at 40% 35%, #ffe08a, #ffb21e 45%, #c46d00); box-shadow: 0 0 28px #ffb21ecc; }
+.lc-g.on { background: radial-gradient(circle at 40% 35%, #b6ffcb, #2bff6a 45%, #009b35); box-shadow: 0 0 40px #2bff6aee; }
+.lc-r.on { background: radial-gradient(circle at 40% 35%, #ffb3ad, #ff2a1f 45%, #9b0d06); box-shadow: 0 0 40px #ff2a1fee; }
+.lc-big { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: clamp(1.8rem, 10vw, 3.4rem); line-height: 1; font-variant-numeric: tabular-nums; }
+.lc-msg { color: #c9cdd8; font-size: 0.95rem; min-height: 1.4em; text-align: center; }
+.lc-pad.state-green { border-color: #2bff6a; } .lc-pad.state-false { border-color: #ff2a1f; background: radial-gradient(80% 60% at 50% 30%, #3a0c0a, #0b0303); }
+.lc-pad.state-result { border-color: var(--yellow); }
+.lc-tries { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.lc-tries span { padding: 10px; border: 1px solid #ffffff1f; border-radius: 10px; text-align: center; font-variant-numeric: tabular-nums; font-weight: 700; }
+.lc-tries .ok { border-color: #2bff6a66; color: #9dffbc; } .lc-tries .bad { border-color: #ff2a1f66; color: #ffb3ad; }
+.lc-best { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: clamp(2.6rem, 14vw, 4.4rem); line-height: 1; color: #2bff6a; font-variant-numeric: tabular-nums; }
+.lc-share { gap: 10px; flex-wrap: wrap; }
+.lc-closed h2 { font-size: clamp(1.8rem, 9vw, 3rem); color: #fff; }
+.lc-board ol { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; }
+.lc-board li { display: grid; grid-template-columns: 2.4em 1fr auto; gap: 10px; align-items: center; padding: 10px 14px; border-radius: 10px; background: #0f0f15; border: 1px solid #ffffff14; font-variant-numeric: tabular-nums; }
+.lc-board li b { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; color: var(--muted); }
+.lc-board li:nth-child(-n+5) { border-color: #ffb21e55; } .lc-board li:nth-child(-n+5) b { color: var(--yellow); }
+.lc-board li .t { font-weight: 800; color: #fff; }
+.lc-board .lc-empty { display: block; color: var(--muted); }
+.lc-rules summary { cursor: pointer; font-weight: 700; } .lc-rules ul { color: #c9cdd8; line-height: 1.6; padding-left: 20px; }
+.lc-rules a, .lc-closed a { color: var(--yellow); }
+
 /* privacy page */
 .legal { max-width: 760px; margin: 0 auto; padding-bottom: 100px; display: grid; gap: 30px; }
 .legal section { display: grid; gap: 12px; }
@@ -580,6 +627,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       <a href="#events">Events <small>Now and next</small></a>
       <a href="#cars">Show cars <small>The confirmed line-up</small></a>
       <a href="#gallery">Gallery <small>The floor, up close</small></a>
+      <a href="#launch">Launch Control <small>Win a free ticket</small></a>
     </nav>
     <div class="cta-stack">
       <a class="btn fill yellow tkt" href="https://apps.little.africa/events/tunerfest-2026" target="_blank" rel="noopener">Buy tickets <span class="arr">→</span></a>
@@ -610,6 +658,12 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       </div>
     </div>
   </section>
+
+  <a class="lc-strip wrap" href="#launch">
+    <span class="lc-dots" aria-hidden="true"><i></i><i></i><i></i><i class="g"></i></span>
+    <span class="lc-strip-msg"><b>Launch Control:</b> test your reaction time. The 5 fastest win a free ticket.</span>
+    <span class="lc-strip-go">Play <span aria-hidden="true">→</span></span>
+  </a>
 
   <section class="pin" id="pin" aria-label="Get involved">
     <div class="pin-stage">
@@ -841,6 +895,80 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   </div>
 </div>
 
+<!-- =========================== LAUNCH CONTROL (#launch) =========================== -->
+<!-- Reaction-time giveaway. The database (lc_* functions) picks the green delay and times every tap. -->
+<div class="view lc" data-view="launch" hidden>
+  <div class="wrap">
+    <div class="lc-head">
+      <img src="assets/tunerfest-logo.webp" alt="Tuner Fest 6.0, Tuner Motorshow Event, presented by Al-Husnain Motors" width="1200" height="385">
+      <h1 class="mega">Launch <span class="outline">Control</span></h1>
+      <p class="lede">Beat the Christmas tree. React to the green light faster than everyone else, and the <b>top 5</b> win a free ticket to Tuner Fest 6.0 on Sunday, November 29 at Galleria Mall, Karen.</p>
+      <p class="lc-deadline" id="lc-deadline"></p>
+    </div>
+
+    <!-- entry -->
+    <form class="lc-card" id="lc-entry" novalidate hidden>
+      <div class="field"><label for="lc-name">Your name</label><input id="lc-name" type="text" autocomplete="name" maxlength="40" required><span class="error">Enter your name.</span></div>
+      <div class="field"><label for="lc-phone">Phone number</label><input id="lc-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="0712 345 678" required><span class="error">Enter a Kenyan number, like 0712 345 678.</span></div>
+      <p class="hint">We only use your number to contact you if you win. It's never shown on the leaderboard.</p>
+      <p class="form-status err" id="lc-entry-err" role="alert" hidden></p>
+      <button class="btn fill lc-go" type="submit">Start your engines <span class="arr">→</span></button>
+    </form>
+
+    <!-- game -->
+    <div class="lc-game" id="lc-game" hidden>
+      <div class="lc-top"><span id="lc-who"></span><span id="lc-attempt"></span></div>
+      <button class="lc-pad" id="lc-pad" type="button" aria-describedby="lc-msg">
+        <span class="lc-tree" aria-hidden="true">
+          <i class="lc-l lc-a" data-l="1"></i><i class="lc-l lc-a" data-l="1"></i>
+          <i class="lc-l lc-a" data-l="2"></i><i class="lc-l lc-a" data-l="2"></i>
+          <i class="lc-l lc-a" data-l="3"></i><i class="lc-l lc-a" data-l="3"></i>
+          <i class="lc-l lc-g" data-l="g"></i><i class="lc-l lc-g" data-l="g"></i>
+          <i class="lc-l lc-r" data-l="r"></i><i class="lc-l lc-r" data-l="r"></i>
+        </span>
+        <span class="lc-big" id="lc-big">TAP TO START</span>
+        <span class="lc-msg" id="lc-msg" role="status" aria-live="assertive">Tap when the light turns green. Not before.</span>
+      </button>
+      <div class="lc-tries" id="lc-tries"></div>
+      <button class="link-btn" type="button" id="lc-change">Not you? Change name or number</button>
+    </div>
+
+    <!-- result -->
+    <div class="lc-card lc-done" id="lc-done" hidden>
+      <span class="eyebrow">Session complete</span>
+      <p class="lc-best" id="lc-best"></p>
+      <p class="lede" id="lc-rank"></p>
+      <div class="row lc-share">
+        <a class="btn fill" id="lc-wa" style="--c:#25d366" target="_blank" rel="noopener">Share on WhatsApp</a>
+        <button class="btn" type="button" id="lc-sharebtn">Share your time</button>
+      </div>
+      <button class="btn fill lc-go" type="button" id="lc-again">Run it again <span class="arr">→</span></button>
+    </div>
+
+    <div class="lc-closed lc-card" id="lc-closed" hidden>
+      <h2 class="mega">Giveaway closed</h2>
+      <p class="lede">Thanks for playing. Winners will be announced on our socials, follow <a href="https://www.instagram.com/shift_nationn/" target="_blank" rel="noopener">@shift_nationn</a> on Instagram.</p>
+    </div>
+
+    <section class="lc-board" aria-labelledby="lc-board-h">
+      <h2 id="lc-board-h" class="eyebrow ruled">Leaderboard · top 10</h2>
+      <ol id="lc-board"><li class="lc-empty">Loading…</li></ol>
+    </section>
+
+    <details class="lc-rules">
+      <summary>Rules</summary>
+      <ul>
+        <li>Enter your name and a Kenyan phone number. One leaderboard entry per number, and your best time counts.</li>
+        <li>Each run is 3 attempts. Tap the moment the light turns green. Tapping before green is a false start and the attempt doesn't count.</li>
+        <li>Our server picks the random start and times every tap. Times under 0.100s are treated as impossible and rejected.</li>
+        <li>The giveaway closes at the time shown above. The 5 fastest times then each win one free ticket, sent to the winner by Shift Nation.</li>
+        <li>Winners are checked before prizes are sent. Entries that look automated or tampered with are disqualified.</li>
+        <li>See our <a href="#terms">event rules</a> and <a href="#privacy">privacy policy</a>.</li>
+      </ul>
+    </details>
+  </div>
+</div>
+
 <!-- =========================== TERMS =========================== -->
 <div class="view" data-view="terms" hidden>
   <div class="wrap">
@@ -911,6 +1039,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
           <li><b>Show car registration:</b> your name, email, phone number, Instagram handle (optional), the name of your car, and a photo of it.</li>
           <li><b>Booth request:</b> your name, email, phone number, business name, what you'll show or sell, booth size, whether you need power, and any notes.</li>
           <li><b>Driver passes:</b> the pass code, the driver's name and car, and the time the pass is scanned at the gate.</li>
+          <li><b>Launch Control game:</b> your name, phone number, reaction times, and your device's IP address (used only to stop cheating). Only a shortened version of your name is shown on the leaderboard, never your number.</li>
         </ul>
         <p>Tickets are sold by our ticketing partner Little Africa, not on this website, so their own privacy terms apply to ticket purchases.</p>
       </section>
@@ -1095,7 +1224,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
         <li><a href="#tickets">Ticket prices</a></li>
         <li><a href="#events">Events</a></li>
         <li><a href="#cars">Show cars</a></li>
-        <li><a href="#gallery">Gallery</a></li></ul></div>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#launch">Launch Control</a></li></ul></div>
       <div><h4>Showcase</h4><ul>
         <li><a href="#register">Register your car</a></li>
         <li><a href="#booth">Exhibit products</a></li>
@@ -2247,11 +2377,72 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     $("#adm-list").replaceChildren(form, ...(rows.length ? rows : [el("div", { class: "adm-empty", text: "No cars added by the team yet." })]));
     setTimeout(() => input.focus(), 0);
   }
+  // Launch Control admin: full phone numbers for verifying and contacting winners
+  async function loadGame() {
+    const [st, pl] = await Promise.all([
+      sb.from("game_settings").select("*").eq("id", 1).maybeSingle(),
+      sb.from("game_players").select("*").order("best_ms", { ascending: true, nullsFirst: false }).order("best_at", { ascending: true }).limit(2000)]);
+    if (st.error || pl.error) { adm.game = { error: true, players: [] }; }
+    else adm.game = { settings: st.data, players: pl.data };
+    if (adm.page === "launch" || adm.page === "home") renderAdmin();
+  }
+  const eatInput = iso => { const d = new Date(new Date(iso).getTime() + 3 * 3600e3); return d.toISOString().slice(0, 16); };
+  function renderLaunchAdmin() {
+    const g = adm.game;
+    if (!g) { $("#adm-stats").replaceChildren(); $("#adm-list").replaceChildren(el("div", { class: "adm-empty", text: "Loading the game…" })); return loadGame(); }
+    if (g.error) { $("#adm-stats").replaceChildren(); $("#adm-list").replaceChildren(el("div", { class: "adm-empty", text: "The game's database isn't set up yet. Run supabase-launch-control.sql in Supabase, then press Refresh." })); return; }
+    const ranked = g.players.filter(p => p.best_ms != null && !p.disqualified);
+    const rankOf = new Map(ranked.map((p, i) => [p.phone, i + 1]));
+    const open = new Date(g.settings.deadline) > new Date();
+    $("#adm-stats").replaceChildren(
+      el("div", {}, el("b", { text: String(ranked.length) }), el("span", { text: "On the board" })),
+      el("div", {}, el("b", { text: String(g.players.reduce((a, p) => a + p.runs, 0)) }), el("span", { text: "Attempts" })),
+      el("div", {}, el("b", { text: String(g.players.filter(p => p.flags.length).length) }), el("span", { text: "Flagged players" })),
+      el("div", {}, el("b", { text: open ? "Open" : "Closed" }), el("span", { text: "Giveaway" })));
+    const dl = el("input", { type: "datetime-local", value: eatInput(g.settings.deadline), "aria-label": "Closing time (EAT)" });
+    const settings = el("form", { class: "pass-tools", onsubmit: async ev => {
+        ev.preventDefault();
+        if (!dl.value) return;
+        const iso = new Date(dl.value + ":00+03:00").toISOString();
+        const r = await sb.from("game_settings").update({ deadline: iso }).eq("id", 1);
+        if (r.error) { admMsg("The closing time didn't save. Try again.", true); return; }
+        g.settings.deadline = iso; admMsg(`Giveaway closes ${new Date(iso).toLocaleString("en-GB", { timeZone: "Africa/Nairobi", dateStyle: "full", timeStyle: "short" })} EAT.`); renderAdmin();
+      } },
+      el("div", { class: "field" }, el("label", { text: "Giveaway closes (Nairobi time)" }), dl),
+      el("button", { class: "btn fill yellow", type: "submit", text: "Save closing time" }),
+      el("a", { class: "btn", href: "#launch", target: "_blank", text: "Open the game" }));
+    const q = adm.q.toLowerCase().replace(/\s/g, "");
+    const rows = g.players.filter(p => !q || p.name.toLowerCase().replace(/\s/g, "").includes(q) || p.phone.includes(q.replace(/^0/, "254"))).slice(0, 200);
+    const FLAG_TEXT = { impossible_time: "tried an impossible time", repeated_timing_mismatch: "phone's times often didn't match the server",
+      "many_under_0.130s": "several times under 0.130s", robotic_consistency: "suspiciously identical times" };
+    $("#adm-list").replaceChildren(settings,
+      el("p", { class: "pass-note", style: "text-align:left;margin:0", text: "Top 5 (highlighted) win. Check flagged players before giving prizes: call them, or ask them to play again in front of you." }),
+      ...(rows.length ? rows.map(p => {
+        const rank = rankOf.get(p.phone), win = rank && rank <= 5, local = "0" + p.phone.slice(3);
+        return el("article", { class: "adm-row booth", style: win ? "border-color:#2bff6a" : "" },
+          el("div", { style: "min-width:0" },
+            el("h3", {}, el("span", { text: `${rank ? "#" + rank + " " : ""}${p.name}` }),
+              p.disqualified ? el("span", { class: "pill declined", text: "Disqualified" }) : win ? el("span", { class: "pill approved", text: "Winning" }) : null,
+              p.flags.length ? el("span", { class: "pill pending", text: "Flagged" }) : null),
+            el("dl", {}, [["Best time", p.best_ms != null ? (p.best_ms / 1000).toFixed(3) + "s" : "No valid time"], ["Phone", `${local} (+${p.phone})`],
+              ["Attempts", `${p.runs} (${p.valid_runs} valid, ${p.false_starts} false starts)`], ["Flags", p.flags.map(f => FLAG_TEXT[f] || f).join(", ") || "None"],
+              ["Last IP", p.last_ip || "—"], ["Best set", p.best_at ? fmtTime(Date.parse(p.best_at)) : "—"]]
+              .map(([k, v]) => [el("dt", { text: k }), el("dd", { text: v })]))),
+          el("div", { class: "adm-actions" },
+            el("a", { class: "btn", href: `tel:+${p.phone}`, text: "Call" }),
+            el("a", { class: "btn fill", style: "--c:#25d366", href: waLink(p.phone, `Hi ${p.name.split(/\s+/)[0]}, it's Shift Nation about TunerFest 6.0 Launch Control.`), target: "_blank", rel: "noopener", text: "WhatsApp" }),
+            el("button", { class: `btn${p.disqualified ? "" : " red"}`, type: "button", text: p.disqualified ? "Reinstate" : "Disqualify", onclick: async () => {
+              const r = await sb.from("game_players").update({ disqualified: !p.disqualified }).eq("phone", p.phone);
+              if (r.error) { admMsg("That change didn't save. Try again.", true); return; }
+              p.disqualified = !p.disqualified; admMsg(""); renderAdmin(); } })));
+      }) : [el("div", { class: "adm-empty", text: g.players.length ? "No players match your search." : "No one has played yet." })]));
+  }
   // Admin pages: #admin (home tiles), #admin/cars, #admin/booths, #admin/passes, #admin/scan
   const ADMIN_PAGES = {
     home: { title: "Admin", intro: "Pick what you want to work on." },
     cars: { kind: "car", title: "Show cars", intro: "Review show car applications. Approving a car creates its driver pass and emails the owner." },
     booths: { kind: "booth", title: "Booths", intro: "Review booth and vendor requests." },
+    launch: { kind: "launch", title: "Launch Control", intro: "The reaction-time giveaway. Check the top times and flags, contact the top 5, and set the closing time." },
     add: { kind: "add", title: "Add a car", intro: "Register a show car yourself. Type the car and its driver pass is emailed to info@shiftnation.org." },
     passes: { kind: "passes", title: "Driver passes", intro: "Every approved show car gets a pass. Email passes, create extra ones by hand, and see who has arrived." },
     scan: { kind: "scan", title: "Gate scanner", intro: "Scan driver passes with your phone's camera. Each pass lets one driver in, once." },
@@ -2279,6 +2470,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     $("#adm-home").replaceChildren(...[
       tile("#admin/cars", "var(--red)", "Show car approvals", String(countOf(cars, "pending")), "waiting for review", `${countOf(cars, "approved")} / ${SPOTS} spots filled · ${cars.length} applications`, "Open approvals →"),
       tile("#admin/booths", "var(--teal)", "Booths", String(countOf(booths, "pending")), "waiting for review", `${countOf(booths, "approved")} approved${unpaid ? ` · ${unpaid} awaiting payment` : ""} · ${booths.length} ${booths.length === 1 ? "request" : "requests"}`, "Open booths →"),
+      tile("#admin/launch", "#2bff6a", "Launch Control", adm.game ? String(adm.game.players.filter(g => g.best_ms != null).length) : "→", "players on the board", "Reaction-time giveaway: top 5 win tickets", "Open game admin →"),
       adm.passesOk ? tile("#admin/add", "var(--red)", "Add a car", "+", "register a show car yourself", `${[...adm.entries.values()].filter(isTeamCar).length} added by the team · pass goes to ${TEAM_EMAIL}`, "Add a car →") : null,
       adm.passesOk ? tile("#admin/passes", "var(--yellow)", "Driver passes", `${dIn} / ${drivers.length}`, "drivers checked in", unmailed ? `${unmailed} ${unmailed === 1 ? "pass" : "passes"} not emailed yet` : "All passes emailed", "Open passes →") : null,
       adm.passesOk ? tile("#admin/scan", "var(--yellow)", "Gate", "Scan", "driver and vendor passes", `${live.length - inn} still to arrive`, "Open scanner →", true) : null,
@@ -2353,6 +2545,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     $("#adm-intro").textContent = ADMIN_PAGES[adm.page].intro;
     if (home) return renderHome();
     $("#adm-bar").hidden = adm.page === "scan" || adm.page === "add";
+    if (adm.page === "launch") { $("#adm-status").hidden = true; $("#adm-q").placeholder = "Search name or phone"; return renderLaunchAdmin(); }
     if (adm.page === "scan") return renderScanPage();
     if (adm.page === "add") return renderAddCar();
     $("#adm-status").hidden = adm.kind === "passes";
@@ -2481,7 +2674,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       adm.entries = new Map(r.data.map(row => [row.id, fromRow(row)]));
       const t = await sb.from("driver_tickets").select("*").limit(2000);
       if (!t.error) { adm.passes = t.data; adm.passesOk = true; }
-      adm.gateKeys = null;
+      adm.gateKeys = null; adm.game = null; loadGame();
       if (!adm.keepMsg) admMsg(""); adm.keepMsg = false; renderAdmin();
     }
     async function enter(session) {
@@ -2542,6 +2735,17 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   }
 
   $("#adm-export").addEventListener("click", async () => {
+    if (adm.kind === "launch") {
+      const ranked = (adm.game?.players || []).filter(p => p.best_ms != null && !p.disqualified);
+      const rk = new Map(ranked.map((p, i) => [p.phone, i + 1]));
+      const cols = ["rank", "name", "phone", "best_seconds", "best_at", "runs", "valid_runs", "false_starts", "flags", "disqualified", "last_ip"];
+      const c = v => { let t = v == null ? "" : String(v); if (/^[=+\-@]/.test(t)) t = "'" + t; return /[",\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t; };
+      const lines = (adm.game?.players || []).map(p => [rk.get(p.phone) || "", p.name, ("0" + p.phone.slice(3)).replace(/^(\d{4})(\d{3})(\d{3})$/, "$1 $2 $3"), p.best_ms != null ? (p.best_ms / 1000).toFixed(3) : "", p.best_at || "",
+        p.runs, p.valid_runs, p.false_starts, p.flags.join(" "), p.disqualified, p.last_ip || ""].map(c).join(","));
+      try { await adm.ops.save("launch-control-players.csv", [cols.join(","), ...lines].join("\n")); }
+      catch { admMsg("The export didn't save. Try again.", true); }
+      return;
+    }
     if (adm.kind === "passes") {
       const pc = ["code", "name", "car", "revoked", "checked_in_at", "created_at"];
       const c2 = v => { let t = v == null ? "" : String(v); if (/^[=+\-@]/.test(t)) t = "'" + t; return /[",\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t; };
@@ -2558,6 +2762,145 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     catch (err) { if (err && err.code !== "cancelled") admMsg("The export didn't save. Try again.", true); }
   });
 
+  /* ---------- Launch Control (reaction-time giveaway) ---------- */
+  // The database picks the random green delay and times each tap with its own clock (lc_* functions).
+  // The phone also times the tap; the server accepts that only if it fits its own measurement.
+  const LC = { STORE: "tf6-lc-player", TRIES: 3, open: null, me: null, tries: [], run: null, phase: "idle", timers: [], greenAt: 0 };
+  const lcPhone = v => { const d = String(v || "").replace(/\D/g, "");
+    return /^0[17]\d{8}$/.test(d) ? "254" + d.slice(1) : /^[17]\d{8}$/.test(d) ? "254" + d : /^254[17]\d{8}$/.test(d) ? d : null; };
+  const secs = ms => (ms / 1000).toFixed(3) + "s";
+  const lcShow = which => {
+    for (const id of ["lc-entry", "lc-game", "lc-done", "lc-closed"]) $("#" + id).hidden = id !== which;
+    // while playing, the lights and tap area get the whole screen
+    $(".lc").classList.toggle("playing", which === "lc-game");
+    if (which === "lc-game") scrollTo(0, 0);
+  };
+  const lcLights = on => { $$(".lc-l").forEach(l => l.classList.toggle("on", on.includes(l.dataset.l))); };
+  const lcPad = (big, msg, state) => { $("#lc-big").textContent = big; $("#lc-msg").textContent = msg; $("#lc-pad").className = "lc-pad" + (state ? " state-" + state : ""); };
+  const lcClear = () => { LC.timers.forEach(clearTimeout); LC.timers = []; };
+  const lcTriesRow = () => $("#lc-tries").replaceChildren(...Array.from({ length: LC.TRIES }, (_, i) => {
+    const t = LC.tries[i];
+    return el("span", { class: t ? (t.ms ? "ok" : "bad") : "", text: t ? (t.ms ? secs(t.ms) : t.label) : "—" });
+  }));
+  const LC_ERRORS = {
+    closed: "The giveaway has closed.", bad_phone: "Enter a Kenyan number, like 0712 345 678.", bad_name: "Enter your name.",
+    limit_phone: "You've used all your attempts for today. Come back tomorrow for more.",
+    limit_ip: "Too many attempts from this network right now. Try again in a while.",
+    bad_run: "That attempt timed out. Tap to try again.",
+  };
+
+  async function lcBoard() {
+    const r = await sb.rpc("lc_leaderboard");
+    const ol = $("#lc-board");
+    if (r.error) { ol.replaceChildren(el("li", { class: "lc-empty", text: "The leaderboard didn't load. Refresh to try again." })); return; }
+    ol.replaceChildren(...(r.data.length ? r.data.map(x => el("li", {}, el("b", { text: String(x.rank) }), el("span", { text: x.name }), el("span", { class: "t", text: secs(x.best_ms) })))
+      : [el("li", { class: "lc-empty", text: "No times yet. Be the first on the board." })]));
+  }
+  async function initLaunch() {
+    if (!sb) { lcShow("lc-closed"); $("#lc-closed").replaceChildren(el("p", { class: "lede", text: "Launch Control works on shiftnation.org." })); return; }
+    try { LC.me = JSON.parse(localStorage.getItem(LC.STORE) || "null"); } catch {}
+    if (LC.me) { $("#lc-name").value = LC.me.name; $("#lc-phone").value = LC.me.phoneInput || ""; }
+    lcBoard();
+    const st = await sb.rpc("lc_status");
+    LC.open = st.error ? true : st.data.open;
+    if (!st.error) $("#lc-deadline").textContent = (LC.open ? "Closes " : "Closed ") + new Date(st.data.deadline).toLocaleString("en-GB",
+      { timeZone: "Africa/Nairobi", weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) + " EAT";
+    if (!LC.open) return lcShow("lc-closed");
+    if (LC.phase === "idle" || LC.phase === "ready") { lcShow(LC.me ? "lc-game" : "lc-entry"); if (LC.me) lcReady(); }
+  }
+  function lcReady() {
+    lcClear(); LC.phase = "ready"; LC.run = null; lcLights([]);
+    $("#lc-who").textContent = LC.me.name;
+    $("#lc-attempt").textContent = `Attempt ${LC.tries.length + 1} of ${LC.TRIES}`;
+    lcTriesRow();
+    lcPad("TAP TO START", "Tap when the light turns green. Not before.");
+  }
+
+  $("#lc-entry").addEventListener("submit", ev => {
+    ev.preventDefault();
+    const name = $("#lc-name").value.trim(), phone = lcPhone($("#lc-phone").value);
+    $("#lc-name").closest(".field").classList.toggle("invalid", name.length < 2);
+    $("#lc-phone").closest(".field").classList.toggle("invalid", !phone);
+    if (name.length < 2 || !phone) return;
+    LC.me = { name, phone, phoneInput: $("#lc-phone").value.trim() };
+    try { localStorage.setItem(LC.STORE, JSON.stringify(LC.me)); } catch {}
+    LC.tries = []; lcShow("lc-game"); lcReady();
+  });
+  $("#lc-change").addEventListener("click", () => { lcClear(); LC.phase = "idle"; LC.tries = []; lcShow("lc-entry"); $("#lc-name").focus(); });
+
+  // pointerdown reacts faster than click on phones
+  $("#lc-pad").addEventListener("pointerdown", ev => { ev.preventDefault(); lcTap(performance.now()); });
+  $("#lc-pad").addEventListener("keydown", ev => { if (ev.key === " " || ev.key === "Enter") { ev.preventDefault(); if (!ev.repeat) lcTap(performance.now()); } });
+
+  function lcTap(now) {
+    if (LC.phase === "ready") return lcStart();
+    if (LC.phase === "staging" || LC.phase === "countdown") return lcFinish(null, true);
+    if (LC.phase === "green") return lcFinish(Math.round(now - LC.greenAt), false);
+    if (LC.phase === "result") { if (LC.tries.length >= LC.TRIES) return lcSession(); lcReady(); return lcStart(); }
+  }
+  async function lcStart() {
+    LC.phase = "staging"; lcLights([]); lcPad("STAGING…", "Get ready. Wait for green.");
+    const s1 = await sb.rpc("lc_start", { p_name: LC.me.name, p_phone: LC.me.phone });
+    if (LC.phase !== "staging") return;   // false-started while staging
+    if (s1.error || s1.data.error) return lcFail(s1.data?.error);
+    LC.run = s1.data.run_id;
+    const s2 = await sb.rpc("lc_arm", { p_run: LC.run });
+    if (LC.phase !== "staging") return;
+    if (s2.error || s2.data.error) return lcFail(s2.data?.error);
+    LC.phase = "countdown"; lcPad("", "Wait for green…");
+    const step = s2.data.amber_ms / 3;
+    [1, 2, 3].forEach(i => LC.timers.push(setTimeout(() => lcLights(["1", "2", "3"].slice(0, i)), step * (i - 1))));
+    LC.timers.push(setTimeout(() => {
+      lcLights(["g"]); lcPad("GO!", "", "green"); LC.phase = "green";
+      LC.greenAt = performance.now();
+      // time from the frame the green is actually painted
+      requestAnimationFrame(() => { LC.greenAt = performance.now(); });
+    }, s2.data.wait_ms));
+  }
+  function lcFail(code) {
+    lcClear(); LC.phase = "ready";
+    if (code === "closed") { LC.open = false; LC.phase = "idle"; return initLaunch(); }
+    lcPad("TAP TO RETRY", LC_ERRORS[code] || "No connection. Check your internet and tap to try again.");
+  }
+  async function lcFinish(clientMs, falseStart) {
+    lcClear(); const run = LC.run; LC.phase = "sending";
+    if (falseStart) { lcLights(["r"]); lcPad("FALSE START", "Red light. You tapped before green.", "false"); }
+    else lcPad(secs(clientMs), "Checking your time…", "result");
+    if (!run) { LC.tries.push({ label: "False start" }); return lcAfter(); }
+    const r = await sb.rpc("lc_tap", { p_run: run, p_client_ms: falseStart ? null : clientMs, p_false_start: falseStart });
+    const d = r.data || {};
+    if (r.error || d.error) { LC.tries.push({ label: "No time" }); lcPad("NO TIME", LC_ERRORS[d.error] || "Your time didn't reach us. Check your connection.", "false"); return lcAfter(); }
+    if (d.result === "false_start") { lcLights(["r"]); LC.tries.push({ label: "False start" }); lcPad("FALSE START", "Red light. You tapped before green.", "false"); }
+    else if (d.result === "too_fast") { LC.tries.push({ label: "Rejected" }); lcPad("REJECTED", "Under 0.100s isn't humanly possible, so it doesn't count.", "false"); }
+    else if (d.result === "expired") { LC.tries.push({ label: "Too slow" }); lcPad("TOO SLOW", "The attempt timed out.", "false"); }
+    else {
+      LC.tries.push({ ms: d.ms }); LC.best = d.best_ms; LC.rank = d.rank;
+      lcPad(secs(d.ms), d.ms <= 200 ? "Lightning launch!" : d.ms <= 300 ? "Strong launch." : "Keep practising. The pros react in under 0.200s.", "result");
+    }
+    lcAfter();
+  }
+  function lcAfter() {
+    LC.phase = "result"; lcTriesRow();
+    $("#lc-msg").textContent += LC.tries.length >= LC.TRIES ? " Tap to see your result." : " Tap for the next attempt.";
+  }
+  function lcSession() {
+    const valid = LC.tries.filter(t => t.ms).map(t => t.ms), best = valid.length ? Math.min(...valid) : null;
+    LC.phase = "done"; lcShow("lc-done"); lcBoard();
+    $("#lc-best").textContent = best ? secs(best) : "No valid time";
+    $("#lc-rank").textContent = LC.best ? `Your best ever: ${secs(LC.best)}. You're number ${LC.rank} on the leaderboard${LC.rank <= 5 ? ", a winning spot right now!" : "."}`
+      : "Every attempt was a false start. Wait for the green and try again.";
+    const shareTime = LC.best || best;
+    const text = shareTime ? `I launched in ${secs(shareTime)} on TunerFest 6.0 Launch Control. Can you beat me? The top 5 win free tickets: https://www.shiftnation.org/#launch`
+      : "Try TunerFest 6.0 Launch Control. The top 5 reaction times win free tickets: https://www.shiftnation.org/#launch";
+    $("#lc-wa").href = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    $("#lc-sharebtn").textContent = "Share your time";
+    $("#lc-sharebtn").onclick = async () => {
+      if (navigator.share) { try { await navigator.share({ text }); } catch {} return; }
+      try { await navigator.clipboard.writeText(text); $("#lc-sharebtn").textContent = "Copied"; } catch { prompt("Copy this:", text); }
+    };
+  }
+  $("#lc-again").addEventListener("click", () => { LC.tries = []; lcShow("lc-game"); lcReady(); });
+
   /* ---------- routing ---------- */
   const views = $$(".view");
   function route() {
@@ -2573,6 +2916,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     if (name === "register") setType(h === "booth" ? "booth" : "car");
     if (name === "cars") loadShowCars();
     if (isPass) showPass(h.slice(5).toUpperCase());
+    if (name === "launch") initLaunch();
     if (name === "admin") setAdminPage(sub);
     if (isGate) showGate(h.startsWith("gate-") ? h.slice(5) : null);
     scrollTop();
