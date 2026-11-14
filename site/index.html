@@ -454,6 +454,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
 .scan-foot input { flex: 1; min-width: 0; min-height: 48px; padding: 0 12px; background: var(--night-2); border: 1px solid var(--line); color: var(--text); font: inherit; text-transform: uppercase; }
 .pass-tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; padding: 14px; border: 1px solid var(--line); background: var(--night-2); }
 .pass-tools .field { flex: 1 1 180px; margin: 0; }
+.pass-tools textarea, .pass-tools input[type=datetime-local] { width: 100%; padding: 10px 12px; background: var(--night); border: 1px solid var(--line); color: var(--text); font: inherit; border-radius: 0; }
+.pass-tools textarea { min-height: 110px; resize: vertical; }
 .pay-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .pay-form input { min-height: 40px; padding: 0 10px; background: var(--night); border: 1px solid var(--line); color: var(--text); font: inherit; width: 170px; max-width: 100%; }
 .pay-form input[type=number] { width: 110px; }
@@ -502,7 +504,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
 /* drag-race tree: two lanes, rows of amber, amber, amber, green, red */
 .lc-tree { display: grid; grid-template-columns: repeat(2, auto); gap: 8px 22px; padding: 14px 20px; border-radius: 18px; background: linear-gradient(#111, #000); box-shadow: inset 0 0 0 2px #2a2a2a, 0 10px 30px #000; }
 .lc-l { width: clamp(34px, 10vw, 48px); aspect-ratio: 1; border-radius: 50%; background: #1b1b1f; box-shadow: inset 0 -5px 10px #0009; transition: background .05s; }
-.lc.playing .lc-head { display: none; }
+.lc.playing .lc-head, .safe.playing .safe-status { display: none; }
 .lc.playing .wrap { padding-top: 10px; }
 .lc-a.on { background: radial-gradient(circle at 40% 35%, #ffe08a, #ffb21e 45%, #c46d00); box-shadow: 0 0 28px #ffb21ecc; }
 .lc-g.on { background: radial-gradient(circle at 40% 35%, #b6ffcb, #2bff6a 45%, #009b35); box-shadow: 0 0 40px #2bff6aee; }
@@ -539,6 +541,32 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
 .flash-cd { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: 1.15rem; font-variant-numeric: tabular-nums; letter-spacing: 0.04em; }
 .flash-go { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; }
 .page-top + .flash, .tiers { margin-top: 0; }
+
+/* Crack the Safe */
+.safe-strip { margin-top: 10px; background: linear-gradient(90deg, #0b0d14, #1a1606 70%, #14100a); }
+.safe-dial { font-size: 1.5rem; line-height: 1; }
+.safe-status { text-align: center; justify-items: center; }
+.safe-status .cd { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: clamp(2.2rem, 12vw, 3.4rem); font-variant-numeric: tabular-nums; color: #fff; line-height: 1; }
+.safe-status .k { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--yellow); }
+.safe-play { display: grid; gap: 12px; }
+.safe-door { display: grid; gap: 14px; justify-items: center; padding: 20px 14px; border-radius: 22px; border: 2px solid #3a3a44; background: radial-gradient(90% 70% at 50% 25%, #2a2a33, #0d0d12); box-shadow: inset 0 0 0 6px #15151b, 0 20px 40px -20px #000; }
+.safe-slots { display: flex; gap: 10px; }
+.safe-slots span { width: clamp(52px, 17vw, 66px); aspect-ratio: 3 / 4; display: grid; place-items: center; border-radius: 12px; background: #050507; border: 2px solid #44444f; font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: clamp(1.8rem, 9vw, 2.4rem); color: #ffb21e; text-shadow: 0 0 12px #ffb21e88; }
+.safe-keys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: min(320px, 100%); }
+.safe-keys button { touch-action: manipulation; min-height: 58px; border-radius: 14px; border: 1px solid #ffffff22; background: #1a1a22; color: #fff; font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: 1.4rem; cursor: pointer; }
+.safe-keys button:active { transform: translateY(1px); background: #24242e; }
+.safe-keys .go { grid-column: span 2; background: var(--red); border-color: var(--red); font-size: 0.85rem; letter-spacing: 0.18em; text-transform: uppercase; }
+.safe-keys button:disabled { opacity: .4; cursor: default; }
+.safe-log { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.safe-log li { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; padding: 10px 14px; border-radius: 10px; background: #0f0f15; border: 1px solid #ffffff14; }
+.safe-log .g { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; letter-spacing: 0.2em; font-size: 1.1rem; }
+.safe-log .pegs { display: flex; gap: 6px; }
+.safe-log .pegs i { width: 14px; height: 14px; border-radius: 50%; background: #2a2a33; }
+.safe-log .pegs i.x { background: #2bff6a; box-shadow: 0 0 8px #2bff6a; } .safe-log .pegs i.p { background: #ffb21e; box-shadow: 0 0 8px #ffb21e; }
+.safe-log .t { color: var(--muted); font-size: 0.8rem; text-align: right; }
+.safe-win { border-color: #2bff6a; text-align: center; justify-items: center; }
+.safe-win h2 { font-size: clamp(1.6rem, 8vw, 2.6rem); color: #fff; }
+.safe-code { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: clamp(1.4rem, 8vw, 2.2rem); letter-spacing: 0.08em; color: #2bff6a; padding: 12px 18px; border: 2px dashed #2bff6a; border-radius: 12px; user-select: all; overflow-wrap: anywhere; }
 
 /* privacy page */
 .legal { max-width: 760px; margin: 0 auto; padding-bottom: 100px; display: grid; gap: 30px; }
@@ -642,6 +670,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       <a href="#cars">Show cars <small>The confirmed line-up</small></a>
       <a href="#gallery">Gallery <small>The floor, up close</small></a>
       <a href="#launch">Launch Control <small>Win a free ticket</small></a>
+      <a href="#safe">Crack the Safe <small>12 PM &amp; 7 PM daily</small></a>
     </nav>
     <div class="cta-stack">
       <a class="btn fill yellow tkt" href="https://apps.little.africa/events/tunerfest-2026" target="_blank" rel="noopener">Buy tickets <span class="arr">→</span></a>
@@ -682,6 +711,11 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   <a class="lc-strip wrap" href="#launch">
     <span class="lc-dots" aria-hidden="true"><i></i><i></i><i></i><i class="g"></i></span>
     <span class="lc-strip-msg"><b>Launch Control:</b> test your reaction time. The 5 fastest win a free ticket.</span>
+    <span class="lc-strip-go">Play <span aria-hidden="true">→</span></span>
+  </a>
+  <a class="lc-strip wrap safe-strip" href="#safe">
+    <span class="safe-dial" aria-hidden="true">🔒</span>
+    <span class="lc-strip-msg"><b>Crack the Safe:</b> a new safe drops at 12 PM and 7 PM every day. First to crack it wins a free ticket.</span>
     <span class="lc-strip-go">Play <span aria-hidden="true">→</span></span>
   </a>
 
@@ -992,6 +1026,71 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   </div>
 </div>
 
+<!-- =========================== CRACK THE SAFE (#safe) =========================== -->
+<!-- Two drops a day. The database holds each drop's secret combination and scores every guess (safe_* functions). -->
+<div class="view lc safe" data-view="safe" hidden>
+  <div class="wrap">
+    <div class="lc-head">
+      <img src="assets/tunerfest-logo.webp" alt="Tuner Fest 6.0, Tuner Motorshow Event, presented by Al-Husnain Motors" width="1200" height="385">
+      <h1 class="mega">Crack the <span class="outline">Safe</span></h1>
+      <p class="lede">A new safe drops at <b>12 PM and 7 PM</b> every day with a secret 4-digit code. The <b>first person to crack it</b> wins a free ticket to Tuner Fest 6.0.</p>
+    </div>
+
+    <div class="lc-card safe-status" id="sf-status"><p class="lede">Checking the safe…</p></div>
+
+    <form class="lc-card" id="sf-entry" novalidate hidden>
+      <div class="field"><label for="sf-name">Your name</label><input id="sf-name" type="text" autocomplete="name" maxlength="40" required><span class="error">Enter your name.</span></div>
+      <div class="field"><label for="sf-phone">Phone number</label><input id="sf-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="0712 345 678" required><span class="error">Enter a Kenyan number, like 0712 345 678.</span></div>
+      <p class="hint">If you win, your free-ticket code appears here straight away. We'll also contact you on this number.</p>
+      <button class="btn fill lc-go" type="submit">Try the safe <span class="arr">→</span></button>
+    </form>
+
+    <div class="safe-play" id="sf-play" hidden>
+      <div class="lc-top"><span id="sf-who"></span><span id="sf-left"></span></div>
+      <div class="safe-door">
+        <div class="safe-slots" id="sf-slots" aria-live="polite"><span></span><span></span><span></span><span></span></div>
+        <div class="safe-keys" role="group" aria-label="Safe keypad">
+          <button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button>
+          <button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button>
+          <button type="button" data-k="del" aria-label="Delete">⌫</button>
+          <button type="button" data-k="go" class="go" id="sf-go">Open</button>
+        </div>
+        <p class="lc-msg" id="sf-msg" role="status">Enter 4 digits from 1 to 6, then press Open.</p>
+      </div>
+      <ol class="safe-log" id="sf-log"></ol>
+      <button class="link-btn" type="button" id="sf-change">Not you? Change name or number</button>
+    </div>
+
+    <div class="lc-card safe-win" id="sf-win" hidden>
+      <span class="eyebrow" style="--c:#2bff6a">Safe cracked</span>
+      <h2 class="mega">You won a free ticket!</h2>
+      <p class="lede">Your single-use code:</p>
+      <p class="safe-code" id="sf-code"></p>
+      <div class="row" style="gap:10px;flex-wrap:wrap">
+        <button class="btn" type="button" id="sf-copy">Copy code</button>
+        <a class="btn fill yellow" href="https://apps.little.africa/events/tunerfest-2026" target="_blank" rel="noopener">Get my ticket <span class="arr">→</span></a>
+      </div>
+      <p class="hint">Enter the code at checkout on Little Africa and your ticket is free. Take a screenshot so you don't lose it. It works once.</p>
+    </div>
+
+    <section class="lc-board" aria-labelledby="sf-win-h">
+      <h2 id="sf-win-h" class="eyebrow ruled">Safe crackers</h2>
+      <ol id="sf-winners"><li class="lc-empty">No one has cracked a safe yet.</li></ol>
+    </section>
+
+    <details class="lc-rules">
+      <summary>How to play</summary>
+      <ul>
+        <li>Each drop's code is 4 digits, each from 1 to 6. Digits can repeat.</li>
+        <li>After each guess you get a light for each digit: <b style="color:#2bff6a">green</b> = right digit in the right place, <b style="color:#ffb21e">amber</b> = right digit in the wrong place. No light means that digit isn't in the code (or not that many times).</li>
+        <li>You get 7 guesses per drop. The first person to open the safe wins a single-use free-ticket code, and the safe closes until the next drop.</li>
+        <li>New drops at 12 PM and 7 PM, Nairobi time. Each phone number can win once.</li>
+        <li>Winners are checked before codes are honoured. Entries that look automated are disqualified. See our <a href="#terms">event rules</a> and <a href="#privacy">privacy policy</a>.</li>
+      </ul>
+    </details>
+  </div>
+</div>
+
 <!-- =========================== TERMS =========================== -->
 <div class="view" data-view="terms" hidden>
   <div class="wrap">
@@ -1063,6 +1162,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
           <li><b>Booth request:</b> your name, email, phone number, business name, what you'll show or sell, booth size, whether you need power, and any notes.</li>
           <li><b>Driver passes:</b> the pass code, the driver's name and car, and the time the pass is scanned at the gate.</li>
           <li><b>Launch Control game:</b> your name, phone number, reaction times, and your device's IP address (used only to stop cheating). Your name and best time are shown on the public leaderboard, never your number.</li>
+          <li><b>Crack the Safe game:</b> your name, phone number, your guesses and your device's IP address (used only to stop cheating). Winners are shown by a shortened name, never by number.</li>
         </ul>
         <p>Tickets are sold by our ticketing partner Little Africa, not on this website, so their own privacy terms apply to ticket purchases.</p>
       </section>
@@ -1248,7 +1348,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
         <li><a href="#events">Events</a></li>
         <li><a href="#cars">Show cars</a></li>
         <li><a href="#gallery">Gallery</a></li>
-        <li><a href="#launch">Launch Control</a></li></ul></div>
+        <li><a href="#launch">Launch Control</a></li>
+        <li><a href="#safe">Crack the Safe</a></li></ul></div>
       <div><h4>Showcase</h4><ul>
         <li><a href="#register">Register your car</a></li>
         <li><a href="#booth">Exhibit products</a></li>
@@ -2401,6 +2502,80 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     $("#adm-list").replaceChildren(form, ...(rows.length ? rows : [el("div", { class: "adm-empty", text: "No cars added by the team yet." })]));
     setTimeout(() => input.focus(), 0);
   }
+  // Crack the Safe admin: codes, winners and drop times
+  async function loadSafe() {
+    const [st, codes, drops, players] = await Promise.all([
+      sb.from("safe_settings").select("*").eq("id", 1).maybeSingle(),
+      sb.from("safe_codes").select("*").order("id"),
+      sb.from("safe_drops").select("id,opens_at,closes_at,cracked_by,cracked_at,code_id").order("opens_at", { ascending: false }).limit(60),
+      sb.from("safe_players").select("phone,name,won_drop")]);
+    adm.safe = [st, codes, drops, players].some(r => r.error) ? { error: true, codes: [] }
+      : { settings: st.data, codes: codes.data, drops: drops.data, players: new Map(players.data.map(x => [x.phone, x])) };
+    if (adm.page === "safe" || adm.page === "home") renderAdmin();
+  }
+  function renderSafeAdmin() {
+    const S = adm.safe;
+    if (!S) { $("#adm-stats").replaceChildren(); $("#adm-list").replaceChildren(el("div", { class: "adm-empty", text: "Loading the safe…" })); return loadSafe(); }
+    if (S.error) { $("#adm-stats").replaceChildren(); $("#adm-list").replaceChildren(el("div", { class: "adm-empty", text: "The safe's database isn't set up yet. Run supabase-crack-the-safe.sql in Supabase, then press Refresh." })); return; }
+    const left = S.codes.filter(c => !c.given_to), given = S.codes.filter(c => c.given_to);
+    $("#adm-stats").replaceChildren(
+      el("div", {}, el("b", { text: String(left.length) }), el("span", { text: "Codes left" })),
+      el("div", {}, el("b", { text: String(given.length) }), el("span", { text: "Codes won" })),
+      el("div", {}, el("b", { text: String(S.players.size) }), el("span", { text: "Players" })));
+    // paste codes
+    const box = el("textarea", { rows: "4", placeholder: "Paste codes from Little Africa, one per line (or separated by commas or spaces)", "aria-label": "Codes to add" });
+    const add = el("form", { class: "pass-tools", style: "display:grid", onsubmit: async ev => {
+        ev.preventDefault();
+        const have = new Set(S.codes.map(c => c.code));
+        const list = [...new Set(box.value.split(/[\s,;]+/).map(x => x.trim()).filter(x => x.length >= 3))];
+        const fresh = list.filter(x => !have.has(x));
+        if (!fresh.length) { admMsg(list.length ? "Those codes are already in the list." : "Paste at least one code.", true); return; }
+        const r = await sb.from("safe_codes").insert(fresh.map(code => ({ code })));
+        if (r.error) { admMsg("The codes didn't save. Check for typos and try again.", true); return; }
+        admMsg(`Added ${fresh.length} ${fresh.length === 1 ? "code" : "codes"}${list.length > fresh.length ? ` (${list.length - fresh.length} already in the list)` : ""}.`); adm.safe = null; renderAdmin();
+      } },
+      el("label", { class: "eyebrow", style: "--c: var(--muted)", text: "Add free-ticket codes" }), box,
+      el("button", { class: "btn fill yellow", type: "submit", style: "justify-self:start", text: "Add codes" }));
+    // settings
+    const times = el("input", { type: "text", value: S.settings.drop_times.join(", "), "aria-label": "Drop times" });
+    const ends = el("input", { type: "datetime-local", value: eatInput(S.settings.ends_at), "aria-label": "Last drop before (EAT)" });
+    const set = el("form", { class: "pass-tools", onsubmit: async ev => {
+        ev.preventDefault();
+        const t = times.value.split(/[\s,]+/).filter(Boolean);
+        if (!t.length || !t.every(x => /^([01]?\d|2[0-3]):[0-5]\d$/.test(x))) { admMsg("Write drop times like 12:00, 19:00 (24-hour, Nairobi time).", true); return; }
+        const r = await sb.from("safe_settings").update({ drop_times: t.map(x => x.padStart(5, "0")), ends_at: new Date(ends.value + ":00+03:00").toISOString() }).eq("id", 1);
+        if (r.error) { admMsg("The settings didn't save. Try again.", true); return; }
+        admMsg("Safe settings saved. New times apply from the next drop."); adm.safe = null; renderAdmin();
+      } },
+      el("div", { class: "field" }, el("label", { text: "Drop times (Nairobi, 24-hour)" }), times),
+      el("div", { class: "field" }, el("label", { text: "Giveaway ends" }), ends),
+      el("button", { class: "btn", type: "submit", text: "Save settings" }),
+      el("a", { class: "btn", href: "#safe", target: "_blank", text: "Open the game" }));
+    // winners, newest first
+    const codeById = new Map(S.codes.map(c => [c.id, c]));
+    const wins = S.drops.filter(d => d.cracked_by).map(d => {
+      const pl = S.players.get(d.cracked_by) || { name: "?", phone: d.cracked_by }, code = codeById.get(d.code_id)?.code || "—";
+      const first = pl.name.split(/\s+/)[0];
+      return el("article", { class: "adm-row booth", style: "border-color:#2bff6a" },
+        el("div", { style: "min-width:0" },
+          el("h3", {}, el("span", { text: pl.name }), el("span", { class: "pill approved", text: "Winner" })),
+          el("dl", {}, [["Drop", d.id], ["Cracked", fmtTime(Date.parse(d.cracked_at))], ["Phone", "0" + pl.phone.slice(3)], ["Code", code]]
+            .map(([k, v]) => [el("dt", { text: k }), el("dd", { text: v })]))),
+        el("div", { class: "adm-actions" },
+          el("a", { class: "btn", href: `tel:+${pl.phone}`, text: "Call" }),
+          el("a", { class: "btn fill", style: "--c:#25d366", target: "_blank", rel: "noopener", text: "WhatsApp code",
+            href: waLink(pl.phone, `Hi ${first}, it's Shift Nation. Congratulations on cracking the TunerFest safe! Your free-ticket code is ${code}. Enter it at checkout here: https://apps.little.africa/events/tunerfest-2026`) })));
+    });
+    const recent = S.drops.filter(d => !d.cracked_by).slice(0, 6).map(d => el("li", { text: `${d.id}: not cracked` }));
+    $("#adm-list").replaceChildren(
+      ...(left.length ? [] : [el("div", { class: "adm-empty", style: "border-color:var(--red);color:#ffb3ad", text: "No codes left, so the safe stays locked. Paste more codes below." })]),
+      add, set,
+      el("h3", { class: "eyebrow", style: "--c: var(--muted);margin-top:10px", text: wins.length ? "Winners" : "No winners yet" }), ...wins,
+      ...(recent.length ? [el("h3", { class: "eyebrow", style: "--c: var(--muted);margin-top:10px", text: "Recent drops nobody cracked" }), el("ul", { class: "pass-note", style: "text-align:left" }, ...recent)] : []),
+      el("details", { class: "lc-rules" }, el("summary", { text: `All codes (${S.codes.length})` }),
+        el("ul", {}, ...S.codes.map(c => el("li", { text: `${c.code}: ${c.given_to ? `won by ${(S.players.get(c.given_to) || {}).name || c.given_to} (${c.drop_id})` : "not won yet"}` })))));
+  }
+  // Crack the Safe admin: codes, winners and drop times (end)
   // Launch Control admin: full phone numbers for verifying and contacting winners
   async function loadGame() {
     const [st, pl] = await Promise.all([
@@ -2466,6 +2641,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     home: { title: "Admin", intro: "Pick what you want to work on." },
     cars: { kind: "car", title: "Show cars", intro: "Review show car applications. Approving a car creates its driver pass and emails the owner." },
     booths: { kind: "booth", title: "Booths", intro: "Review booth and vendor requests." },
+    safe: { kind: "safe", title: "Crack the Safe", intro: "Paste your free-ticket codes, see who cracked each drop, and set the drop times." },
     launch: { kind: "launch", title: "Launch Control", intro: "The reaction-time giveaway. Check the top times and flags, contact the top 5, and set the closing time." },
     add: { kind: "add", title: "Add a car", intro: "Register a show car yourself. Type the car and its driver pass is emailed to info@shiftnation.org." },
     passes: { kind: "passes", title: "Driver passes", intro: "Every approved show car gets a pass. Email passes, create extra ones by hand, and see who has arrived." },
@@ -2494,6 +2670,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     $("#adm-home").replaceChildren(...[
       tile("#admin/cars", "var(--red)", "Show car approvals", String(countOf(cars, "pending")), "waiting for review", `${countOf(cars, "approved")} / ${SPOTS} spots filled · ${cars.length} applications`, "Open approvals →"),
       tile("#admin/booths", "var(--teal)", "Booths", String(countOf(booths, "pending")), "waiting for review", `${countOf(booths, "approved")} approved${unpaid ? ` · ${unpaid} awaiting payment` : ""} · ${booths.length} ${booths.length === 1 ? "request" : "requests"}`, "Open booths →"),
+      tile("#admin/safe", "#ffb21e", "Crack the Safe", adm.safe ? String(adm.safe.codes.filter(c => !c.given_to).length) : "→", "free-ticket codes left", "Drops at 12 PM and 7 PM, first to crack wins", "Open safe admin →"),
       tile("#admin/launch", "#2bff6a", "Launch Control", adm.game ? String(adm.game.players.filter(g => g.best_ms != null).length) : "→", "players on the board", "Reaction-time giveaway: top 5 win tickets", "Open game admin →"),
       adm.passesOk ? tile("#admin/add", "var(--red)", "Add a car", "+", "register a show car yourself", `${[...adm.entries.values()].filter(isTeamCar).length} added by the team · pass goes to ${TEAM_EMAIL}`, "Add a car →") : null,
       adm.passesOk ? tile("#admin/passes", "var(--yellow)", "Driver passes", `${dIn} / ${drivers.length}`, "drivers checked in", unmailed ? `${unmailed} ${unmailed === 1 ? "pass" : "passes"} not emailed yet` : "All passes emailed", "Open passes →") : null,
@@ -2569,6 +2746,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     $("#adm-intro").textContent = ADMIN_PAGES[adm.page].intro;
     if (home) return renderHome();
     $("#adm-bar").hidden = adm.page === "scan" || adm.page === "add";
+    if (adm.page === "safe") { $("#adm-bar").hidden = true; return renderSafeAdmin(); }
     if (adm.page === "launch") { $("#adm-status").hidden = true; $("#adm-q").placeholder = "Search name or phone"; return renderLaunchAdmin(); }
     if (adm.page === "scan") return renderScanPage();
     if (adm.page === "add") return renderAddCar();
@@ -2698,7 +2876,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       adm.entries = new Map(r.data.map(row => [row.id, fromRow(row)]));
       const t = await sb.from("driver_tickets").select("*").limit(2000);
       if (!t.error) { adm.passes = t.data; adm.passesOk = true; }
-      adm.gateKeys = null; adm.game = null; loadGame();
+      adm.gateKeys = null; adm.game = null; loadGame(); adm.safe = null; loadSafe();
       if (!adm.keepMsg) admMsg(""); adm.keepMsg = false; renderAdmin();
     }
     async function enter(session) {
@@ -2941,6 +3119,126 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       : "None of your attempts counted this time. Thanks for playing!";
   }
 
+  /* ---------- Crack the Safe ---------- */
+  // Two drops a day. The database holds the secret combination and scores each guess (safe_* functions);
+  // the page only ever sees the result, and the free-ticket code only if this player cracks it first.
+  const SF = { STORE_WIN: "tf6-safe-win", st: null, entry: "", log: [], busy: false, timer: 0, poll: 0 };
+  const sfShow = which => {
+    for (const id of ["sf-entry", "sf-play", "sf-win"]) $("#" + id).hidden = id !== which;
+    $(".safe").classList.toggle("playing", which === "sf-play");
+  };
+  const sfWhen = iso => new Date(iso).toLocaleString("en-GB", { timeZone: "Africa/Nairobi", weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit", hour12: true });
+  const SF_ERRORS = {
+    bad_phone: "Enter a Kenyan number, like 0712 345 678.", bad_name: "Enter your name.", bad_guess: "Use 4 digits, each from 1 to 6.",
+    out_of_guesses: "You've used all 7 guesses for this drop. Come back for the next one.", already_won: "You've already won a ticket. Leave the next safe for someone else!",
+    limit_ip: "Too many guesses from this network for this drop.", waiting: "The safe isn't open right now.", ended: "The giveaway has ended.",
+    no_codes: "All the free tickets have been given out.",
+  };
+  function sfWinners(list) {
+    $("#sf-winners").replaceChildren(...(list.length ? list.map(w => el("li", {}, el("b", { text: "🔓" }), el("span", { text: w.name }),
+      el("span", { class: "t", text: sfWhen(w.drop.replace(" ", "T") + ":00+03:00") }))) : [el("li", { class: "lc-empty", text: "No one has cracked a safe yet." })]));
+  }
+  function sfCountdown(target, label) {
+    clearTimeout(SF.timer);
+    const box = $("#sf-status"), t = Date.parse(target);
+    const tick = () => {
+      const left = t - Date.now();
+      if (left <= 0) { sfLoad(); return; }
+      const h = Math.floor(left / 3600e3), m = Math.floor(left / 60e3) % 60, sec = Math.floor(left / 1e3) % 60;
+      box.querySelector(".cd").textContent = `${h}:${pad(m)}:${pad(sec)}`;
+      SF.timer = setTimeout(tick, 1000);
+    };
+    box.replaceChildren(el("span", { class: "k", text: label }), el("span", { class: "cd" }), el("p", { class: "lede", text: `Next drop: ${sfWhen(target)}` }));
+    tick();
+  }
+  async function sfLoad() {
+    if (!sb) { $("#sf-status").replaceChildren(el("p", { class: "lede", text: "Crack the Safe works on shiftnation.org." })); return; }
+    clearTimeout(SF.timer); clearInterval(SF.poll);
+    try { LC.me = LC.me || JSON.parse(localStorage.getItem(LC.STORE) || "null"); } catch {}
+    const r = await sb.rpc("safe_status", { p_phone: LC.me?.phone || null });
+    if (r.error) { $("#sf-status").replaceChildren(el("p", { class: "lede", text: "The safe didn't load. Check your connection and refresh." })); return; }
+    const st = SF.st = r.data;
+    SF.log = st.my_guesses || [];
+    sfWinners(st.winners || []);
+    let mine = null; try { mine = JSON.parse(localStorage.getItem(SF.STORE_WIN) || "null"); } catch {}
+    if (mine) return sfWon(mine.code, true);
+    if (st.already_won) { sfShow(""); return $("#sf-status").replaceChildren(el("span", { class: "k", text: "Already a winner" }), el("p", { class: "lede", text: "This number has already cracked a safe and won a ticket. Leave the next one for someone else!" })); }
+    if (st.phase === "ended") { sfShow(""); return $("#sf-status").replaceChildren(el("span", { class: "k", text: "Giveaway over" }), el("p", { class: "lede", text: "The safe giveaway has ended. Thanks for playing, and see you at Tuner Fest 6.0!" })); }
+    if (st.phase === "open") {
+      $("#sf-status").replaceChildren(el("span", { class: "k", text: "The safe is open" }), el("p", { class: "lede", text: "Crack it before anyone else to win a free ticket." }));
+      if (!LC.me) { sfShow("sf-entry"); if (LC.me === null) { $("#sf-name").value = ""; } return; }
+      sfShow("sf-play"); sfPlay();
+      SF.poll = setInterval(sfCheckCracked, 15000);
+      return;
+    }
+    sfShow("");
+    if (!st.next_at) return $("#sf-status").replaceChildren(el("span", { class: "k", text: "No more drops" }), el("p", { class: "lede", text: "There are no more safe drops before the event." }));
+    sfCountdown(st.next_at, st.phase === "cracked" ? `Cracked by ${st.cracked_by} · Next safe in` : st.phase === "no_codes" ? "All tickets for now are won. Next safe in" : "Next safe opens in");
+  }
+  async function sfCheckCracked() {
+    const r = await sb.rpc("safe_status", { p_phone: LC.me?.phone || null });
+    if (!r.error && r.data.phase !== "open" && !SF.busy) { SF.log = []; sfLoad(); }
+  }
+  function sfPlay() {
+    $("#sf-who").textContent = LC.me.name;
+    const left = SF.st.max_guesses - SF.st.guesses_used;
+    $("#sf-left").textContent = `${left} ${left === 1 ? "guess" : "guesses"} left`;
+    sfDraw();
+    if (left <= 0) { sfKeys(false); $("#sf-msg").textContent = SF_ERRORS.out_of_guesses; }
+    else sfKeys(true);
+  }
+  const sfKeys = on => $$(".safe-keys button").forEach(b => { b.disabled = !on; });
+  function sfDraw() {
+    [...$("#sf-slots").children].forEach((c, i) => { c.textContent = SF.entry[i] || ""; });
+    $("#sf-log").replaceChildren(...SF.log.map(g => el("li", {}, el("span", { class: "g", text: g.guess }),
+      el("span", { class: "pegs", "aria-label": `${g.exact} right place, ${g.partial} wrong place` },
+        ...Array.from({ length: 4 }, (_, i) => el("i", { class: i < g.exact ? "x" : i < g.exact + g.partial ? "p" : "" }))),
+      el("span", { class: "t", text: `${g.exact} right · ${g.partial} close` }))));
+  }
+  $(".safe-keys").addEventListener("click", ev => {
+    const k = ev.target.closest("button")?.dataset.k; if (!k || SF.busy) return;
+    if (k === "del") SF.entry = SF.entry.slice(0, -1);
+    else if (k === "go") return sfGuess();
+    else if (SF.entry.length < 4) SF.entry += k;
+    sfDraw();
+  });
+  async function sfGuess() {
+    if (SF.entry.length < 4) { $("#sf-msg").textContent = "Enter all 4 digits first."; return; }
+    SF.busy = true; sfKeys(false); $("#sf-msg").textContent = "Trying the handle…";
+    const guess = SF.entry;
+    const r = await sb.rpc("safe_guess", { p_name: LC.me.name, p_phone: LC.me.phone, p_guess: guess });
+    SF.busy = false; const d = r.data || {};
+    if (r.error) { sfKeys(true); $("#sf-msg").textContent = "No connection. Check your internet and try again."; return; }
+    if (d.result === "won") return sfWon(d.code, false);
+    if (d.error === "cracked" || d.result === "too_late") { $("#sf-msg").textContent = "Too late! Someone just cracked this safe."; SF.log = []; SF.entry = ""; return setTimeout(sfLoad, 2500); }
+    if (d.error) { $("#sf-msg").textContent = SF_ERRORS[d.error] || "That didn't work. Try again."; if (["waiting", "ended", "no_codes", "already_won"].includes(d.error)) setTimeout(sfLoad, 2500); else sfKeys(d.error !== "out_of_guesses"); return; }
+    SF.log.unshift({ guess, exact: d.exact, partial: d.partial }); SF.entry = "";
+    SF.st.guesses_used = SF.st.max_guesses - d.left;
+    $("#sf-msg").textContent = d.exact === 3 ? "So close! 3 in the right place." : d.left ? "Locked. Use the lights to narrow it down." : "That was your last guess for this drop.";
+    sfPlay(); if (d.left <= 0) $("#sf-msg").textContent = SF_ERRORS.out_of_guesses;
+  }
+  function sfWon(code, again) {
+    clearTimeout(SF.timer); clearInterval(SF.poll);
+    try { localStorage.setItem(SF.STORE_WIN, JSON.stringify({ code })); } catch {}
+    sfShow("sf-win"); $("#sf-code").textContent = code;
+    sb.rpc("safe_status", { p_phone: LC.me?.phone || null }).then(r => { if (!r.error) sfWinners(r.data.winners || []); });
+    $("#sf-status").replaceChildren(el("span", { class: "k", text: again ? "You've already won" : "You cracked it!" }));
+  }
+  $("#sf-copy").addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText($("#sf-code").textContent); $("#sf-copy").textContent = "Copied"; } catch { prompt("Copy your code:", $("#sf-code").textContent); }
+  });
+  $("#sf-entry").addEventListener("submit", ev => {
+    ev.preventDefault();
+    const name = $("#sf-name").value.trim(), phone = lcPhone($("#sf-phone").value);
+    $("#sf-name").closest(".field").classList.toggle("invalid", name.length < 2);
+    $("#sf-phone").closest(".field").classList.toggle("invalid", !phone);
+    if (name.length < 2 || !phone) return;
+    LC.me = { name, phone, phoneInput: $("#sf-phone").value.trim() };
+    try { localStorage.setItem(LC.STORE, JSON.stringify(LC.me)); } catch {}
+    sfLoad();
+  });
+  $("#sf-change").addEventListener("click", () => { LC.me = null; try { localStorage.removeItem(LC.STORE); } catch {} SF.log = []; sfShow("sf-entry"); $("#sf-name").focus(); });
+
   /* ---------- routing ---------- */
   const views = $$(".view");
   function route() {
@@ -2957,6 +3255,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     if (name === "cars") loadShowCars();
     if (isPass) showPass(h.slice(5).toUpperCase());
     if (name === "launch") initLaunch();
+    if (name === "safe") sfLoad(); else { clearTimeout(SF.timer); clearInterval(SF.poll); }
     if (name === "admin") setAdminPage(sub);
     if (isGate) showGate(h.startsWith("gate-") ? h.slice(5) : null);
     scrollTop();
