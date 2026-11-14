@@ -519,6 +519,19 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
 .lc-rules summary { cursor: pointer; font-weight: 700; } .lc-rules ul { color: #c9cdd8; line-height: 1.6; padding-left: 20px; }
 .lc-rules a, .lc-closed a { color: var(--yellow); }
 
+/* flash sale banner (shown until FLASH.end) */
+.flash { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; width: 100%; margin: 0 0 18px; padding: 14px 18px; border-radius: 14px; text-decoration: none; color: #fff;
+  background: linear-gradient(100deg, #e5372b, #ff6a00); box-shadow: 0 14px 34px -16px #e5372b; text-align: left; }
+.flash[hidden] { display: none; }
+.flash:hover { filter: brightness(1.06); }
+.flash-tag { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; background: #fff; color: #e5372b; padding: 5px 10px; border-radius: 999px; animation: flashpulse 1.2s ease-in-out infinite; }
+@keyframes flashpulse { 50% { opacity: .55; } }
+@media (prefers-reduced-motion: reduce) { .flash-tag { animation: none; } }
+.flash-msg { flex: 1 1 220px; min-width: 0; font-size: 0.95rem; }
+.flash-cd { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: 1.15rem; font-variant-numeric: tabular-nums; letter-spacing: 0.04em; }
+.flash-go { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; }
+.page-top + .flash, .tiers { margin-top: 0; }
+
 /* privacy page */
 .legal { max-width: 760px; margin: 0 auto; padding-bottom: 100px; display: grid; gap: 30px; }
 .legal section { display: grid; gap: 12px; }
@@ -631,6 +644,12 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
 <div class="view" data-view="home">
   <section class="hero">
     <div class="wrap">
+      <a class="flash" href="https://apps.little.africa/events/tunerfest-2026" target="_blank" rel="noopener" data-flash hidden>
+        <span class="flash-tag">Flash sale</span>
+        <span class="flash-msg"><b>Tickets just KES 700</b> until Sunday, Nov 15 at 11:59 PM. Buy online or dial <b>*826*31#</b>.</span>
+        <span class="flash-cd" aria-label="Time left in the flash sale"><b data-fcd="h">00</b>:<b data-fcd="m">00</b>:<b data-fcd="s">00</b></span>
+        <span class="flash-go">Buy now <span aria-hidden="true">→</span></span>
+      </a>
       <span class="eyebrow ruled both">East Africa's biggest automotive showcase</span>
       <h1 class="mega"><span>Machines.</span><span class="outline">Culture.</span><span>Horsepower.</span></h1>
       <span class="date-chip">November 29, 2026 — Galleria Mall, Karen</span>
@@ -759,6 +778,12 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       <h1 class="sub">Tuner Fest 6.0 tickets</h1>
       <p class="lede">Sunday, November 29 at Galleria Mall, Karen, Nairobi. The earlier you buy, the less you pay. Buy online or dial <b class="ussd">*826*31#</b> from your phone.</p>
     </div>
+    <a class="flash" href="https://apps.little.africa/events/tunerfest-2026" target="_blank" rel="noopener" data-flash hidden>
+        <span class="flash-tag">Flash sale</span>
+        <span class="flash-msg"><b>Tickets just KES 700</b> until Sunday, Nov 15 at 11:59 PM. Buy online or dial <b>*826*31#</b>.</span>
+        <span class="flash-cd" aria-label="Time left in the flash sale"><b data-fcd="h">00</b>:<b data-fcd="m">00</b>:<b data-fcd="s">00</b></span>
+        <span class="flash-go">Buy now <span aria-hidden="true">→</span></span>
+      </a>
     <div class="tiers" id="tiers"></div>
     <div class="dial">
       <div><span class="eyebrow" style="--c: var(--muted)">Buy by phone</span><p class="dial-code">Dial <b class="ussd" id="ussd">*826*31#</b></p><p class="lede">Works on any phone. Follow the prompts to pay for your ticket.</p></div>
@@ -1461,7 +1486,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       </div>
     </article>`;
     }).join("");
-    $$("[data-from-price]").forEach(el => { el.textContent = open ? "From KES 800" : "From KES 1,000"; });
+    const flashOn = Date.now() < Date.parse("2026-11-15T23:59:00+03:00");   // flash sale, see FLASH below
+    $$("[data-from-price]").forEach(el => { el.textContent = flashOn ? "Flash sale KES 700" : open ? "From KES 800" : "From KES 1,000"; });
     $$("[data-price-line]").forEach(el => { el.textContent = open
       ? "Early bird KES 800 until Oct 30, then KES 1,000 advanced and KES 1,500 at the gate."
       : "Advanced KES 1,000, or KES 1,500 at the gate."; });
@@ -2747,6 +2773,20 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     try { await adm.ops.save("tunerfest-applications.csv", [cols.join(","), ...rows].join("\n")); }
     catch (err) { if (err && err.code !== "cancelled") admMsg("The export didn't save. Try again.", true); }
   });
+
+  /* ---------- flash sale ---------- */
+  // Banner with a countdown on the home and tickets pages; it hides itself when the sale ends.
+  const FLASH = { end: Date.parse("2026-11-15T23:59:00+03:00") };
+  function flashTick() {
+    const left = FLASH.end - Date.now();
+    $$("[data-flash]").forEach(b => { b.hidden = left <= 0; });
+    if (left <= 0) return;
+    const h = Math.floor(left / 3600e3), m = Math.floor(left / 60e3) % 60, sec = Math.floor(left / 1e3) % 60;
+    const v = { h: String(h).padStart(2, "0"), m: pad(m), s: pad(sec) };
+    $$("[data-fcd]").forEach(n => { n.textContent = v[n.dataset.fcd]; });
+    setTimeout(flashTick, 1000);
+  }
+  flashTick();
 
   /* ---------- Launch Control (reaction-time giveaway) ---------- */
   // The database picks the random green delay and times each tap with its own clock (lc_* functions).
