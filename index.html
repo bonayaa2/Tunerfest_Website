@@ -535,6 +535,12 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
 .safe-log .pegs i { width: 14px; height: 14px; border-radius: 50%; background: #2a2a33; }
 .safe-log .pegs i.x { background: #2bff6a; box-shadow: 0 0 8px #2bff6a; } .safe-log .pegs i.p { background: #ffb21e; box-shadow: 0 0 8px #ffb21e; }
 .safe-log .t { color: var(--muted); font-size: 0.8rem; text-align: right; }
+.safe-log li.row4 { display: flex; justify-content: center; gap: 8px; }
+.tile { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 8px; font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: 1.3rem; color: #fff; background: #3a3a44; }
+.tile.g { background: #1fa64a; } .tile.a { background: #d98a00; } .tile.x { background: #3a3a44; color: #c9cdd8; }
+.safe-key { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 8px; font-size: 0.8rem; color: var(--muted); margin: 0; }
+.safe-key .tile { width: 26px; height: 26px; font-size: 0.8rem; border-radius: 6px; }
+.safe-keys button.k-g { background: #1fa64a; border-color: #1fa64a; } .safe-keys button.k-a { background: #d98a00; border-color: #d98a00; } .safe-keys button.k-x { background: #101014; color: #55555f; }
 .safe-win { border-color: #2bff6a; text-align: center; justify-items: center; }
 .safe-win h2 { font-size: clamp(1.6rem, 8vw, 2.6rem); color: #fff; }
 .safe-code { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: clamp(1.4rem, 8vw, 2.2rem); letter-spacing: 0.08em; color: #2bff6a; padding: 12px 18px; border: 2px dashed #2bff6a; border-radius: 12px; user-select: all; overflow-wrap: anywhere; }
@@ -948,6 +954,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
           <button type="button" data-k="go" class="go" id="sf-go">Open</button>
         </div>
         <p class="lc-msg" id="sf-msg" role="status">Enter 4 digits from 1 to 6, then press Open.</p>
+        <p class="safe-key"><span class="tile g">2</span> right place <span class="tile a">4</span> wrong place <span class="tile x">1</span> not in code</p>
       </div>
       <ol class="safe-log" id="sf-log"></ol>
       <button class="link-btn" type="button" id="sf-change">Not you? Change name or number</button>
@@ -974,7 +981,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       <summary>How to play</summary>
       <ul>
         <li>Each drop's code is 4 digits, each from 1 to 6. Digits can repeat.</li>
-        <li>After each guess you get a light for each digit: <b style="color:#2bff6a">green</b> = right digit in the right place, <b style="color:#ffb21e">amber</b> = right digit in the wrong place. No light means that digit isn't in the code (or not that many times).</li>
+        <li>After each guess, every digit gets a colour: <b style="color:#2bff6a">green</b> = right digit in the right place, <b style="color:#ffb21e">orange</b> = the digit is in the code but somewhere else, <b>grey</b> = not in the code. The keypad keeps the colours too.</li>
         <li>You get 7 guesses per drop. The first person to open the safe wins a single-use free-ticket code, and the safe closes until the next drop.</li>
         <li>New drops at 12 PM and 7 PM, Nairobi time. Each phone number can win once.</li>
         <li>Winners are checked before codes are honoured. Entries that look automated are disqualified. See our <a href="#terms">event rules</a> and <a href="#privacy">privacy policy</a>.</li>
@@ -2871,10 +2878,13 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   const sfKeys = on => $$(".safe-keys button").forEach(b => { b.disabled = !on; });
   function sfDraw() {
     [...$("#sf-slots").children].forEach((c, i) => { c.textContent = SF.entry[i] || ""; });
-    $("#sf-log").replaceChildren(...SF.log.map(g => el("li", {}, el("span", { class: "g", text: g.guess }),
-      el("span", { class: "pegs", "aria-label": `${g.exact} right place, ${g.partial} wrong place` },
-        ...Array.from({ length: 4 }, (_, i) => el("i", { class: i < g.exact ? "x" : i < g.exact + g.partial ? "p" : "" }))),
-      el("span", { class: "t", text: `${g.exact} right · ${g.partial} close` }))));
+    const SAY = { g: "right place", a: "in the code, wrong place", x: "not in the code" };
+    $("#sf-log").replaceChildren(...SF.log.map(g => el("li", { class: "row4" },
+      ...[...g.guess].map((dg, i) => el("span", { class: `tile ${g.marks?.[i] || "x"}`, "aria-label": `${dg}: ${SAY[g.marks?.[i] || "x"]}`, text: dg })))));
+    // keypad remembers what each digit has shown: green beats orange beats grey
+    const best = {};
+    for (const g of SF.log) [...g.guess].forEach((dg, i) => { const m = g.marks?.[i] || "x"; if (m === "g" || (m === "a" && best[dg] !== "g") || !best[dg]) best[dg] = m; });
+    $$(".safe-keys [data-k]").forEach(b => { b.classList.remove("k-g", "k-a", "k-x"); if (best[b.dataset.k]) b.classList.add("k-" + best[b.dataset.k]); });
   }
   $(".safe-keys").addEventListener("click", ev => {
     const k = ev.target.closest("button")?.dataset.k; if (!k || SF.busy) return;
@@ -2893,9 +2903,10 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     if (d.result === "won") return sfWon(d.code, false);
     if (d.error === "cracked" || d.result === "too_late") { $("#sf-msg").textContent = "Too late! Someone just cracked this safe."; SF.log = []; SF.entry = ""; return setTimeout(sfLoad, 2500); }
     if (d.error) { $("#sf-msg").textContent = SF_ERRORS[d.error] || "That didn't work. Try again."; if (["waiting", "ended", "no_codes", "already_won"].includes(d.error)) setTimeout(sfLoad, 2500); else sfKeys(d.error !== "out_of_guesses"); return; }
-    SF.log.unshift({ guess, exact: d.exact, partial: d.partial }); SF.entry = "";
+    SF.log.unshift({ guess, marks: d.marks }); SF.entry = "";
     SF.st.guesses_used = SF.st.max_guesses - d.left;
-    $("#sf-msg").textContent = d.exact === 3 ? "So close! 3 in the right place." : d.left ? "Locked. Use the lights to narrow it down." : "That was your last guess for this drop.";
+    const greens = ((d.marks || "").match(/g/g) || []).length;
+    $("#sf-msg").textContent = greens === 3 ? "So close! 3 in the right place." : d.left ? "Locked. Keep the green ones, move the orange ones." : "That was your last guess for this drop.";
     sfPlay(); if (d.left <= 0) $("#sf-msg").textContent = SF_ERRORS.out_of_guesses;
   }
   function sfWon(code, again) {
