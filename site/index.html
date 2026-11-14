@@ -515,12 +515,13 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
 .lc-tries span { padding: 10px; border: 1px solid #ffffff1f; border-radius: 10px; text-align: center; font-variant-numeric: tabular-nums; font-weight: 700; }
 .lc-tries .ok { border-color: #2bff6a66; color: #9dffbc; } .lc-tries .bad { border-color: #ff2a1f66; color: #ffb3ad; }
 .lc-best { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: clamp(2.6rem, 14vw, 4.4rem); line-height: 1; color: #2bff6a; font-variant-numeric: tabular-nums; }
-.lc-share { gap: 10px; flex-wrap: wrap; }
 .lc-closed h2 { font-size: clamp(1.8rem, 9vw, 3rem); color: #fff; }
 .lc-board ol { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; }
 .lc-board li { display: grid; grid-template-columns: 2.4em 1fr auto; gap: 10px; align-items: center; padding: 10px 14px; border-radius: 10px; background: #0f0f15; border: 1px solid #ffffff14; font-variant-numeric: tabular-nums; }
 .lc-board li b { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; color: var(--muted); }
-.lc-board li:nth-child(-n+5) { border-color: #ffb21e55; } .lc-board li:nth-child(-n+5) b { color: var(--yellow); }
+.lc-board li.win { border-color: #ffb21e55; } .lc-board li.win b { color: var(--yellow); }
+.lc-board li.me { border-color: #2bff6a; background: #0c1a11; }
+.lc-board li.cut { display: block; padding: 4px 0 0; border: 0; background: none; color: var(--yellow); font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase; }
 .lc-board li .t { font-weight: 800; color: #fff; }
 .lc-board .lc-empty { display: block; color: var(--muted); }
 .lc-rules summary { cursor: pointer; font-weight: 700; } .lc-rules ul { color: #c9cdd8; line-height: 1.6; padding-left: 20px; }
@@ -927,7 +928,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
           <i class="lc-l lc-r" data-l="r"></i><i class="lc-l lc-r" data-l="r"></i>
         </span>
         <span class="lc-big" id="lc-big">TAP TO START</span>
-        <span class="lc-msg" id="lc-msg" role="status" aria-live="assertive">Tap when the light turns green. Not before.</span>
+        <span class="lc-msg" id="lc-msg" role="status" aria-live="assertive">You get one go of 3 attempts. Tap when the light turns green, not before.</span>
       </button>
       <div class="lc-tries" id="lc-tries"></div>
       <button class="link-btn" type="button" id="lc-change">Not you? Change name or number</button>
@@ -935,14 +936,9 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
 
     <!-- result -->
     <div class="lc-card lc-done" id="lc-done" hidden>
-      <span class="eyebrow">Session complete</span>
+      <span class="eyebrow" id="lc-done-tag">That's your go</span>
       <p class="lc-best" id="lc-best"></p>
       <p class="lede" id="lc-rank"></p>
-      <div class="row lc-share">
-        <a class="btn fill" id="lc-wa" style="--c:#25d366" target="_blank" rel="noopener">Share on WhatsApp</a>
-        <button class="btn" type="button" id="lc-sharebtn">Share your time</button>
-      </div>
-      <button class="btn fill lc-go" type="button" id="lc-again">Run it again <span class="arr">→</span></button>
     </div>
 
     <div class="lc-closed lc-card" id="lc-closed" hidden>
@@ -951,15 +947,17 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     </div>
 
     <section class="lc-board" aria-labelledby="lc-board-h">
-      <h2 id="lc-board-h" class="eyebrow ruled">Leaderboard · top 10</h2>
+      <h2 id="lc-board-h" class="eyebrow ruled">Leaderboard</h2>
+      <p class="pass-note" id="lc-board-note" style="text-align:left;margin:6px 0 0">Everyone's best time, fastest first. The top 5 at the deadline win a free ticket.</p>
       <ol id="lc-board"><li class="lc-empty">Loading…</li></ol>
     </section>
 
     <details class="lc-rules">
       <summary>Rules</summary>
       <ul>
-        <li>Enter your name and a Kenyan phone number. One leaderboard entry per number, and your best time counts.</li>
-        <li>Each run is 3 attempts. Tap the moment the light turns green. Tapping before green is a false start and the attempt doesn't count.</li>
+        <li>Enter your name and a Kenyan phone number. One entry per number.</li>
+        <li>Each phone number gets <b>one go of 3 attempts</b>, and your best of the 3 counts. Tap the moment the light turns green. Tapping before green is a false start and that attempt doesn't count.</li>
+        <li>Your name and best time appear on the public leaderboard. Your phone number never does.</li>
         <li>Our server picks the random start and times every tap. Times under 0.100s are treated as impossible and rejected.</li>
         <li>The giveaway closes at the time shown above. The 5 fastest times then each win one free ticket, sent to the winner by Shift Nation.</li>
         <li>Winners are checked before prizes are sent. Entries that look automated or tampered with are disqualified.</li>
@@ -1039,7 +1037,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
           <li><b>Show car registration:</b> your name, email, phone number, Instagram handle (optional), the name of your car, and a photo of it.</li>
           <li><b>Booth request:</b> your name, email, phone number, business name, what you'll show or sell, booth size, whether you need power, and any notes.</li>
           <li><b>Driver passes:</b> the pass code, the driver's name and car, and the time the pass is scanned at the gate.</li>
-          <li><b>Launch Control game:</b> your name, phone number, reaction times, and your device's IP address (used only to stop cheating). Only a shortened version of your name is shown on the leaderboard, never your number.</li>
+          <li><b>Launch Control game:</b> your name, phone number, reaction times, and your device's IP address (used only to stop cheating). Your name and best time are shown on the public leaderboard, never your number.</li>
         </ul>
         <p>Tickets are sold by our ticketing partner Little Africa, not on this website, so their own privacy terms apply to ticket purchases.</p>
       </section>
@@ -2793,8 +2791,10 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     const r = await sb.rpc("lc_leaderboard");
     const ol = $("#lc-board");
     if (r.error) { ol.replaceChildren(el("li", { class: "lc-empty", text: "The leaderboard didn't load. Refresh to try again." })); return; }
-    ol.replaceChildren(...(r.data.length ? r.data.map(x => el("li", {}, el("b", { text: String(x.rank) }), el("span", { text: x.name }), el("span", { class: "t", text: secs(x.best_ms) })))
-      : [el("li", { class: "lc-empty", text: "No times yet. Be the first on the board." })]));
+    const rows = r.data.map(x => el("li", { class: `${x.rank <= 5 ? "win" : ""}${LC.rank && x.rank === LC.rank ? " me" : ""}` },
+      el("b", { text: String(x.rank) }), el("span", { text: x.name }), el("span", { class: "t", text: secs(x.best_ms) })));
+    if (rows.length > 5) rows.splice(5, 0, el("li", { class: "cut", text: "▲ Prize spots: top 5 win a free ticket" }));
+    ol.replaceChildren(...(rows.length ? rows : [el("li", { class: "lc-empty", text: "No times yet. Be the first on the board." })]));
   }
   async function initLaunch() {
     if (!sb) { lcShow("lc-closed"); $("#lc-closed").replaceChildren(el("p", { class: "lede", text: "Launch Control works on shiftnation.org." })); return; }
@@ -2813,7 +2813,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     $("#lc-who").textContent = LC.me.name;
     $("#lc-attempt").textContent = `Attempt ${LC.tries.length + 1} of ${LC.TRIES}`;
     lcTriesRow();
-    lcPad("TAP TO START", "Tap when the light turns green. Not before.");
+    lcPad("TAP TO START", LC.tries.length ? "Tap when the light turns green, not before." : "You get one go of 3 attempts. Tap when the light turns green, not before.");
   }
 
   $("#lc-entry").addEventListener("submit", ev => {
@@ -2842,6 +2842,7 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     LC.phase = "staging"; lcLights([]); lcPad("STAGING…", "Get ready. Wait for green.");
     const s1 = await sb.rpc("lc_start", { p_name: LC.me.name, p_phone: LC.me.phone });
     if (LC.phase !== "staging") return;   // false-started while staging
+    if (s1.data?.error === "used") return lcUsed(s1.data);
     if (s1.error || s1.data.error) return lcFail(s1.data?.error);
     LC.run = s1.data.run_id;
     const s2 = await sb.rpc("lc_arm", { p_run: LC.run });
@@ -2856,6 +2857,14 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
       // time from the frame the green is actually painted
       requestAnimationFrame(() => { LC.greenAt = performance.now(); });
     }, s2.data.wait_ms));
+  }
+  function lcUsed(d) {
+    lcClear(); LC.phase = "done"; lcShow("lc-done"); lcBoard();
+    $("#lc-done-tag").textContent = "You've had your go";
+    $("#lc-best").textContent = d.best_ms ? secs(d.best_ms) : "No valid time";
+    $("#lc-rank").textContent = d.best_ms
+      ? `Each number gets one go of ${LC.TRIES} attempts. Your best is ${secs(d.best_ms)}, number ${d.rank} on the leaderboard${d.rank <= 5 ? ", a winning spot right now!" : "."}`
+      : `Each number gets one go of ${LC.TRIES} attempts, and yours are used up.`;
   }
   function lcFail(code) {
     lcClear(); LC.phase = "ready";
@@ -2886,20 +2895,11 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
   function lcSession() {
     const valid = LC.tries.filter(t => t.ms).map(t => t.ms), best = valid.length ? Math.min(...valid) : null;
     LC.phase = "done"; lcShow("lc-done"); lcBoard();
+    $("#lc-done-tag").textContent = "That's your go";
     $("#lc-best").textContent = best ? secs(best) : "No valid time";
-    $("#lc-rank").textContent = LC.best ? `Your best ever: ${secs(LC.best)}. You're number ${LC.rank} on the leaderboard${LC.rank <= 5 ? ", a winning spot right now!" : "."}`
-      : "Every attempt was a false start. Wait for the green and try again.";
-    const shareTime = LC.best || best;
-    const text = shareTime ? `I launched in ${secs(shareTime)} on TunerFest 6.0 Launch Control. Can you beat me? The top 5 win free tickets: https://www.shiftnation.org/#launch`
-      : "Try TunerFest 6.0 Launch Control. The top 5 reaction times win free tickets: https://www.shiftnation.org/#launch";
-    $("#lc-wa").href = `https://wa.me/?text=${encodeURIComponent(text)}`;
-    $("#lc-sharebtn").textContent = "Share your time";
-    $("#lc-sharebtn").onclick = async () => {
-      if (navigator.share) { try { await navigator.share({ text }); } catch {} return; }
-      try { await navigator.clipboard.writeText(text); $("#lc-sharebtn").textContent = "Copied"; } catch { prompt("Copy this:", text); }
-    };
+    $("#lc-rank").textContent = LC.best ? `Your best: ${secs(LC.best)}. You're number ${LC.rank} on the leaderboard${LC.rank <= 5 ? ", a winning spot right now!" : "."} Winners are announced after the giveaway closes.`
+      : "None of your attempts counted this time. Thanks for playing!";
   }
-  $("#lc-again").addEventListener("click", () => { LC.tries = []; lcShow("lc-game"); lcReady(); });
 
   /* ---------- routing ---------- */
   const views = $$(".view");
