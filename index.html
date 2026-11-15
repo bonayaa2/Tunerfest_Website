@@ -2857,6 +2857,8 @@ legend { font-family: var(--f-display); font-stretch: 125%; font-weight: 800; fo
     SF.log = st.my_guesses || [];
     sfWinners(st.winners || []);
     let mine = null; try { mine = JSON.parse(localStorage.getItem(SF.STORE_WIN) || "null"); } catch {}
+    // a saved win only counts if the server still has this number as a winner (test wins get cleared)
+    if (mine && LC.me && !st.already_won) { try { localStorage.removeItem(SF.STORE_WIN); } catch {} mine = null; }
     if (mine) return sfWon(mine.code, true);
     if (st.already_won) { sfShow(""); return $("#sf-status").replaceChildren(el("span", { class: "k", text: "Already a winner" }), el("p", { class: "lede", text: "This number has already cracked a safe and won a ticket. Leave the next one for someone else!" })); }
     if (st.phase === "ended") { sfShow(""); return $("#sf-status").replaceChildren(el("span", { class: "k", text: "Giveaway over" }), el("p", { class: "lede", text: "The safe giveaway has ended. Thanks for playing, and see you at Tuner Fest 6.0!" })); }
